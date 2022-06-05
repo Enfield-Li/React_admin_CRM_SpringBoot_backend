@@ -24,9 +24,12 @@
     "react-scripts": "^5.0.0"
   },
   "resolutions": {
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0"
+    "@types/react": "17.0.30"
   },
+  "optionalDependencies": {
+    "@types/react": "^17.0.44"
+  },
+  "preinstall": "npx npm-force-resolutions",
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
