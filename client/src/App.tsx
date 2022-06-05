@@ -7,10 +7,13 @@ import contacts from './contacts';
 import companies from './companies';
 import deals from './deals';
 import { Dashboard } from './dashboard/Dashboard';
+import simpleRestProvider from "ra-data-json-server";
 
+const data = simpleRestProvider("http://localhost:3060");
 const App = () => (
     <Admin
-        dataProvider={dataProvider}
+        // dataProvider={dataProvider}
+        dataProvider={data}
         authProvider={authProvider}
         layout={Layout}
         dashboard={Dashboard}
