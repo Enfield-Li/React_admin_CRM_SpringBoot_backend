@@ -5,7 +5,7 @@ import static javax.persistence.CascadeType.DETACH;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.sale.entity.Sale;
-import com.example.demo.tag.entity.Tag;
+import com.example.demo.tag.Tags;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +15,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Contact {
 
   @Id
@@ -45,9 +52,6 @@ public class Contact {
   private Instant last_seen;
   private Boolean has_newsletter;
 
-  @Transient
-  private List<Tag> tags = new ArrayList<>();
-
   @Column(updatable = false, insertable = false)
   private Long company_id;
 
@@ -62,7 +66,17 @@ public class Contact {
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @OneToMany(cascade = ALL)
-  @JoinColumn(name = "tag_id")
-  private List<Tag> tag_list = new ArrayList<>();
+  @Transient
+  private List<Integer> tags = new ArrayList<>();
+
+  @ManyToMany
+  @JoinTable(
+    name = "contact_tag",
+    joinColumns = @JoinColumn(name = "contact_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id"),
+    uniqueConstraints = @UniqueConstraint(
+      columnNames = { "contact_id", "tag_id" }
+    )
+  )
+  private List<Tags> tag_list = new ArrayList<>();
 }

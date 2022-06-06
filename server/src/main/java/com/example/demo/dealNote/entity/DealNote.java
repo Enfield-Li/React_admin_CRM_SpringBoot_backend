@@ -12,10 +12,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class DealNote {
 
   @Id
@@ -39,7 +43,7 @@ public class DealNote {
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "deal_id")
   private Deal deal;
 }
