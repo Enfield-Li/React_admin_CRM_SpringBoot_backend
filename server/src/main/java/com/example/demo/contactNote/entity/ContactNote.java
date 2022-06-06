@@ -1,5 +1,8 @@
 package com.example.demo.contactNote.entity;
 
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
+
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.sale.entity.Sale;
 import java.time.Instant;
@@ -26,14 +29,13 @@ public class ContactNote {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Instant date;
-
   @Lob
   @Column(length = 1000)
   private String text;
 
   private String type;
-  private String stats;
+  private Instant date;
+  private String status;
 
   @Column(updatable = false, insertable = false)
   private Long contact_id;
@@ -41,11 +43,11 @@ public class ContactNote {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @OneToOne
+  @OneToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
 
-  @ManyToOne
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 }

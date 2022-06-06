@@ -1,5 +1,8 @@
 package com.example.demo.task.entity;
 
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
+
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.sale.entity.Sale;
 import java.time.Instant;
@@ -34,11 +37,11 @@ public class Task {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @ManyToOne
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @ManyToOne
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
 }

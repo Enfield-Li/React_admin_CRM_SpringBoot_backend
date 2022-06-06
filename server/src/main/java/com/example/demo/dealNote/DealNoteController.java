@@ -1,10 +1,12 @@
 package com.example.demo.dealNote;
 
+import com.example.demo.deal.entity.Deal;
+import com.example.demo.deal.repository.DealRespository;
 import com.example.demo.dealNote.entity.DealNote;
 import com.example.demo.dealNote.repository.DealNoteRepository;
-
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,54 +28,51 @@ import org.springframework.web.bind.annotation.RestController;
 class DealNoteController {
 
   private final DealNoteRepository dealNoteRepo;
+  private final SaleRepository saleRepo;
+  private final DealRespository dealRepo;
 
   @Autowired
-  public DealNoteController(DealNoteRepository dealNoteRepo) {
+  public DealNoteController(
+    DealNoteRepository dealNoteRepo,
+    SaleRepository saleRepo,
+    DealRespository dealRepo
+  ) {
     this.dealNoteRepo = dealNoteRepo;
+    this.saleRepo = saleRepo;
+    this.dealRepo = dealRepo;
   }
 
   @PostMapping("test")
   public void test() {}
 
-  @PostMapping("saveAll")
+  @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<DealNote> dealNotes) {
+    dealNotes.forEach(
+      dn -> {
+        Deal deal = dealRepo.findById(dn.getDeal_id()).orElse(null);
+        Sale sale = saleRepo.findById(dn.getSales_id()).orElse(null);
+
+        dn.setDeal(deal);
+        dn.setSale(sale);
+      }
+    );
+
     dealNoteRepo.saveAll(dealNotes);
   }
 
   @GetMapping
   public ResponseEntity<List<DealNote>> getAll() {
-    try {
-      List<DealNote> items = new ArrayList<DealNote>();
-
-      dealNoteRepo.findAll().forEach(items::add);
-
-      if (items.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-      return new ResponseEntity<>(items, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return null;
   }
 
   @GetMapping("{id}")
   public ResponseEntity<DealNote> getById(@PathVariable("id") Long id) {
-    Optional<DealNote> existingItemOptional = dealNoteRepo.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @PostMapping
   public ResponseEntity<DealNote> create(@RequestBody DealNote item) {
-    try {
-      DealNote savedItem = dealNoteRepo.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 
   @PutMapping("{id}")
@@ -81,29 +80,11 @@ class DealNoteController {
     @PathVariable("id") Long id,
     @RequestBody DealNote item
   ) {
-    Optional<DealNote> existingItemOptional = dealNoteRepo.findById(id);
-    if (existingItemOptional.isPresent()) {
-      DealNote existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        dealNoteRepo.save(existingItem),
-        HttpStatus.OK
-      );
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      dealNoteRepo.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.company.entity;
 
 import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.sale.entity.Sale;
 import java.time.Instant;
@@ -49,7 +50,7 @@ public class Company {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @ManyToOne(cascade = DETACH)
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 }

@@ -1,7 +1,7 @@
 package com.example.demo.contact.entity;
 
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.sale.entity.Sale;
@@ -18,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -52,24 +51,24 @@ public class Contact {
   private Instant last_seen;
   private Boolean has_newsletter;
 
+  @Transient
+  private List<Integer> tags = new ArrayList<>();
+
   @Column(updatable = false, insertable = false)
   private Long company_id;
 
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @ManyToOne(cascade = DETACH)
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @ManyToOne(cascade = DETACH)
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @Transient
-  private List<Integer> tags = new ArrayList<>();
-
-  @ManyToMany
+  @ManyToMany(cascade = DETACH, fetch = LAZY)
   @JoinTable(
     name = "contact_tag",
     joinColumns = @JoinColumn(name = "contact_id"),

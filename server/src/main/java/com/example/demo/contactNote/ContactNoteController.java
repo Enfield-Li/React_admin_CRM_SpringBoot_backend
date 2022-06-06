@@ -1,7 +1,11 @@
 package com.example.demo.contactNote;
 
+import com.example.demo.contact.entity.Contact;
+import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.contactNote.entity.ContactNote;
 import com.example.demo.contactNote.repository.ContactNoteRepository;
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,54 +28,51 @@ import org.springframework.web.bind.annotation.RestController;
 class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;
+  private final SaleRepository saleRepo;
+  private final ContactRepository contactRepo;
 
   @Autowired
-  public ContactNoteController(ContactNoteRepository contactNoteRepo) {
+  public ContactNoteController(
+    ContactNoteRepository contactNoteRepo,
+    SaleRepository saleRepo,
+    ContactRepository contactRepo
+  ) {
     this.contactNoteRepo = contactNoteRepo;
+    this.saleRepo = saleRepo;
+    this.contactRepo = contactRepo;
   }
 
   @PostMapping("test")
   public void test() {}
 
-  @PostMapping("saveAll")
+  @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<ContactNote> contactNotes) {
+    contactNotes.forEach(
+      cn -> {
+        Sale sale = saleRepo.findById(cn.getSales_id()).orElse(null);
+        Contact contact = contactRepo.findById(cn.getContact_id()).orElse(null);
+
+        cn.setSale(sale);
+        cn.setContact(contact);
+      }
+    );
+
     contactNoteRepo.saveAll(contactNotes);
   }
 
   @GetMapping
   public ResponseEntity<List<ContactNote>> getAll() {
-    try {
-      List<ContactNote> items = new ArrayList<ContactNote>();
-
-      contactNoteRepo.findAll().forEach(items::add);
-
-      if (items.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-      return new ResponseEntity<>(items, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return null;
   }
 
   @GetMapping("{id}")
   public ResponseEntity<ContactNote> getById(@PathVariable("id") Long id) {
-    Optional<ContactNote> existingItemOptional = contactNoteRepo.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @PostMapping
   public ResponseEntity<ContactNote> create(@RequestBody ContactNote item) {
-    try {
-      ContactNote savedItem = contactNoteRepo.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 
   @PutMapping("{id}")
@@ -79,29 +80,11 @@ class ContactNoteController {
     @PathVariable("id") Long id,
     @RequestBody ContactNote item
   ) {
-    Optional<ContactNote> existingItemOptional = contactNoteRepo.findById(id);
-    if (existingItemOptional.isPresent()) {
-      ContactNote existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        contactNoteRepo.save(existingItem),
-        HttpStatus.OK
-      );
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      contactNoteRepo.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 }

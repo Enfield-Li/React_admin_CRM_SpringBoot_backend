@@ -2,6 +2,8 @@ package com.example.demo.company;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.company.repository.CompanyRepository;
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +26,29 @@ import org.springframework.web.bind.annotation.RestController;
 class CompanyController {
 
   private final CompanyRepository companyRepo;
+  private final SaleRepository saleRepo;
 
   @Autowired
-  public CompanyController(CompanyRepository companyRepo) {
+  public CompanyController(
+    CompanyRepository companyRepo,
+    SaleRepository saleRepo
+  ) {
     this.companyRepo = companyRepo;
+    this.saleRepo = saleRepo;
   }
 
   @PostMapping("test")
   public void test() {}
 
-  @PostMapping("saveAll")
+  @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Company> company) {
+    company.forEach(
+      c -> {
+        Sale sale = saleRepo.findById(c.getSales_id()).orElse(null);
+        c.setSale(sale);
+      }
+    );
+
     companyRepo.saveAll(company);
   }
 
@@ -45,23 +59,12 @@ class CompanyController {
 
   @GetMapping("{id}")
   public ResponseEntity<Company> getById(@PathVariable("id") Long id) {
-    Optional<Company> existingItemOptional = companyRepo.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @PostMapping
   public ResponseEntity<Company> create(@RequestBody Company item) {
-    try {
-      Company savedItem = companyRepo.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 
   @PutMapping("{id}")
@@ -69,29 +72,11 @@ class CompanyController {
     @PathVariable("id") Long id,
     @RequestBody Company item
   ) {
-    Optional<Company> existingItemOptional = companyRepo.findById(id);
-    if (existingItemOptional.isPresent()) {
-      Company existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        companyRepo.save(existingItem),
-        HttpStatus.OK
-      );
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      companyRepo.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 }

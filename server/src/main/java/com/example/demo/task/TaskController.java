@@ -1,5 +1,9 @@
 package com.example.demo.task;
 
+import com.example.demo.contact.entity.Contact;
+import com.example.demo.contact.repository.ContactRepository;
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import com.example.demo.task.entity.Task;
 import com.example.demo.task.repository.TaskRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,55 +27,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tasks")
 class TaskController {
 
-  TaskRepository taskRepo;
+  private final TaskRepository taskRepo;
+  private final ContactRepository contactRepo;
+  private final SaleRepository saleRepo;
 
   @Autowired
-  public TaskController(TaskRepository repository) {
-    this.taskRepo = repository;
+  public TaskController(
+    TaskRepository taskRepo,
+    ContactRepository contactRepo,
+    SaleRepository saleRepo
+  ) {
+    this.taskRepo = taskRepo;
+    this.contactRepo = contactRepo;
+    this.saleRepo = saleRepo;
   }
 
   @PostMapping("test")
   public void test() {}
 
-  @PostMapping("saveAll")
+  @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Task> tasks) {
+    tasks.forEach(
+      task -> {
+        Sale sale = saleRepo.findById(task.getSales_id()).orElse(null);
+        Contact contact = contactRepo
+          .findById(task.getContact_id())
+          .orElse(null);
+
+        task.setSale(sale);
+        task.setContact(contact);
+      }
+    );
+
     taskRepo.saveAll(tasks);
   }
 
   @GetMapping
   public ResponseEntity<List<Task>> getAll() {
-    try {
-      List<Task> items = new ArrayList<Task>();
-
-      taskRepo.findAll().forEach(items::add);
-
-      if (items.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-      return new ResponseEntity<>(items, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return null;
   }
 
   @GetMapping("{id}")
   public ResponseEntity<Task> getById(@PathVariable("id") Long id) {
-    Optional<Task> existingItemOptional = taskRepo.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @PostMapping
   public ResponseEntity<Task> create(@RequestBody Task item) {
-    try {
-      Task savedItem = taskRepo.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 
   @PutMapping("{id}")
@@ -79,26 +82,11 @@ class TaskController {
     @PathVariable("id") Long id,
     @RequestBody Task item
   ) {
-    Optional<Task> existingItemOptional = taskRepo.findById(id);
-    if (existingItemOptional.isPresent()) {
-      Task existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(taskRepo.save(existingItem), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      taskRepo.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 }

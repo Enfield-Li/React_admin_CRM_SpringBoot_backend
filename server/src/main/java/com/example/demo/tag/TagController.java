@@ -31,7 +31,7 @@ class TagController {
   @PostMapping("test")
   public void test() {}
 
-  @PostMapping("saveAll")
+  @PostMapping("bulk_insert")
   public void saveAllTag(@RequestBody List<com.example.demo.tag.Tags> tags) {
     tagRepo.saveAll(tags);
   }

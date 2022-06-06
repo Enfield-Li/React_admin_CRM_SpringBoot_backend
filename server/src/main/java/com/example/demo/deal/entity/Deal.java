@@ -1,7 +1,7 @@
 package com.example.demo.deal.entity;
 
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.contact.entity.Contact;
@@ -19,8 +19,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -46,7 +44,7 @@ public class Deal {
 
   private Instant created_at;
   private Instant updated_at;
-  private Instant started_at;
+  private Instant start_at;
 
   private String name;
   private Long amount;
@@ -63,18 +61,15 @@ public class Deal {
   @Column(updatable = false, insertable = false)
   private Long company_id;
 
-  @Column(updatable = false, insertable = false)
-  private Long contact_id;
-
-  @OneToOne
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @ManyToOne(cascade = DETACH)
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @ManyToMany
+  @ManyToMany(cascade = DETACH, fetch = LAZY)
   @JoinTable(
     name = "deal_contact",
     joinColumns = @JoinColumn(name = "deal_id"),

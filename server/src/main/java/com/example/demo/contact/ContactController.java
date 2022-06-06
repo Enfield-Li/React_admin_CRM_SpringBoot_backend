@@ -1,7 +1,11 @@
 package com.example.demo.contact;
 
+import com.example.demo.company.entity.Company;
+import com.example.demo.company.repository.CompanyRepository;
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.contact.repository.ContactRepository;
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import com.example.demo.tag.TagRepository;
 import com.example.demo.tag.Tags;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,25 +31,35 @@ class ContactController {
 
   private final ContactRepository contactRepo;
   private final TagRepository tagRepo;
+  private final CompanyRepository companyRepo;
+  private final SaleRepository saleRepo;
 
   @Autowired
   public ContactController(
     ContactRepository contactRepo,
-    TagRepository tagRepo
+    TagRepository tagRepo,
+    CompanyRepository companyRepo,
+    SaleRepository saleRepo
   ) {
     this.contactRepo = contactRepo;
     this.tagRepo = tagRepo;
+    this.companyRepo = companyRepo;
+    this.saleRepo = saleRepo;
   }
 
   @PostMapping("test")
   public void test() {}
 
-  @PostMapping("saveAll")
+  @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Contact> contacts) {
     contacts.forEach(
       contact -> {
-        List<Integer> tags = contact.getTags();
+        Sale sale = saleRepo.findById(contact.getSales_id()).orElse(null);
+        Company company = companyRepo
+          .findById(contact.getCompany_id())
+          .orElse(null);
 
+        List<Integer> tags = contact.getTags();
         List<Tags> tag_list = new ArrayList<>();
         tags.forEach(
           t -> {
@@ -55,6 +69,8 @@ class ContactController {
         );
         contact.setTag_list(tag_list);
         contact.setTags(null);
+        contact.setCompany(company);
+        contact.setSale(sale);
 
         contactRepo.save(contact);
       }
@@ -63,38 +79,17 @@ class ContactController {
 
   @GetMapping
   public ResponseEntity<List<Contact>> getAll() {
-    try {
-      List<Contact> items = new ArrayList<Contact>();
-
-      contactRepo.findAll().forEach(items::add);
-
-      if (items.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-      return new ResponseEntity<>(items, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return null;
   }
 
   @GetMapping("{id}")
   public ResponseEntity<Contact> getById(@PathVariable("id") Long id) {
-    Optional<Contact> existingItemOptional = contactRepo.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @PostMapping
   public ResponseEntity<Contact> create(@RequestBody Contact item) {
-    try {
-      Contact savedItem = contactRepo.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 
   @PutMapping("{id}")
@@ -102,29 +97,11 @@ class ContactController {
     @PathVariable("id") Long id,
     @RequestBody Contact item
   ) {
-    Optional<Contact> existingItemOptional = contactRepo.findById(id);
-    if (existingItemOptional.isPresent()) {
-      Contact existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        contactRepo.save(existingItem),
-        HttpStatus.OK
-      );
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      contactRepo.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 }

@@ -1,5 +1,8 @@
 package com.example.demo.dealNote.entity;
 
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.FetchType.LAZY;
+
 import com.example.demo.deal.entity.Deal;
 import com.example.demo.sale.entity.Sale;
 import java.time.Instant;
@@ -39,11 +42,11 @@ public class DealNote {
   @Column(updatable = false, insertable = false)
   private Long deal_id;
 
-  @ManyToOne
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @ManyToOne
+  @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "deal_id")
   private Deal deal;
 }
