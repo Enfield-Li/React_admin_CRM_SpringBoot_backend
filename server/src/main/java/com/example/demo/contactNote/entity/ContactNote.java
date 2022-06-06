@@ -9,12 +9,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class ContactNote {
 
   @Id
@@ -23,8 +28,11 @@ public class ContactNote {
 
   private Instant date;
 
-  private String type;
+  @Lob
+  @Column(length = 1000)
   private String text;
+
+  private String type;
   private String stats;
 
   @Column(updatable = false, insertable = false)

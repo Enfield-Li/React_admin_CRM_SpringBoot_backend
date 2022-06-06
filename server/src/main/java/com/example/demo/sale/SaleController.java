@@ -1,7 +1,7 @@
-package com.example.demo.company;
+package com.example.demo.sale;
 
-import com.example.demo.company.entity.Company;
-import com.example.demo.company.repository.CompanyRepository;
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,33 +19,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Company")
-@RequestMapping("/companies")
-class CompanyController {
+@Tag(name = "Sale")
+@RequestMapping("/sales")
+class SaleController {
 
-  private final CompanyRepository companyRepo;
+  private final SaleRepository saleRepo;
 
   @Autowired
-  public CompanyController(CompanyRepository companyRepo) {
-    this.companyRepo = companyRepo;
+  public SaleController(SaleRepository saleRepo) {
+    this.saleRepo = saleRepo;
   }
 
   @PostMapping("test")
   public void test() {}
 
   @PostMapping("saveAll")
-  public void saveAll(@RequestBody List<Company> company) {
-    companyRepo.saveAll(company);
+  public void saveAll(@RequestBody List<Sale> sales) {
+    saleRepo.saveAll(sales);
   }
 
   @GetMapping
-  public ResponseEntity<List<Company>> getAll() {
-    return null;
+  public ResponseEntity<List<Sale>> getAll() {
+    try {
+      List<Sale> items = new ArrayList<Sale>();
+
+      saleRepo.findAll().forEach(items::add);
+
+      if (items.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+      return new ResponseEntity<>(items, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<Company> getById(@PathVariable("id") Long id) {
-    Optional<Company> existingItemOptional = companyRepo.findById(id);
+  public ResponseEntity<Sale> getById(@PathVariable("id") Long id) {
+    Optional<Sale> existingItemOptional = saleRepo.findById(id);
 
     if (existingItemOptional.isPresent()) {
       return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
@@ -55,9 +65,9 @@ class CompanyController {
   }
 
   @PostMapping
-  public ResponseEntity<Company> create(@RequestBody Company item) {
+  public ResponseEntity<Sale> create(@RequestBody Sale item) {
     try {
-      Company savedItem = companyRepo.save(item);
+      Sale savedItem = saleRepo.save(item);
       return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
@@ -65,21 +75,18 @@ class CompanyController {
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<Company> update(
+  public ResponseEntity<Sale> update(
     @PathVariable("id") Long id,
-    @RequestBody Company item
+    @RequestBody Sale item
   ) {
-    Optional<Company> existingItemOptional = companyRepo.findById(id);
+    Optional<Sale> existingItemOptional = saleRepo.findById(id);
     if (existingItemOptional.isPresent()) {
-      Company existingItem = existingItemOptional.get();
+      Sale existingItem = existingItemOptional.get();
       System.out.println(
         "TODO for developer - update logic is unique to entity and must be implemented manually."
       );
       //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        companyRepo.save(existingItem),
-        HttpStatus.OK
-      );
+      return new ResponseEntity<>(saleRepo.save(existingItem), HttpStatus.OK);
     } else {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -88,7 +95,7 @@ class CompanyController {
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     try {
-      companyRepo.deleteById(id);
+      saleRepo.deleteById(id);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);

@@ -15,15 +15,22 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Deal {
 
   @Id
@@ -67,7 +74,14 @@ public class Deal {
   @JoinColumn(name = "company_id")
   private Company company;
 
-  @OneToMany(cascade = ALL)
-  @JoinColumn(name = "contact_id")
-  private List<Contact> contact_ids_list = new ArrayList<>();
+  @ManyToMany
+  @JoinTable(
+    name = "deal_contact",
+    joinColumns = @JoinColumn(name = "deal_id"),
+    inverseJoinColumns = @JoinColumn(name = "contact_id"),
+    uniqueConstraints = @UniqueConstraint(
+      columnNames = { "deal_id", "contact_id" }
+    )
+  )
+  private List<Contact> contact_list = new ArrayList<>();
 }
