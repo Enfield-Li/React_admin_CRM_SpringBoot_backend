@@ -2,8 +2,9 @@ package com.example.demo.company;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.company.repository.CompanyRepository;
+import com.example.demo.sale.entity.Sale;
+import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +25,33 @@ import org.springframework.web.bind.annotation.RestController;
 class CompanyController {
 
   private final CompanyRepository companyRepo;
+  private final SaleRepository saleRepo;
 
   @Autowired
-  public CompanyController(CompanyRepository companyRepo) {
+  public CompanyController(
+    CompanyRepository companyRepo,
+    SaleRepository saleRepo
+  ) {
     this.companyRepo = companyRepo;
+    this.saleRepo = saleRepo;
   }
 
   @PostMapping("test")
-  public void test() {}
+  public void test(@RequestBody Company company) {
+    Sale sale = saleRepo.findById(company.getSales_id()).orElse(null);
+    company.setSale(sale);
+    companyRepo.save(company);
+  }
 
   @PostMapping("saveAll")
   public void saveAll(@RequestBody List<Company> company) {
+    company.forEach(
+      c -> {
+        Sale sales = saleRepo.findById(c.getSales_id()).orElse(null);
+        c.setSale(sales);
+      }
+    );
+
     companyRepo.saveAll(company);
   }
 

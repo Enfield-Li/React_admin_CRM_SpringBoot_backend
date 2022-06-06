@@ -50,6 +50,6 @@ public class Company {
   private Long sales_id;
 
   @ManyToOne(cascade = DETACH)
-  @JoinColumn(name = "sales_id")
+  @JoinColumn(name = "sales_id", nullable = false)
   private Sale sale;
 }
