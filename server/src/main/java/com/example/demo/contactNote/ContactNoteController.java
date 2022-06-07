@@ -53,7 +53,7 @@ class ContactNoteController {
         );
         Contact contact = entityManager.getReference(
           Contact.class,
-          contactNote.getSales_id()
+          contactNote.getContact_id()
         );
 
         contactNote.setSale(sale);
