@@ -12,8 +12,8 @@ import simpleRestProvider from "ra-data-json-server";
 const data = simpleRestProvider("http://localhost:3060");
 const App = () => (
     <Admin
-        dataProvider={dataProvider}
-        // dataProvider={data}
+        // dataProvider={dataProvider}
+        dataProvider={data}
         authProvider={authProvider}
         layout={Layout}
         dashboard={Dashboard}

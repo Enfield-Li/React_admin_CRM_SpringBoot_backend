@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 class DealNoteController {
 
   private final DealNoteRepository dealNoteRepo;
-  private final SaleRepository saleRepo;
-  private final DealRespository dealRepo;
+  private final EntityManager entityManager;
 
   @Autowired
   public DealNoteController(
     DealNoteRepository dealNoteRepo,
-    SaleRepository saleRepo,
-    DealRespository dealRepo
+    EntityManager entityManager
   ) {
     this.dealNoteRepo = dealNoteRepo;
-    this.saleRepo = saleRepo;
-    this.dealRepo = dealRepo;
+    this.entityManager = entityManager;
   }
 
   @PostMapping("test")
@@ -48,12 +46,18 @@ class DealNoteController {
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<DealNote> dealNotes) {
     dealNotes.forEach(
-      dn -> {
-        Deal deal = dealRepo.findById(dn.getDeal_id()).orElse(null);
-        Sale sale = saleRepo.findById(dn.getSales_id()).orElse(null);
+      dealNote -> {
+        Sale sale = entityManager.getReference(
+          Sale.class,
+          dealNote.getSales_id()
+        );
+        Deal deal = entityManager.getReference(
+          Deal.class,
+          dealNote.getDeal_id()
+        );
 
-        dn.setDeal(deal);
-        dn.setSale(sale);
+        dealNote.setSale(sale);
+        dealNote.setDeal(deal);
       }
     );
 

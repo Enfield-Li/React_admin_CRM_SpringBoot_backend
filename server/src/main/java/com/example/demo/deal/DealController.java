@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,21 +31,12 @@ import org.springframework.web.bind.annotation.RestController;
 class DealController {
 
   private final DealRespository dealRepo;
-  private final ContactRepository contactRepo;
-  private final CompanyRepository companyRepo;
-  private final SaleRepository saleRepo;
+  private final EntityManager entityManager;
 
   @Autowired
-  public DealController(
-    DealRespository dealRepo,
-    ContactRepository contactRepo,
-    CompanyRepository companyRepo,
-    SaleRepository saleRepo
-  ) {
+  public DealController(DealRespository dealRepo, EntityManager entityManager) {
     this.dealRepo = dealRepo;
-    this.contactRepo = contactRepo;
-    this.companyRepo = companyRepo;
-    this.saleRepo = saleRepo;
+    this.entityManager = entityManager;
   }
 
   @PostMapping("test")
@@ -54,27 +46,33 @@ class DealController {
   public void saveAll(@RequestBody List<Deal> deals) {
     deals.forEach(
       deal -> {
-        Sale sale = saleRepo.findById(deal.getSales_id()).orElse(null);
-        Company company = companyRepo
-          .findById(deal.getCompany_id())
-          .orElse(null);
+        Sale sale = entityManager.getReference(Sale.class, deal.getSales_id());
+
+        Company company = entityManager.getReference(
+          Company.class,
+          deal.getCompany_id()
+        );
 
         List<Contact> contact_list = new ArrayList<>();
         deal
-          .getContact_ids()
+          .getContact_list()
           .forEach(
-            id -> {
-              Contact contact = contactRepo.findById(id).orElse(null);
+            contactId -> {
+              Contact contact = entityManager.getReference(
+                Contact.class,
+                contactId
+              );
               contact_list.add(contact);
             }
           );
-        deal.setContact_list(contact_list);
+
         deal.setSale(sale);
         deal.setCompany(company);
-
-        dealRepo.save(deal);
+        deal.setContact_list(contact_list);
       }
     );
+
+    dealRepo.saveAll(deals);
   }
 
   @GetMapping

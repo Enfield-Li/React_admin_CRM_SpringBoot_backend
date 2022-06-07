@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 class TaskController {
 
   private final TaskRepository taskRepo;
-  private final ContactRepository contactRepo;
-  private final SaleRepository saleRepo;
+  private final EntityManager entityManager;
 
   @Autowired
-  public TaskController(
-    TaskRepository taskRepo,
-    ContactRepository contactRepo,
-    SaleRepository saleRepo
-  ) {
+  public TaskController(TaskRepository taskRepo, EntityManager entityManager) {
     this.taskRepo = taskRepo;
-    this.contactRepo = contactRepo;
-    this.saleRepo = saleRepo;
+    this.entityManager = entityManager;
   }
 
   @PostMapping("test")
@@ -49,10 +44,11 @@ class TaskController {
   public void saveAll(@RequestBody List<Task> tasks) {
     tasks.forEach(
       task -> {
-        Sale sale = saleRepo.findById(task.getSales_id()).orElse(null);
-        Contact contact = contactRepo
-          .findById(task.getContact_id())
-          .orElse(null);
+        Sale sale = entityManager.getReference(Sale.class, task.getSales_id());
+        Contact contact = entityManager.getReference(
+          Contact.class,
+          task.getContact_id()
+        );
 
         task.setSale(sale);
         task.setContact(contact);

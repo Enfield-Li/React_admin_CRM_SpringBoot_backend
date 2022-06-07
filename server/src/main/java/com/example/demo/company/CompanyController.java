@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,30 +27,33 @@ import org.springframework.web.bind.annotation.RestController;
 class CompanyController {
 
   private final CompanyRepository companyRepo;
-  private final SaleRepository saleRepo;
+  private final EntityManager entityManager;
 
   @Autowired
   public CompanyController(
     CompanyRepository companyRepo,
-    SaleRepository saleRepo
+    EntityManager entityManager
   ) {
     this.companyRepo = companyRepo;
-    this.saleRepo = saleRepo;
+    this.entityManager = entityManager;
   }
 
   @PostMapping("test")
   public void test() {}
 
   @PostMapping("bulk_insert")
-  public void saveAll(@RequestBody List<Company> company) {
-    company.forEach(
-      c -> {
-        Sale sale = saleRepo.findById(c.getSales_id()).orElse(null);
-        c.setSale(sale);
+  public void saveAll(@RequestBody List<Company> companies) {
+    companies.forEach(
+      company -> {
+        Sale sale = entityManager.getReference(
+          Sale.class,
+          company.getSales_id()
+        );
+        company.setSale(sale);
       }
     );
 
-    companyRepo.saveAll(company);
+    companyRepo.saveAll(companies);
   }
 
   @GetMapping

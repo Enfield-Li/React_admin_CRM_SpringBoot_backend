@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,21 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 class ContactController {
 
   private final ContactRepository contactRepo;
-  private final TagRepository tagRepo;
-  private final CompanyRepository companyRepo;
-  private final SaleRepository saleRepo;
+  private final EntityManager entityManager;
 
   @Autowired
   public ContactController(
     ContactRepository contactRepo,
-    TagRepository tagRepo,
-    CompanyRepository companyRepo,
-    SaleRepository saleRepo
+    EntityManager entityManager
   ) {
     this.contactRepo = contactRepo;
-    this.tagRepo = tagRepo;
-    this.companyRepo = companyRepo;
-    this.saleRepo = saleRepo;
+    this.entityManager = entityManager;
   }
 
   @PostMapping("test")
@@ -54,27 +49,21 @@ class ContactController {
   public void saveAll(@RequestBody List<Contact> contacts) {
     contacts.forEach(
       contact -> {
-        Sale sale = saleRepo.findById(contact.getSales_id()).orElse(null);
-        Company company = companyRepo
-          .findById(contact.getCompany_id())
-          .orElse(null);
-
-        List<Integer> tags = contact.getTags();
-        List<Tags> tag_list = new ArrayList<>();
-        tags.forEach(
-          t -> {
-            Tags tag = tagRepo.findById(t).orElse(null);
-            tag_list.add(tag);
-          }
+        Sale sale = entityManager.getReference(
+          Sale.class,
+          contact.getSales_id()
         );
-        contact.setTag_list(tag_list);
-        contact.setTags(null);
-        contact.setCompany(company);
-        contact.setSale(sale);
+        Company company = entityManager.getReference(
+          Company.class,
+          contact.getCompany_id()
+        );
 
-        contactRepo.save(contact);
+        contact.setSale(sale);
+        contact.setCompany(company);
       }
     );
+
+    contactRepo.saveAll(contacts);
   }
 
   @GetMapping
