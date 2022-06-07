@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;
-  private final SaleRepository saleRepo;
-  private final ContactRepository contactRepo;
+  private final EntityManager entityManager;
 
   @Autowired
   public ContactNoteController(
     ContactNoteRepository contactNoteRepo,
-    SaleRepository saleRepo,
-    ContactRepository contactRepo
+    EntityManager entityManager
   ) {
     this.contactNoteRepo = contactNoteRepo;
-    this.saleRepo = saleRepo;
-    this.contactRepo = contactRepo;
+    this.entityManager = entityManager;
   }
 
   @PostMapping("test")
@@ -48,12 +46,18 @@ class ContactNoteController {
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<ContactNote> contactNotes) {
     contactNotes.forEach(
-      cn -> {
-        Sale sale = saleRepo.findById(cn.getSales_id()).orElse(null);
-        Contact contact = contactRepo.findById(cn.getContact_id()).orElse(null);
+      contactNote -> {
+        Sale sale = entityManager.getReference(
+          Sale.class,
+          contactNote.getSales_id()
+        );
+        Contact contact = entityManager.getReference(
+          Contact.class,
+          contactNote.getSales_id()
+        );
 
-        cn.setSale(sale);
-        cn.setContact(contact);
+        contactNote.setSale(sale);
+        contactNote.setContact(contact);
       }
     );
 

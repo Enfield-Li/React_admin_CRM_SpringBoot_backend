@@ -13,6 +13,6 @@ public class CorsConfig implements WebMvcConfigurer {
       .addMapping("/**")
       .allowCredentials(true)
       .exposedHeaders("X-Total-Count")
-      .allowedOrigins("http://localhost:3080");
+      .allowedOrigins("http://localhost:3000");
   }
 }
