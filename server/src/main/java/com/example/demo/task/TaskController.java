@@ -5,6 +5,7 @@ import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
 import com.example.demo.task.entity.Task;
+import com.example.demo.task.repository.TaskMapper;
 import com.example.demo.task.repository.TaskRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,11 +32,17 @@ class TaskController {
 
   private final TaskRepository taskRepo;
   private final EntityManager entityManager;
+  private final TaskMapper taskMapper;
 
   @Autowired
-  public TaskController(TaskRepository taskRepo, EntityManager entityManager) {
+  public TaskController(
+    TaskRepository taskRepo,
+    EntityManager entityManager,
+    TaskMapper taskMapper
+  ) {
     this.taskRepo = taskRepo;
     this.entityManager = entityManager;
+    this.taskMapper = taskMapper;
   }
 
   @PostMapping("test")
@@ -59,18 +67,36 @@ class TaskController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Task>> getAll() {
-    return null;
+  public ResponseEntity<List<Task>> getAll(
+    @RequestParam(name = "_start") Integer start,
+    @RequestParam(name = "_end") Integer end,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "contact_id", required = false) Long contact_id
+  ) {
+    Integer take = end - start;
+
+    List<Task> tasks = taskMapper.getAllTasks(
+      start,
+      take,
+      sort,
+      order,
+      contact_id
+    );
+
+    String taskCount = taskMapper.getTaskCount();
+
+    return ResponseEntity.ok().header("X-Total-Count", taskCount).body(tasks);
   }
 
   @GetMapping("{id}")
   public ResponseEntity<Task> getById(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PostMapping
   public ResponseEntity<Task> create(@RequestBody Task item) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PutMapping("{id}")
@@ -78,11 +104,11 @@ class TaskController {
     @PathVariable("id") Long id,
     @RequestBody Task item
   ) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

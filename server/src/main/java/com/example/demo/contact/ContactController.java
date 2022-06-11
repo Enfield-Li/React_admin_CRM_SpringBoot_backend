@@ -2,12 +2,14 @@ package com.example.demo.contact;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.company.repository.CompanyRepository;
+import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.contact.entity.Contact;
+import com.example.demo.contact.repository.ContactMapper;
 import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
-import com.example.demo.tag.TagRepository;
 import com.example.demo.tag.Tags;
+import com.example.demo.tag.TagsRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +35,17 @@ class ContactController {
 
   private final ContactRepository contactRepo;
   private final EntityManager entityManager;
+  private final ContactMapper contactMapper;
 
   @Autowired
   public ContactController(
     ContactRepository contactRepo,
-    EntityManager entityManager
+    EntityManager entityManager,
+    ContactMapper contactMapper
   ) {
     this.contactRepo = contactRepo;
     this.entityManager = entityManager;
+    this.contactMapper = contactMapper;
   }
 
   @PostMapping("test")
@@ -74,26 +79,69 @@ class ContactController {
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "q", required = false) String query,
-    @RequestParam(name = "last_seen", required = false) String last_seen,
-    @RequestParam(name = "status", required = false) Boolean status,
-    @RequestParam(name = "sales_id", required = false) Long sales_id
+    @RequestParam(
+      name = "last_seen_gte",
+      required = false
+    ) String last_seen_gte,
+    @RequestParam(
+      name = "last_seen_lte",
+      required = false
+    ) String last_seen_lte,
+    @RequestParam(name = "status", required = false) String status,
+    @RequestParam(name = "sales_id", required = false) Long sales_id,
+    @RequestParam(name = "company_id", required = false) Long company_id
   ) {
-    System.out.println(start);
-    System.out.println(end);
-    System.out.println(order);
-    System.out.println(sort);
+    Integer take = end - start;
 
-    return ResponseEntity.ok().header("X-Total-Count", "10").body(null);
+    List<Contact> companyContacts = contactMapper.getCompanyContacts(
+      start,
+      take,
+      sort,
+      order,
+      status,
+      sales_id,
+      last_seen_gte,
+      last_seen_lte,
+      company_id
+    );
+
+    String conctactCount = contactMapper.getContactCount(
+      status,
+      sales_id,
+      company_id,
+      last_seen_gte,
+      last_seen_lte
+    );
+
+    return ResponseEntity
+      .ok()
+      .header("X-Total-Count", conctactCount)
+      .body(companyContacts);
   }
 
   @GetMapping("{id}")
   public ResponseEntity<Contact> getById(@PathVariable("id") Long id) {
-    return null;
+    Contact contact = contactRepo
+      .findById(id)
+      .orElseThrow(
+        () -> new ItemNotFoundException("Contact with id: " + id + " not found")
+      );
+
+    return ResponseEntity.ok().body(contact);
+  }
+
+  @GetMapping(params = "id")
+  public ResponseEntity<List<Contact>> getManyReference(
+    @RequestParam("id") List<Long> ids
+  ) {
+    List<Contact> contacts = contactMapper.getContactsByIds(ids);
+
+    return ResponseEntity.ok().body(contacts);
   }
 
   @PostMapping
   public ResponseEntity<Contact> create(@RequestBody Contact item) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PutMapping("{id}")
@@ -101,11 +149,11 @@ class ContactController {
     @PathVariable("id") Long id,
     @RequestBody Contact item
   ) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

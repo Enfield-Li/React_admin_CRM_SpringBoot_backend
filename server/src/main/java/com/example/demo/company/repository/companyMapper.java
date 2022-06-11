@@ -26,4 +26,6 @@ public interface companyMapper {
     @Param("sector") String sector,
     @Param("searchText") String searchText
   );
+
+  public List<Company> getManyReferences(@Param("ids") List<Long> ids);
 }

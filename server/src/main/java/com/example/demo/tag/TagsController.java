@@ -20,13 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Tag")
 @RequestMapping("/tags")
-class TagController {
+class TagsController {
 
-  private final TagRepository tagRepo;
+  private final TagsRepository tagsRepo;
+  private final TagsMapper tagsMapper;
 
   @Autowired
-  public TagController(TagRepository tagRepo) {
-    this.tagRepo = tagRepo;
+  public TagsController(TagsRepository tagsRepo, TagsMapper tagsMapper) {
+    this.tagsRepo = tagsRepo;
+    this.tagsMapper = tagsMapper;
   }
 
   @PostMapping("test")
@@ -34,27 +36,26 @@ class TagController {
 
   @PostMapping("bulk_insert")
   public void saveAllTag(@RequestBody List<com.example.demo.tag.Tags> tags) {
-    tagRepo.saveAll(tags);
+    tagsRepo.saveAll(tags);
   }
 
   @GetMapping
-  public ResponseEntity<List<Tag>> getAll(
+  public ResponseEntity<List<Tags>> getAll(
     @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "q", required = false) String query
   ) {
-    System.out.println(start);
-    System.out.println(end);
-    System.out.println(order);
-    System.out.println(sort);
+    // Integer take = end - start;
+    // List<Tags> tags = tagsMapper.getAllTags(start, take, sort, order);
+    List<Tags> tags = tagsRepo.findAll();
 
-    return null;
+    return ResponseEntity.ok().body(tags);
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<Tag> getById(@PathVariable("id") Integer id) {
-    return null;
+  public ResponseEntity<Tags> getById(@PathVariable("id") Integer id) {
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

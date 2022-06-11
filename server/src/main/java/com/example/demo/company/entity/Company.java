@@ -4,6 +4,8 @@ import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.sale.entity.Sale;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,6 +52,7 @@ public class Company {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
+  @JsonIgnore
   @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;

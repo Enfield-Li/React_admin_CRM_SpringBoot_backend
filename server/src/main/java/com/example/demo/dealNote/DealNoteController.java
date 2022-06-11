@@ -3,6 +3,7 @@ package com.example.demo.dealNote;
 import com.example.demo.deal.entity.Deal;
 import com.example.demo.deal.repository.DealRespository;
 import com.example.demo.dealNote.entity.DealNote;
+import com.example.demo.dealNote.repository.DealNoteMapper;
 import com.example.demo.dealNote.repository.DealNoteRepository;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
@@ -31,14 +32,17 @@ class DealNoteController {
 
   private final DealNoteRepository dealNoteRepo;
   private final EntityManager entityManager;
+  private final DealNoteMapper dealNoteMapper;
 
   @Autowired
   public DealNoteController(
     DealNoteRepository dealNoteRepo,
-    EntityManager entityManager
+    EntityManager entityManager,
+    DealNoteMapper dealNoteMapper
   ) {
     this.dealNoteRepo = dealNoteRepo;
     this.entityManager = entityManager;
+    this.dealNoteMapper = dealNoteMapper;
   }
 
   @PostMapping("test")
@@ -71,24 +75,34 @@ class DealNoteController {
     @RequestParam(name = "_end") Integer end,
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "deal_id", required = false) Long deal_id,
     @RequestParam(name = "q", required = false) String query
   ) {
-    System.out.println(start);
-    System.out.println(end);
-    System.out.println(order);
-    System.out.println(sort);
+    Integer take = end - start;
 
-    return null;
+    List<DealNote> dealNotes = dealNoteMapper.getNotesByDealId(
+      start,
+      take,
+      sort,
+      order,
+      deal_id
+    );
+    String dealNoteCount = dealNoteMapper.getDealNoteCount(deal_id);
+
+    return ResponseEntity
+      .ok()
+      .header("X-Total-Count", dealNoteCount)
+      .body(dealNotes);
   }
 
   @GetMapping("{id}")
   public ResponseEntity<DealNote> getById(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PostMapping
   public ResponseEntity<DealNote> create(@RequestBody DealNote item) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PutMapping("{id}")
@@ -96,11 +110,11 @@ class DealNoteController {
     @PathVariable("id") Long id,
     @RequestBody DealNote item
   ) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

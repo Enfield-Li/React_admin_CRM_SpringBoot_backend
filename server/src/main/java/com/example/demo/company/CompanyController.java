@@ -3,6 +3,7 @@ package com.example.demo.company;
 import com.example.demo.company.entity.Company;
 import com.example.demo.company.repository.CompanyRepository;
 import com.example.demo.company.repository.companyMapper;
+import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -130,12 +131,27 @@ class CompanyController {
 
   @GetMapping("{id}")
   public ResponseEntity<Company> getById(@PathVariable("id") Long id) {
-    return null;
+    Company company = companyRepo
+      .findById(id)
+      .orElseThrow(
+        () -> new ItemNotFoundException("Company with id: " + id + " not found")
+      );
+
+    return ResponseEntity.ok().body(company);
+  }
+
+  @GetMapping(params = "id")
+  public ResponseEntity<List<Company>> getManyReference(
+    @RequestParam("id") List<Long> ids
+  ) {
+    List<Company> products = companyMapper.getManyReferences(ids);
+
+    return ResponseEntity.ok().body(products);
   }
 
   @PostMapping
   public ResponseEntity<Company> create(@RequestBody Company item) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PutMapping("{id}")
@@ -143,11 +159,11 @@ class CompanyController {
     @PathVariable("id") Long id,
     @RequestBody Company item
   ) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

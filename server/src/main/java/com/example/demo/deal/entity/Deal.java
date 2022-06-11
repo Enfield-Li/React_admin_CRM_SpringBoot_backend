@@ -6,6 +6,8 @@ import static javax.persistence.FetchType.LAZY;
 import com.example.demo.company.entity.Company;
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.sale.entity.Sale;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,14 +63,17 @@ public class Deal {
   @Column(updatable = false, insertable = false)
   private Long company_id;
 
+  @JsonIgnore
   @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
+  @JsonIgnore
   @ManyToOne(cascade = DETACH, fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
 
+  @JsonIgnore
   @ManyToMany(cascade = DETACH, fetch = LAZY)
   @JoinTable(
     name = "deal_contact",

@@ -9,5 +9,10 @@
     </typeAliases> -->
     <mappers>
         <mapper resource="mybatis/companyMapper.xml" />
+        <mapper resource="mybatis/contactMapper.xml" />
+        <mapper resource="mybatis/dealMapper.xml" />
+        <mapper resource="mybatis/dealNoteMapper.xml" />
+        <mapper resource="mybatis/taskMapper.xml" />
+        <mapper resource="mybatis/contactNoteMapper.xml" />
     </mappers>
 </configuration>

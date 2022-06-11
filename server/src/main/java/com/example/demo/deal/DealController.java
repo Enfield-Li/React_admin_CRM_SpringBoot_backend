@@ -2,9 +2,11 @@ package com.example.demo.deal;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.company.repository.CompanyRepository;
+import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.deal.entity.Deal;
+import com.example.demo.deal.repository.DealMapper;
 import com.example.demo.deal.repository.DealRespository;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
@@ -33,11 +35,17 @@ class DealController {
 
   private final DealRespository dealRepo;
   private final EntityManager entityManager;
+  private final DealMapper dealMapper;
 
   @Autowired
-  public DealController(DealRespository dealRepo, EntityManager entityManager) {
+  public DealController(
+    DealRespository dealRepo,
+    EntityManager entityManager,
+    DealMapper dealMapper
+  ) {
     this.dealRepo = dealRepo;
     this.entityManager = entityManager;
+    this.dealMapper = dealMapper;
   }
 
   @PostMapping("test")
@@ -84,24 +92,45 @@ class DealController {
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "q", required = false) String query,
     @RequestParam(name = "sales_id", required = false) Long sales_id,
-    @RequestParam(name = "stage_neq", required = false) String stage_neq
+    @RequestParam(name = "company_id", required = false) Long company_id,
+    @RequestParam(name = "stage_neq", required = false) String stage
   ) {
-    System.out.println(start);
-    System.out.println(end);
-    System.out.println(order);
-    System.out.println(sort);
+    Integer take = end - start;
+    if (sort.equals("index")) sort = "_index";
+    if (sort.equals("last_seen")) sort = "start_at";
 
-    return null;
+    List<Deal> companyDeals = dealMapper.getCompanyDeals(
+      start,
+      take,
+      sort,
+      order,
+      sales_id,
+      company_id,
+      stage
+    );
+
+    String dealCount = dealMapper.getDealCount(sales_id, company_id, stage);
+
+    return ResponseEntity
+      .ok()
+      .header("X-Total-Count", dealCount)
+      .body(companyDeals);
   }
 
   @GetMapping("{id}")
   public ResponseEntity<Deal> getById(@PathVariable("id") Long id) {
-    return null;
+    Deal deal = dealRepo
+      .findById(id)
+      .orElseThrow(
+        () -> new ItemNotFoundException("Sale with id: " + id + " not found")
+      );
+
+    return ResponseEntity.ok().body(deal);
   }
 
   @PostMapping
   public ResponseEntity<Deal> create(@RequestBody Deal item) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PutMapping("{id}")
@@ -109,11 +138,11 @@ class DealController {
     @PathVariable("id") Long id,
     @RequestBody Deal item
   ) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

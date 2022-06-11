@@ -3,6 +3,7 @@ package com.example.demo.contactNote;
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.contactNote.entity.ContactNote;
+import com.example.demo.contactNote.repository.ContactNoteMapper;
 import com.example.demo.contactNote.repository.ContactNoteRepository;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
@@ -31,14 +32,17 @@ class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;
   private final EntityManager entityManager;
+  private final ContactNoteMapper contactNoteMapper;
 
   @Autowired
   public ContactNoteController(
     ContactNoteRepository contactNoteRepo,
-    EntityManager entityManager
+    EntityManager entityManager,
+    ContactNoteMapper contactNoteMapper
   ) {
     this.contactNoteRepo = contactNoteRepo;
     this.entityManager = entityManager;
+    this.contactNoteMapper = contactNoteMapper;
   }
 
   @PostMapping("test")
@@ -72,24 +76,39 @@ class ContactNoteController {
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "sales_id", required = false) String sales_id,
+    @RequestParam(name = "contact_id", required = false) String contact_id,
     @RequestParam(name = "q", required = false) String query
   ) {
-    System.out.println(start);
-    System.out.println(end);
-    System.out.println(order);
-    System.out.println(sort);
+    Integer take = end - start;
 
-    return null;
+    List<ContactNote> contacts = contactNoteMapper.getAllContactNotes(
+      start,
+      take,
+      sort,
+      order,
+      sales_id,
+      contact_id
+    );
+
+    String contactNoteCount = contactNoteMapper.getContactNoteCount(
+      sales_id,
+      contact_id
+    );
+
+    return ResponseEntity
+      .ok()
+      .header("X-Total-Count", contactNoteCount)
+      .body(contacts);
   }
 
   @GetMapping("{id}")
   public ResponseEntity<ContactNote> getById(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PostMapping
   public ResponseEntity<ContactNote> create(@RequestBody ContactNote item) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PutMapping("{id}")
@@ -97,11 +116,11 @@ class ContactNoteController {
     @PathVariable("id") Long id,
     @RequestBody ContactNote item
   ) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }
