@@ -2,6 +2,7 @@ package com.example.demo.company;
 
 import com.example.demo.company.entity.Company;
 import com.example.demo.company.repository.CompanyRepository;
+import com.example.demo.company.repository.companyMapper;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,14 +30,17 @@ class CompanyController {
 
   private final CompanyRepository companyRepo;
   private final EntityManager entityManager;
+  private final companyMapper companyMapper;
 
   @Autowired
   public CompanyController(
     CompanyRepository companyRepo,
-    EntityManager entityManager
+    EntityManager entityManager,
+    companyMapper companyMapper
   ) {
     this.companyRepo = companyRepo;
     this.entityManager = entityManager;
+    this.companyMapper = companyMapper;
   }
 
   @PostMapping("test")
@@ -63,14 +67,65 @@ class CompanyController {
     @RequestParam(name = "_end") Integer end,
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "sales_id", required = false) Long sales_id,
+    @RequestParam(name = "size", required = false) Integer size,
+    @RequestParam(name = "sector", required = false) String sector,
     @RequestParam(name = "q", required = false) String query
   ) {
-    System.out.println(start);
-    System.out.println(end);
-    System.out.println(order);
-    System.out.println(sort);
+    Integer take = end - start;
 
-    return ResponseEntity.ok().header("X-Total-Count", "10").body(null);
+    Integer sizeMin = null;
+    Integer sizeMax = null;
+
+    if (size != null) {
+      switch (size) {
+        case 1:
+          sizeMax = 1;
+          break;
+        case 10:
+          sizeMin = 1;
+          sizeMax = 10;
+          break;
+        case 50:
+          sizeMin = 9;
+          sizeMax = 50;
+          break;
+        case 250:
+          sizeMin = 49;
+          sizeMax = 250;
+          break;
+        case 500:
+          sizeMin = 249;
+          break;
+        default:
+          break;
+      }
+    }
+
+    List<Company> filteredCompany = companyMapper.getFilteredCompany(
+      start,
+      take,
+      sort,
+      order,
+      sales_id,
+      sizeMin,
+      sizeMax,
+      sector,
+      query
+    );
+
+    String companyCount = companyMapper.getCompanyCount(
+      sales_id,
+      sizeMin,
+      sizeMax,
+      sector,
+      query
+    );
+
+    return ResponseEntity
+      .ok()
+      .header("X-Total-Count", companyCount)
+      .body(filteredCompany);
   }
 
   @GetMapping("{id}")

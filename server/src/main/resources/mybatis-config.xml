@@ -8,6 +8,6 @@
         <package name="com.example.demo.products.entity" />
     </typeAliases> -->
     <mappers>
-        <!-- <mapper resource="com/example/demo/products/repository/ProductMapper.xml" /> -->
+        <mapper resource="mybatis/companyMapper.xml" />
     </mappers>
 </configuration>
