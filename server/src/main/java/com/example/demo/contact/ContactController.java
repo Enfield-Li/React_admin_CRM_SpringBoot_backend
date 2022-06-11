@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -67,8 +68,22 @@ class ContactController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Contact>> getAll() {
-    return null;
+  public ResponseEntity<List<Contact>> getAll(
+    @RequestParam(name = "_start") Integer start,
+    @RequestParam(name = "_end") Integer end,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "q", required = false) String query,
+    @RequestParam(name = "last_seen", required = false) String last_seen,
+    @RequestParam(name = "status", required = false) Boolean status,
+    @RequestParam(name = "sales_id", required = false) Long sales_id
+  ) {
+    System.out.println(start);
+    System.out.println(end);
+    System.out.println(order);
+    System.out.println(sort);
+
+    return ResponseEntity.ok().header("X-Total-Count", "10").body(null);
   }
 
   @GetMapping("{id}")

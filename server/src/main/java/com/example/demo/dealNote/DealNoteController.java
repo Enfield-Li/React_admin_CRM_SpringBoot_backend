@@ -21,11 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Deal_Note")
-@RequestMapping("/dealnotes")
+@RequestMapping("/dealNotes")
 class DealNoteController {
 
   private final DealNoteRepository dealNoteRepo;
@@ -65,7 +66,18 @@ class DealNoteController {
   }
 
   @GetMapping
-  public ResponseEntity<List<DealNote>> getAll() {
+  public ResponseEntity<List<DealNote>> getAll(
+    @RequestParam(name = "_start") Integer start,
+    @RequestParam(name = "_end") Integer end,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "q", required = false) String query
+  ) {
+    System.out.println(start);
+    System.out.println(end);
+    System.out.println(order);
+    System.out.println(sort);
+
     return null;
   }
 
