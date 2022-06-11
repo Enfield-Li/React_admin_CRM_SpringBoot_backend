@@ -1,4 +1,4 @@
-package com.example.demo.tag;
+package com.example.demo.tag.repository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.tag.TagsRepository;
+import com.example.demo.tag.entity.Tags;
 
 @RestController
 @Tag(name = "Tag")
@@ -35,7 +38,7 @@ class TagsController {
   public void test() {}
 
   @PostMapping("bulk_insert")
-  public void saveAllTag(@RequestBody List<com.example.demo.tag.Tags> tags) {
+  public void saveAllTag(@RequestBody List<com.example.demo.tag.entity.Tags> tags) {
     tagsRepo.saveAll(tags);
   }
 
@@ -47,12 +50,19 @@ class TagsController {
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "q", required = false) String query
   ) {
-    // Integer take = end - start;
-    // List<Tags> tags = tagsMapper.getAllTags(start, take, sort, order);
     List<Tags> tags = tagsRepo.findAll();
     String tagsCount = tags.size() + "";
 
     return ResponseEntity.ok().header("X-Total-Count", tagsCount).body(tags);
+  }
+
+  @GetMapping(params = "id")
+  public ResponseEntity<List<Tags>> getManyReference(
+    @RequestParam("id") List<Long> ids
+  ) {
+    List<Tags> contacts = tagsMapper.getTagsByIds(ids);
+
+    return ResponseEntity.ok().body(contacts);
   }
 
   @GetMapping("{id}")

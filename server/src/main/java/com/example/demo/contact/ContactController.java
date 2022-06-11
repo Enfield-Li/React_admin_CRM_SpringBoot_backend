@@ -1,19 +1,15 @@
 package com.example.demo.contact;
 
 import com.example.demo.company.entity.Company;
-import com.example.demo.company.repository.CompanyRepository;
 import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.contact.repository.ContactMapper;
 import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.sale.entity.Sale;
-import com.example.demo.sale.repository.SaleRepository;
-import com.example.demo.tag.Tags;
-import com.example.demo.tag.TagsRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,6 +75,7 @@ class ContactController {
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "q", required = false) String query,
+    @RequestParam(name = "tags", required = false) String tags,
     @RequestParam(
       name = "last_seen_gte",
       required = false
@@ -99,6 +96,7 @@ class ContactController {
       sort,
       order,
       status,
+      tags,
       sales_id,
       last_seen_gte,
       last_seen_lte,
@@ -108,6 +106,7 @@ class ContactController {
 
     String conctactCount = contactMapper.getContactCount(
       status,
+      tags,
       sales_id,
       company_id,
       last_seen_gte,
@@ -123,13 +122,13 @@ class ContactController {
 
   @GetMapping("{id}")
   public ResponseEntity<Contact> getById(@PathVariable("id") Long id) {
-    Contact contact = contactRepo
-      .findById(id)
-      .orElseThrow(
-        () -> new ItemNotFoundException("Contact with id: " + id + " not found")
-      );
+    Contact contact = contactMapper.getContactById(id);
 
-    return ResponseEntity.ok().body(contact);
+    if (contact == null) {
+      throw new ItemNotFoundException("Contact with id: " + id + " not found");
+    }
+
+    return ResponseEntity.ok().body(processContact(contact));
   }
 
   @GetMapping(params = "id")
@@ -157,5 +156,24 @@ class ContactController {
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  }
+
+  private Contact processContact(Contact contact) {
+    String raw_tags = contact.getRaw_tags();
+
+    if (raw_tags != null) {
+      ArrayList<String> tagsStr = new ArrayList<String>(
+        Arrays.asList(raw_tags.split(","))
+      );
+
+      List<Integer> tags = new ArrayList<>();
+
+      tagsStr.forEach(tag -> tags.add(Integer.parseInt(tag)));
+
+      contact.setRaw_tags(null);
+      contact.setTags(tags);
+    }
+
+    return contact;
   }
 }

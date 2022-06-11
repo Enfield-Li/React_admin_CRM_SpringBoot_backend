@@ -13,6 +13,7 @@
         <mapper resource="mybatis/dealMapper.xml" />
         <mapper resource="mybatis/dealNoteMapper.xml" />
         <mapper resource="mybatis/taskMapper.xml" />
+        <mapper resource="mybatis/tagsMapper.xml" />
         <mapper resource="mybatis/contactNoteMapper.xml" />
     </mappers>
 </configuration>

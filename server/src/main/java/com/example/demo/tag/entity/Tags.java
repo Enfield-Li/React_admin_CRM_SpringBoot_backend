@@ -1,4 +1,4 @@
-package com.example.demo.tag;
+package com.example.demo.tag.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
