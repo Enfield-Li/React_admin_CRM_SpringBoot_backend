@@ -9,14 +9,16 @@
             <if test="company_id != null">AND company_id = #{company_id}</if>
             <if test="last_seen_gte != null">AND last_seen > #{last_seen_gte}</if>
             <if test="last_seen_lte != null">AND last_seen <![CDATA[ < ]]> #{last_seen_lte}</if>
-            <!-- <if test="searchText != null">
-                AND 
+            <if test="query != null">
+                AND
                 (
-                    description LIKE '%${searchText}%'
-                    OR
-                    reference LIKE '%${searchText}%'
+                    background LIKE '%${query}%'
+                    OR 
+                    title LIKE '%${query}%'
+                    OR 
+                    CONCAT_WS(' ', first_name, last_name) LIKE '%${query}%'
                 )
-            </if> -->
+            </if>
         </where>
         ORDER BY ${sort} ${order}
         LIMIT #{take}
@@ -31,14 +33,16 @@
             <if test="company_id != null">AND company_id = #{company_id}</if>
             <if test="last_seen_gte != null">AND last_seen > #{last_seen_gte}</if>
             <if test="last_seen_lte != null">AND last_seen <![CDATA[ < ]]> #{last_seen_lte}</if>
-            <!-- <if test="searchText != null">
-                AND 
+            <if test="query != null">
+                AND
                 (
-                    description LIKE '%${searchText}%'
+                    background LIKE '%${query}%'
                     OR 
-                    reference LIKE '%${searchText}%'
+                    title LIKE '%${query}%'
+                    OR 
+                    CONCAT_WS(' ', first_name, last_name) LIKE '%${query}%'
                 )
-            </if> -->
+            </if>
         </where>
     </select>
 

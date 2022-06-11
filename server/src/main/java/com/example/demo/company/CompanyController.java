@@ -107,6 +107,7 @@ class CompanyController {
       start,
       take,
       sort,
+      query,
       order,
       sales_id,
       sizeMin,
@@ -116,6 +117,7 @@ class CompanyController {
     );
 
     String companyCount = companyMapper.getCompanyCount(
+      query,
       sales_id,
       sizeMin,
       sizeMax,

@@ -8,14 +8,18 @@
             <if test="sector != null">AND sector = #{sector}</if>
             <if test="sizeMin != null">AND size > #{sizeMin} </if>
             <if test="sizeMax != null">AND size <![CDATA[ < ]]> #{sizeMax} </if>
-            <!-- <if test="searchText != null">
+            <if test="query != null">
                 AND 
                 (
-                    description LIKE '%${searchText}%'
+                    name LIKE '%${query}%'
                     OR
-                    reference LIKE '%${searchText}%'
+                    city LIKE '%${query}%'
+                    OR
+                    sector LIKE '%${query}%'
+                    OR
+                    state_abbr LIKE '%${query}%'
                 )
-            </if> -->
+            </if>
         </where>
         ORDER BY ${sort} ${order}
         LIMIT #{take}
@@ -29,14 +33,18 @@
             <if test="sector != null">AND sector = #{sector}</if>
             <if test="sizeMin != null">AND size > #{sizeMin} </if>
             <if test="sizeMax != null">AND size <![CDATA[ < ]]> #{sizeMax} </if>
-            <!-- <if test="searchText != null">
+            <if test="query != null">
                 AND 
                 (
-                    description LIKE '%${searchText}%'
-                    OR 
-                    reference LIKE '%${searchText}%'
+                    name LIKE '%${query}%'
+                    OR
+                    city LIKE '%${query}%'
+                    OR
+                    sector LIKE '%${query}%'
+                    OR
+                    state_abbr LIKE '%${query}%'
                 )
-            </if> -->
+            </if>
         </where> 
     </select>
 

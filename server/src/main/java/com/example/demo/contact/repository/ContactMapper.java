@@ -16,7 +16,8 @@ public interface ContactMapper {
     @Param("sales_id") Long sales_id,
     @Param("last_seen_gte") String last_seen_gte,
     @Param("last_seen_lte") String last_seen_lte,
-    @Param("company_id") Long company_id
+    @Param("company_id") Long company_id,
+    @Param("query") String query
   );
 
   String getContactCount(
@@ -24,7 +25,8 @@ public interface ContactMapper {
     @Param("sales_id") Long sales_id,
     @Param("company_id") Long company_id,
     @Param("last_seen_gte") String last_seen_gte,
-    @Param("last_seen_lte") String last_seen_lte
+    @Param("last_seen_lte") String last_seen_lte,
+    @Param("query") String query
   );
 
   List<Contact> getContactsByIds(@Param("ids") List<Long> ids);

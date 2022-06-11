@@ -50,8 +50,9 @@ class TagsController {
     // Integer take = end - start;
     // List<Tags> tags = tagsMapper.getAllTags(start, take, sort, order);
     List<Tags> tags = tagsRepo.findAll();
+    String tagsCount = tags.size() + "";
 
-    return ResponseEntity.ok().body(tags);
+    return ResponseEntity.ok().header("X-Total-Count", tagsCount).body(tags);
   }
 
   @GetMapping("{id}")

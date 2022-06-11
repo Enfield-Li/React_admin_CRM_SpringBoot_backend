@@ -11,6 +11,7 @@ public interface companyMapper {
     @Param("start") Integer start,
     @Param("take") Integer take,
     @Param("sort") String sort,
+    @Param("query") String query,
     @Param("order") String order,
     @Param("sales_id") Long sales_id,
     @Param("sizeMin") Integer sizeMin,
@@ -20,6 +21,7 @@ public interface companyMapper {
   );
 
   public String getCompanyCount(
+    @Param("query") String query,
     @Param("sales_id") Long sales_id,
     @Param("sizeMin") Integer sizeMin,
     @Param("sizeMax") Integer sizeMax,

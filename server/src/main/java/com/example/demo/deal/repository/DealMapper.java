@@ -12,12 +12,16 @@ public interface DealMapper {
     @Param("take") Integer take,
     @Param("sort") String sort,
     @Param("order") String order,
+    @Param("type") String type,
+    @Param("query") String query,
     @Param("sales_id") Long sales_id,
     @Param("company_id") Long company_id,
     @Param("stage") String stage
   );
 
   String getDealCount(
+    @Param("type") String type,
+    @Param("query") String query,
     @Param("sales_id") Long sales_id,
     @Param("company_id") Long company_id,
     @Param("stage") String stage

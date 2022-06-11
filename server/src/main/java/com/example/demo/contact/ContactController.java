@@ -102,7 +102,8 @@ class ContactController {
       sales_id,
       last_seen_gte,
       last_seen_lte,
-      company_id
+      company_id,
+      query
     );
 
     String conctactCount = contactMapper.getContactCount(
@@ -110,7 +111,8 @@ class ContactController {
       sales_id,
       company_id,
       last_seen_gte,
-      last_seen_lte
+      last_seen_lte,
+      query
     );
 
     return ResponseEntity

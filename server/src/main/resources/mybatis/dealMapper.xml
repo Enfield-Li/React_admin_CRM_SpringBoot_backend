@@ -6,15 +6,16 @@
         <where>
             <if test="company_id != null">company_id = #{company_id}</if>
             <if test="sales_id != null">AND sales_id = #{sales_id}</if>
+            <if test="type != null">AND type = #{type}</if>
             <if test="stage != null">AND stage = #{stage}</if>
-            <!-- <if test="searchText != null">
+            <if test="query != null">
                 AND 
                 (
-                    description LIKE '%${searchText}%'
+                    _description LIKE '%${query}%'
                     OR
-                    reference LIKE '%${searchText}%'
+                    name LIKE '%${query}%'
                 )
-            </if> -->
+            </if>
         </where>
         ORDER BY ${sort} ${order}
         LIMIT #{take}
@@ -26,15 +27,16 @@
         <where>
             <if test="company_id != null">company_id = #{company_id}</if>
             <if test="sales_id != null">AND sales_id = #{sales_id}</if>
+            <if test="type != null">AND type = #{type}</if>
             <if test="stage != null">AND stage = #{stage}</if>
-            <!-- <if test="searchText != null">
+            <if test="query != null">
                 AND 
                 (
-                    description LIKE '%${searchText}%'
-                    OR 
-                    reference LIKE '%${searchText}%'
+                    _description LIKE '%${query}%'
+                    OR
+                    name LIKE '%${query}%'
                 )
-            </if> -->
+            </if>
         </where>
     </select>
 

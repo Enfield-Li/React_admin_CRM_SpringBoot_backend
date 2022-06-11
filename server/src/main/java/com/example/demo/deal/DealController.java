@@ -91,6 +91,7 @@ class DealController {
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "q", required = false) String query,
+    @RequestParam(name = "type", required = false) String type,
     @RequestParam(name = "sales_id", required = false) Long sales_id,
     @RequestParam(name = "company_id", required = false) Long company_id,
     @RequestParam(name = "stage_neq", required = false) String stage
@@ -104,12 +105,20 @@ class DealController {
       take,
       sort,
       order,
+      type,
+      query,
       sales_id,
       company_id,
       stage
     );
 
-    String dealCount = dealMapper.getDealCount(sales_id, company_id, stage);
+    String dealCount = dealMapper.getDealCount(
+      type,
+      query,
+      sales_id,
+      company_id,
+      stage
+    );
 
     return ResponseEntity
       .ok()
