@@ -9,6 +9,7 @@ import com.example.demo.tag.entity.Tags;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,8 +49,8 @@ public class Contact {
   private String background;
   private String acquisition;
 
-  private Instant first_seen;
-  private Instant last_seen;
+  private Date first_seen;
+  private Date last_seen;
   private Boolean has_newsletter;
 
   @Transient

@@ -1,20 +1,18 @@
 package com.example.demo.contactNote;
 
 import com.example.demo.contact.entity.Contact;
-import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.contactNote.entity.ContactNote;
 import com.example.demo.contactNote.repository.ContactNoteMapper;
 import com.example.demo.contactNote.repository.ContactNoteRepository;
 import com.example.demo.sale.entity.Sale;
-import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Contact_Notes")
 @RequestMapping("/contactNotes")
+@CrossOrigin("http://localhost:3000")
 class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;
@@ -45,8 +44,11 @@ class ContactNoteController {
     this.contactNoteMapper = contactNoteMapper;
   }
 
-  @PostMapping("test")
-  public void test() {}
+  @GetMapping("test")
+  public void test() {
+    ContactNote cn = contactNoteRepo.findById(1L).orElse(null);
+    System.out.println(cn.getDate());
+  }
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<ContactNote> contactNotes) {
@@ -108,7 +110,18 @@ class ContactNoteController {
 
   @PostMapping
   public ResponseEntity<ContactNote> create(@RequestBody ContactNote item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    Sale sale = entityManager.getReference(Sale.class, item.getSales_id());
+    Contact contact = entityManager.getReference(
+      Contact.class,
+      item.getContact_id()
+    );
+
+    item.setSale(sale);
+    item.setContact(contact);
+
+    ContactNote saved = contactNoteRepo.save(item);
+
+    return ResponseEntity.ok().body(saved);
   }
 
   @PutMapping("{id}")
@@ -121,6 +134,8 @@ class ContactNoteController {
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    contactNoteRepo.deleteById(id);
+
+    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 }

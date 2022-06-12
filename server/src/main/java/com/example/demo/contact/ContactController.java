@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Contact")
 @RequestMapping("/contacts")
+@CrossOrigin("http://localhost:3000")
 class ContactController {
 
   private final ContactRepository contactRepo;
@@ -142,6 +144,7 @@ class ContactController {
 
   @PostMapping
   public ResponseEntity<Contact> create(@RequestBody Contact item) {
+    System.out.println(item.toString());
     return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
@@ -150,6 +153,8 @@ class ContactController {
     @PathVariable("id") Long id,
     @RequestBody Contact item
   ) {
+    System.out.println("put id: " + id);
+    System.out.println("update contact item: " + item);
     return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
