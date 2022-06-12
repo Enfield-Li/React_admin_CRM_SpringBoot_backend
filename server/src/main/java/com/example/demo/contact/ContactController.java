@@ -6,10 +6,13 @@ import com.example.demo.contact.entity.Contact;
 import com.example.demo.contact.repository.ContactMapper;
 import com.example.demo.contact.repository.ContactRepository;
 import com.example.demo.sale.entity.Sale;
+import com.example.demo.tag.entity.Tags;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,6 +67,14 @@ class ContactController {
 
         contact.setSale(sale);
         contact.setCompany(company);
+
+        contact.setTag_list(
+          contact
+            .getTags()
+            .stream()
+            .map(tag -> entityManager.getReference(Tags.class, tag))
+            .collect(Collectors.toList())
+        );
       }
     );
 
@@ -151,11 +162,40 @@ class ContactController {
   @PutMapping("{id}")
   public ResponseEntity<Contact> update(
     @PathVariable("id") Long id,
-    @RequestBody Contact item
+    @RequestBody Contact contactDto
   ) {
-    System.out.println("put id: " + id);
-    System.out.println("update contact item: " + item);
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    if (contactDto.getId() == null) {
+      Contact contact = contactRepo
+        .findById(id)
+        .orElseThrow(
+          () ->
+            new ItemNotFoundException("Contact with id: " + id + " not found")
+        );
+
+      contact.setTag_list(
+        contactDto
+          .getTags()
+          .stream()
+          .map(tag -> entityManager.getReference(Tags.class, tag))
+          .collect(Collectors.toList())
+      );
+
+      contactRepo.save(contact);
+
+      return ResponseEntity.ok().build();
+    }
+
+    contactDto.setTag_list(
+      contactDto
+        .getTags()
+        .stream()
+        .map(tag -> entityManager.getReference(Tags.class, tag))
+        .collect(Collectors.toList())
+    );
+
+    Contact savedContact = contactRepo.save(contactDto);
+
+    return ResponseEntity.ok().body(savedContact);
   }
 
   @DeleteMapping("{id}")

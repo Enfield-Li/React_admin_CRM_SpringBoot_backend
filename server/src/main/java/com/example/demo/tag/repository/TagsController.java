@@ -1,5 +1,7 @@
 package com.example.demo.tag.repository;
 
+import com.example.demo.tag.TagsRepository;
+import com.example.demo.tag.entity.Tags;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.tag.TagsRepository;
-import com.example.demo.tag.entity.Tags;
 
 @RestController
 @Tag(name = "Tag")
@@ -38,8 +37,15 @@ class TagsController {
   public void test() {}
 
   @PostMapping("bulk_insert")
-  public void saveAllTag(@RequestBody List<com.example.demo.tag.entity.Tags> tags) {
+  public void saveAllTag(@RequestBody List<Tags> tags) {
     tagsRepo.saveAll(tags);
+  }
+
+  @PostMapping
+  public ResponseEntity<Tags> createTag(@RequestBody Tags tag) {
+    Tags savedtag = tagsRepo.save(tag);
+
+    return ResponseEntity.ok().body(savedtag);
   }
 
   @GetMapping

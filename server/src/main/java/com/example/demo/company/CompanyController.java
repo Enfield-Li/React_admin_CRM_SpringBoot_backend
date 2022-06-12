@@ -5,15 +5,13 @@ import com.example.demo.company.repository.CompanyRepository;
 import com.example.demo.company.repository.companyMapper;
 import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.sale.entity.Sale;
-import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Company")
 @RequestMapping("/companies")
+@CrossOrigin("http://localhost:3000")
 class CompanyController {
 
   private final CompanyRepository companyRepo;
@@ -152,8 +151,12 @@ class CompanyController {
   }
 
   @PostMapping
-  public ResponseEntity<Company> create(@RequestBody Company item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Company> create(@RequestBody Company company) {
+    // Sale sale = entityManager.getReference(Sale.class, company.getSales_id());
+    // company.setSale(sale);
+
+    Company savedCompany = companyRepo.save(company);
+    return ResponseEntity.ok().body(savedCompany);
   }
 
   @PutMapping("{id}")
@@ -161,7 +164,8 @@ class CompanyController {
     @PathVariable("id") Long id,
     @RequestBody Company item
   ) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    Company savedCompany = companyRepo.save(item);
+    return ResponseEntity.ok().body(savedCompany);
   }
 
   @DeleteMapping("{id}")
