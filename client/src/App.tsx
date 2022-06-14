@@ -13,9 +13,9 @@ import { myAuth } from "./myAuth";
 const data = simpleRestProvider("http://localhost:3080");
 const App = () => (
   <Admin
-    dataProvider={dataProvider}
+    // dataProvider={dataProvider}
     // authProvider={authProvider}
-    // // dataProvider={data}
+    dataProvider={data}
     authProvider={myAuth}
     layout={Layout}
     dashboard={Dashboard}

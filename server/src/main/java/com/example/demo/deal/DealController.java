@@ -125,12 +125,21 @@ class DealController {
       .body(companyDeals);
   }
 
+  @GetMapping(params = "id")
+  public ResponseEntity<List<Deal>> getDealList(
+    @RequestParam("id") List<Long> ids
+  ) {
+    List<Deal> deals = dealMapper.getDealsReference(ids);
+
+    return ResponseEntity.ok().body(deals);
+  }
+
   @GetMapping("{id}")
   public ResponseEntity<Deal> getById(@PathVariable("id") Long id) {
     Deal deal = dealRepo
       .findById(id)
       .orElseThrow(
-        () -> new ItemNotFoundException("Sale with id: " + id + " not found")
+        () -> new ItemNotFoundException("Deal with id: " + id + " not found")
       );
 
     return ResponseEntity.ok().body(deal);

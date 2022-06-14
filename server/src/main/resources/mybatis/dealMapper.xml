@@ -40,7 +40,7 @@
         </where>
     </select>
 
-    <select id="idName" resultType="com.example.demo.deal.entity.Deal">
+    <select id="getDealsReference" resultType="com.example.demo.deal.entity.Deal">
         SELECT *
         FROM deal
         WHERE id IN

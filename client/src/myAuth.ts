@@ -1,80 +1,59 @@
 import { AuthProvider } from "react-admin";
 
-type user = {
+type User = {
   id: number;
   fullName: string;
   avatar: string;
 };
-
-let isLogedIn = true;
-
+// https://marmelab.com/react-admin/AuthProviderWriting.html#:~:text=%3D%20%7B%0A%20%20%20%20//%20...-,Example,-Here%20is%20a
 export const myAuth: AuthProvider = {
-  login: () => {
-    isLogedIn = true;
-    return Promise.resolve();
+  login: async ({ username, password }) => {
+    const res = await fetch("http://localhost:3080/sales/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ saleName: username, rawPassword: password }),
+    });
+    const user: User = await res.json();
+
+    localStorage.setItem("saleName", user.fullName);
   },
-  //   login: ({ username, password }) => {
-  //     const request = new Request("http://localhost:3080/login", {
-  //       method: "POST",
-  //       body: JSON.stringify({ username, password }),
-  //       headers: new Headers({ "Content-Type": "application/json" }),
-  //     });
-  //     return fetch(request)
-  //       .then((response) => {
-  //         if (response.status < 200 || response.status >= 300) {
-  //           throw new Error(response.statusText);
-  //         }
-  //         return response.json();
-  //       })
-  //       .then(() => {
-  //         return Promise.resolve();
-  //       })
-  //       .catch(() => {
-  //         throw new Error("Network error");
-  //       });
-  //   },
   logout: () => {
-    isLogedIn = false;
+    fetch("http://localhost:3080/sales/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    localStorage.removeItem("saleName");
     return Promise.resolve();
   },
-  //   logout: () => {
-  //     const request = new Request("http://localhost:3080/logout", {
-  //       method: "POST",
-  //     });
-  //     return fetch(request)
-  //       .then((response) => {
-  //         if (response.status < 200 || response.status >= 300) {
-  //           throw new Error(response.statusText);
-  //         }
-  //         return response.json();
-  //       })
-  //       .then(() => {
-  //         return Promise.resolve();
-  //       })
-  //       .catch(() => {
-  //         throw new Error("Network error");
-  //       });
-  //   },
-  checkError: () => Promise.resolve(),
-  checkAuth: () => (isLogedIn ? Promise.resolve() : Promise.reject()),
-  getPermissions: () => Promise.resolve(),
-  getIdentity: () => Promise.resolve({ id: 1, fullName: "test" }),
-  //   getIdentity: () => {
-  //     const request = new Request("http://localhost:3080/logout", {
-  //       method: "POST",
-  //     });
-  //     return fetch(request)
-  //       .then((response) => {
-  //         if (response.status < 200 || response.status >= 300) {
-  //           throw new Error(response.statusText);
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((user: user) => {
-  //         return user;
-  //       })
-  //       .catch(() => {
-  //         throw new Error("Network error");
-  //       });
-  //   },
+  checkAuth: () =>
+    localStorage.getItem("saleName") ? Promise.resolve() : Promise.reject(),
+  checkError: (error) => {
+    const status = error.status;
+    if (status === 401 || status === 403) {
+      localStorage.removeItem("saleName");
+      return Promise.reject();
+    }
+    // other error code (404, 500, etc): no need to log out
+    return Promise.resolve();
+  },
+  getIdentity: async () => {
+    const res = await fetch("http://localhost:3080/sales/verify", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      const user: User = await res.json();
+      localStorage.setItem("saleName", user.fullName);
+      return Promise.resolve(user);
+    }
+
+    localStorage.removeItem("saleName");
+    return Promise.reject();
+  },
+  getPermissions: () => Promise.resolve(""),
 };

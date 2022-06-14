@@ -30,4 +30,6 @@ public interface DealMapper {
     @Param("company_id") Long company_id,
     @Param("stage") String stage
   );
+
+  List<Deal> getDealsReference(List<Long> ids);
 }
