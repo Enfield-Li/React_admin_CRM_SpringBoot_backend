@@ -8,7 +8,6 @@ import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleMapper;
 import com.example.demo.sale.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -97,7 +96,7 @@ class SaleController {
   }
 
   @PostMapping("verify")
-  public ResponseEntity<Sale> verify(HttpSession session) {
+  public ResponseEntity<SaleResponseDto> verify(HttpSession session) {
     Long saleId = (Long) session.getAttribute("saleId");
 
     Sale sale = saleRepo
@@ -107,7 +106,12 @@ class SaleController {
           new ItemNotFoundException("Sales with id: " + saleId + " not found")
       );
 
-    return ResponseEntity.ok().body(sale);
+    SaleResponseDto saleResponse = new SaleResponseDto();
+    saleResponse.setId(sale.getId());
+    saleResponse.setFullName(sale.getFirst_name() + " " + sale.getLast_name());
+    saleResponse.setAvatar("https://robohash.org/" + saleResponse.getFullName() + ".png");
+
+    return ResponseEntity.ok().body(saleResponse);
   }
 
   @GetMapping

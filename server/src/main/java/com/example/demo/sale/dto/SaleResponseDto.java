@@ -7,4 +7,5 @@ public class SaleResponseDto {
 
   private Long id;
   private String fullName;
+  private String avatar;
 }
