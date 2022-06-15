@@ -12,6 +12,10 @@
     数据库: MySQL
     额外依赖项：Lombok, OpenAPI
 
+#### 另一个类似的项目：
+
+[React-admin SpringBoot 电商管理系统](https://github.com/Enfield-Li/React_Admin_SpringBoot_Backend)
+
 # A Springboot project for [React-admin](https://marmelab.com/react-admin/) CRM
 
 #### Description:
@@ -23,3 +27,7 @@ A CRM management system. Inspired by the "[React-admin](https://marmelab.com/rea
     ORM implementation: JPA(Hibernate) + Mybatis
     DB: MySQL
     Additional dependencies：Lombok, OpenAPI
+
+#### Another similar project:
+
+[A Springboot E-commerce project for React-admin](https://github.com/Enfield-Li/React_Admin_SpringBoot_Backend)
