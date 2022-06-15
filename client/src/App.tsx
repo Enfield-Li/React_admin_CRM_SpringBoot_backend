@@ -14,12 +14,16 @@ import companies from "./companies";
 import deals from "./deals";
 import { Dashboard } from "./dashboard/Dashboard";
 import simpleRestProvider from "ra-data-json-server";
-import { initLoginSession, myAuth } from "./myAuth";
+import { initLoginSession, myAuth, testCase } from "./myAuth";
 import * as ra_core from "ra-core";
 
 const httpClient = (url: any, options?: ra_core.Options) => {
-  if (options) options.credentials = "include";
+  if (options) {
+    console.log("run options");
+    options.credentials = "include";
+  }
 
+  console.log("run httpClient");
   return fetchUtils.fetchJson(url, options);
 };
 
@@ -27,6 +31,7 @@ const data = simpleRestProvider("http://localhost:3080", httpClient);
 const App = () => {
   React.useEffect(() => {
     initLoginSession();
+    testCase();
   }, []);
 
   return (

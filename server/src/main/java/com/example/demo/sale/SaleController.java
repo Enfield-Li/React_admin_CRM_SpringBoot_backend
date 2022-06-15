@@ -50,7 +50,9 @@ class SaleController {
   }
 
   @GetMapping("test")
-  public void test() {}
+  public void test(HttpSession session) {
+    System.out.println(session.getAttribute("saleId"));
+  }
 
   @PostMapping("login")
   public ResponseEntity<SaleResponseDto> login(
@@ -94,7 +96,7 @@ class SaleController {
     return ResponseEntity.ok().body(true);
   }
 
-  @PostMapping("verify/{id}")
+  @GetMapping("verify/{id}")
   public ResponseEntity<SaleResponseDto> verify(
     HttpSession session,
     @PathVariable("id") Long saleId

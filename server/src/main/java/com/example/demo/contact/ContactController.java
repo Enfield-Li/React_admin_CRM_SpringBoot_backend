@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,8 +45,11 @@ class ContactController {
     this.contactMapper = contactMapper;
   }
 
-  @PostMapping("test")
-  public void test() {}
+  @GetMapping("test")
+  public Boolean test(HttpSession session) {
+    System.out.println(session.getAttribute("saleId"));
+    return true;
+  }
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Contact> contacts) {
