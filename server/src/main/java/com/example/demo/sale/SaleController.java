@@ -56,7 +56,7 @@ class SaleController {
   public ResponseEntity<SaleResponseDto> login(
     @RequestBody LoginSaleDto dto,
     HttpSession session
-  ) {
+  ) { // Javonte Mills
     Optional<Sale> sale = saleRepo.findByFullName(dto.getSaleName());
 
     if (sale.isPresent()) {
@@ -72,6 +72,9 @@ class SaleController {
         responseDto.setId(salePresent.getId());
         responseDto.setFullName(
           salePresent.getFirst_name() + " " + salePresent.getLast_name()
+        );
+        responseDto.setAvatar(
+          "https://robohash.org/" + responseDto.getFullName() + ".png"
         );
 
         session.setAttribute("saleId", salePresent.getId());
@@ -91,17 +94,20 @@ class SaleController {
     return ResponseEntity.ok().body(true);
   }
 
-  @PostMapping("verify")
-  public ResponseEntity<SaleResponseDto> verify(HttpSession session) {
-    Long id = (Long) session.getAttribute("saleId");
+  @PostMapping("verify/{id}")
+  public ResponseEntity<SaleResponseDto> verify(
+    HttpSession session,
+    @PathVariable("id") Long saleId
+  ) {
+    Long sessionId = (Long) session.getAttribute("saleId");
 
-    Sale sale = saleRepo.findById(id).orElse(null);
-
-    if (sale == null) {
+    if (sessionId == null || saleId != sessionId) {
       return ResponseEntity
-        .status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+        .status(HttpStatus.UNAUTHORIZED)
         .build();
     }
+
+    Sale sale = saleRepo.findById(sessionId).orElse(null);
 
     SaleResponseDto saleResponse = new SaleResponseDto();
 

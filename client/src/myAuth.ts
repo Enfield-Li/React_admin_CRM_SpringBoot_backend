@@ -5,6 +5,7 @@ type User = {
   fullName: string;
   avatar: string;
 };
+
 // https://marmelab.com/react-admin/AuthProviderWriting.html#:~:text=%3D%20%7B%0A%20%20%20%20//%20...-,Example,-Here%20is%20a
 export const myAuth: AuthProvider = {
   login: async ({ username, password }) => {
@@ -22,7 +23,7 @@ export const myAuth: AuthProvider = {
 
       const user: User = await res.json();
 
-      localStorage.setItem("saleName", user.fullName);
+      localStorage.setItem("user", JSON.stringify(user));
     } catch (error) {
       return Promise.reject(error);
     }
@@ -34,41 +35,51 @@ export const myAuth: AuthProvider = {
         credentials: "include",
       });
 
-      localStorage.removeItem("saleName");
+      localStorage.removeItem("user");
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
     }
   },
   checkAuth: () =>
-    localStorage.getItem("saleName") ? Promise.resolve() : Promise.reject(),
+    localStorage.getItem("user") ? Promise.resolve() : Promise.reject(),
   checkError: (error) => {
     const status = error.status;
     if (status === 401 || status === 403) {
-      localStorage.removeItem("saleName");
+      localStorage.removeItem("user");
       return Promise.reject();
     }
     // other error code (404, 500, etc): no need to log out
     return Promise.resolve();
   },
   getIdentity: async () => {
-    try {
-      const res = await fetch("http://localhost:3080/sales/verify", {
-        method: "POST",
-        credentials: "include",
-      });
+    const user = localStorage.getItem("user");
 
-      if (res.ok) {
-        const user: User = await res.json();
-        localStorage.setItem("saleName", user.fullName);
-        return Promise.resolve(user);
-      }
+    if (user === null) return Promise.reject();
 
-      localStorage.removeItem("saleName");
-      return Promise.reject();
-    } catch (error) {
-      return Promise.reject(error);
-    }
+    return Promise.resolve(JSON.parse(user));
   },
   getPermissions: () => Promise.resolve(""),
 };
+
+export async function initLoginSession() {
+  try {
+    const userString = localStorage.getItem("user");
+    if (userString === null) return;
+
+    const user: User = JSON.parse(userString);
+
+    const res = await fetch(`http://localhost:3080/sales/verify/${user.id}`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error();
+
+    const successLoginUser: User = await res.json();
+    localStorage.setItem("user", JSON.stringify(successLoginUser));
+  } catch (error) {
+    localStorage.removeItem("user");
+    console.log(error);
+  }
+}

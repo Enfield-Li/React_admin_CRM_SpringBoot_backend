@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Admin, Resource, ListGuesser, defaultTheme } from "react-admin";
+import {
+  Admin,
+  Resource,
+  ListGuesser,
+  defaultTheme,
+  fetchUtils,
+} from "react-admin";
 import { dataProvider } from "./dataProvider";
 import { authProvider } from "./authProvider";
 import Layout from "./Layout";
@@ -8,35 +14,48 @@ import companies from "./companies";
 import deals from "./deals";
 import { Dashboard } from "./dashboard/Dashboard";
 import simpleRestProvider from "ra-data-json-server";
-import { myAuth } from "./myAuth";
+import { initLoginSession, myAuth } from "./myAuth";
+import * as ra_core from "ra-core";
 
-const data = simpleRestProvider("http://localhost:3080");
-const App = () => (
-  <Admin
-    // dataProvider={dataProvider}
-    // authProvider={authProvider}
-    dataProvider={data}
-    authProvider={myAuth}
-    layout={Layout}
-    dashboard={Dashboard}
-    theme={{
-      ...defaultTheme,
-      palette: {
-        background: {
-          default: "#fafafb",
+const httpClient = (url: any, options?: ra_core.Options) => {
+  if (options) options.credentials = "include";
+
+  return fetchUtils.fetchJson(url, options);
+};
+
+const data = simpleRestProvider("http://localhost:3080", httpClient);
+const App = () => {
+  React.useEffect(() => {
+    initLoginSession();
+  }, []);
+
+  return (
+    <Admin
+      // dataProvider={dataProvider}
+      // authProvider={authProvider}
+      dataProvider={data}
+      authProvider={myAuth}
+      layout={Layout}
+      dashboard={Dashboard}
+      theme={{
+        ...defaultTheme,
+        palette: {
+          background: {
+            default: "#fafafb",
+          },
         },
-      },
-    }}
-  >
-    <Resource name="deals" {...deals} />
-    <Resource name="contacts" {...contacts} />
-    <Resource name="companies" {...companies} />
-    <Resource name="contactNotes" />
-    <Resource name="dealNotes" />
-    <Resource name="tasks" list={ListGuesser} />
-    <Resource name="sales" list={ListGuesser} />
-    <Resource name="tags" list={ListGuesser} />
-  </Admin>
-);
+      }}
+    >
+      <Resource name="deals" {...deals} />
+      <Resource name="contacts" {...contacts} />
+      <Resource name="companies" {...companies} />
+      <Resource name="contactNotes" />
+      <Resource name="dealNotes" />
+      <Resource name="tasks" list={ListGuesser} />
+      <Resource name="sales" list={ListGuesser} />
+      <Resource name="tags" list={ListGuesser} />
+    </Admin>
+  );
+};
 
 export default App;

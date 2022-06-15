@@ -9,6 +9,7 @@ import com.example.demo.sale.entity.Sale;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -125,8 +126,10 @@ class ContactNoteController {
   @PutMapping("{id}")
   public ResponseEntity<ContactNote> update(
     @PathVariable("id") Long id,
-    @RequestBody ContactNote contactNote
+    @RequestBody ContactNote contactNote,
+    HttpSession session
   ) {
+    System.out.println("saleId: " + session.getAttribute("saleId"));
     ContactNote updatedContactNote = contactNoteRepo
       .findById(id)
       .orElseThrow(
