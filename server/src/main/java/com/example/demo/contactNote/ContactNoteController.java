@@ -1,5 +1,6 @@
 package com.example.demo.contactNote;
 
+import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.contact.entity.Contact;
 import com.example.demo.contactNote.entity.ContactNote;
 import com.example.demo.contactNote.repository.ContactNoteMapper;
@@ -7,12 +8,10 @@ import com.example.demo.contactNote.repository.ContactNoteRepository;
 import com.example.demo.sale.entity.Sale;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,14 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Contact_Notes")
 @RequestMapping("/contactNotes")
-@CrossOrigin("http://localhost:3000")
 class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;
   private final EntityManager entityManager;
   private final ContactNoteMapper contactNoteMapper;
 
-  @Autowired
   public ContactNoteController(
     ContactNoteRepository contactNoteRepo,
     EntityManager entityManager,
@@ -124,12 +121,24 @@ class ContactNoteController {
     return ResponseEntity.ok().body(saved);
   }
 
+  @Transactional
   @PutMapping("{id}")
   public ResponseEntity<ContactNote> update(
     @PathVariable("id") Long id,
-    @RequestBody ContactNote item
+    @RequestBody ContactNote contactNote
   ) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    ContactNote updatedContactNote = contactNoteRepo
+      .findById(id)
+      .orElseThrow(
+        () ->
+          new ItemNotFoundException(
+            "Contact note with id: " + id + " not found"
+          )
+      );
+
+    updatedContactNote.setText(contactNote.getText());
+
+    return ResponseEntity.ok().body(updatedContactNote);
   }
 
   @DeleteMapping("{id}")
