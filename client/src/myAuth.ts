@@ -17,6 +17,9 @@ export const myAuth: AuthProvider = {
         },
         body: JSON.stringify({ saleName: username, rawPassword: password }),
       });
+
+      if (!res.ok) throw new Error();
+
       const user: User = await res.json();
 
       localStorage.setItem("saleName", user.fullName);

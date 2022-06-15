@@ -97,19 +97,23 @@ class SaleController {
 
   @PostMapping("verify")
   public ResponseEntity<SaleResponseDto> verify(HttpSession session) {
-    Long saleId = (Long) session.getAttribute("saleId");
+    Long id = (Long) session.getAttribute("saleId");
 
-    Sale sale = saleRepo
-      .findById(saleId)
-      .orElseThrow(
-        () ->
-          new ItemNotFoundException("Sales with id: " + saleId + " not found")
-      );
+    Sale sale = saleRepo.findById(id).orElse(null);
+
+    if (sale == null) {
+      return ResponseEntity
+        .status(HttpStatus.NON_AUTHORITATIVE_INFORMATION)
+        .build();
+    }
 
     SaleResponseDto saleResponse = new SaleResponseDto();
+
     saleResponse.setId(sale.getId());
     saleResponse.setFullName(sale.getFirst_name() + " " + sale.getLast_name());
-    saleResponse.setAvatar("https://robohash.org/" + saleResponse.getFullName() + ".png");
+    saleResponse.setAvatar(
+      "https://robohash.org/" + saleResponse.getFullName() + ".png"
+    );
 
     return ResponseEntity.ok().body(saleResponse);
   }
