@@ -1,4 +1,4 @@
-package com.example.demo.user;
+package com.example.demo.student;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 @Entity
 @AllArgsConstructor
-class User {
+class Student {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

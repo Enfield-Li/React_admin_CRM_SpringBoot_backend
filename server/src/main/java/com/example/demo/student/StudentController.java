@@ -1,4 +1,4 @@
-package com.example.demo.user;
+package com.example.demo.student;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/user")
-class UserController {
+@RequestMapping("/student")
+class StudentController {
 
-  private static final List<User> allUsers = Arrays.asList(
-    new User(1L, "user1"),
-    new User(2L, "user2"),
-    new User(3L, "user3")
+  private static final List<Student> allUsers = Arrays.asList(
+    new Student(1L, "student1"),
+    new Student(2L, "student2"),
+    new Student(3L, "student3")
   );
 
   @GetMapping("{id}")
-  User getOneUser(@PathVariable("id") Long id) {
+  Student getOneUser(@PathVariable("id") Long id) {
     return allUsers
       .stream()
-      .filter(user -> user.getId() == id)
+      .filter(student -> student.getId() == id)
       .findFirst()
       .orElseThrow(() -> new IllegalStateException("User does not exist..."));
   }
