@@ -20,15 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/students")
 class StudentController {
 
-  private static final List<Student> allUsers = Arrays.asList(
-    new Student(1L, "student1"),
-    new Student(2L, "student2"),
-    new Student(3L, "student3")
+  private static final List<Student> STUDENTS = Arrays.asList(
+    new Student(1, "student1"),
+    new Student(2, "student2"),
+    new Student(3, "student3")
   );
 
   @GetMapping("{id}")
-  Student getOneUser(@PathVariable("id") Long id) {
-    return allUsers
+  Student getOneUser(@PathVariable("id") Integer id) {
+    return STUDENTS
       .stream()
       .filter(student -> student.getId() == id)
       .findFirst()

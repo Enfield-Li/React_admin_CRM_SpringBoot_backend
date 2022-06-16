@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-//To use the @Data annotation you should add the Lombok dependency.
 @Data
 @Entity
 @AllArgsConstructor
@@ -16,7 +15,7 @@ class Student {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Integer id;
 
   private String username;
 }
