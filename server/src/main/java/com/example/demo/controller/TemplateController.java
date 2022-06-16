@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+// @Controller
 @RestController
 @RequestMapping("/")
 public class TemplateController {
@@ -16,8 +17,14 @@ public class TemplateController {
     return modelAndView;
   }
 
+  // @GetMapping("login")
+  // public String getLogin() {
+  //   return "login";
+  // }
+
   @GetMapping("courses")
-  public String getCourses() {
-    return "courses";
+  public ModelAndView getCourses() {
+    ModelAndView modelAndView = new ModelAndView("courses");
+    return modelAndView;
   }
 }
