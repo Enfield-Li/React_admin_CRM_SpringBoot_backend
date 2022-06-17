@@ -85,9 +85,7 @@ class SaleController {
       }
     }
 
-    return ResponseEntity
-      .status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
-      .build();
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
 
   @PostMapping("logout")
@@ -101,15 +99,17 @@ class SaleController {
     HttpSession session,
     @PathVariable("id") Long saleId
   ) {
-    Long sessionId = (Long) session.getAttribute("saleId");
+    Long id = (Long) session.getAttribute("saleId");
 
-    if (sessionId == null || saleId != sessionId) {
-      return ResponseEntity
-        .status(HttpStatus.UNAUTHORIZED)
-        .build();
+    if (id == null || saleId != id) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Sale sale = saleRepo.findById(sessionId).orElse(null);
+    Sale sale = saleRepo
+      .findById(id)
+      .orElseThrow(
+        () -> new ItemNotFoundException("Sales with id: " + id + " not found")
+      );
 
     SaleResponseDto saleResponse = new SaleResponseDto();
 
