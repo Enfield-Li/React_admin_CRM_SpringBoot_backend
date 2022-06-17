@@ -85,9 +85,7 @@ class SaleController {
       }
     }
 
-    return ResponseEntity
-      .status(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
-      .build();
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
   }
 
   @PostMapping("logout")
@@ -104,9 +102,7 @@ class SaleController {
     Long sessionId = (Long) session.getAttribute("saleId");
 
     if (sessionId == null || saleId != sessionId) {
-      return ResponseEntity
-        .status(HttpStatus.UNAUTHORIZED)
-        .build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     Sale sale = saleRepo.findById(sessionId).orElse(null);

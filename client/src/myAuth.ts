@@ -83,10 +83,3 @@ export async function initLoginSession() {
     console.log(error);
   }
 }
-
-export async function testCase() {
-  const res = await fetch(`http://localhost:3080/contacts/test`, {
-    method: "GET",
-    credentials: "include",
-  });
-}
