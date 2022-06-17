@@ -99,13 +99,17 @@ class SaleController {
     HttpSession session,
     @PathVariable("id") Long saleId
   ) {
-    Long sessionId = (Long) session.getAttribute("saleId");
+    Long id = (Long) session.getAttribute("saleId");
 
-    if (sessionId == null || saleId != sessionId) {
+    if (id == null || saleId != id) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    Sale sale = saleRepo.findById(sessionId).orElse(null);
+    Sale sale = saleRepo
+      .findById(id)
+      .orElseThrow(
+        () -> new ItemNotFoundException("Sales with id: " + id + " not found")
+      );
 
     SaleResponseDto saleResponse = new SaleResponseDto();
 
