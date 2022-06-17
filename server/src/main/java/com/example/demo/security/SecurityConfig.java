@@ -5,6 +5,7 @@ import static com.example.demo.security.ApplicationUserRole.ADMIN;
 import static com.example.demo.security.ApplicationUserRole.ADMINTRAINEE;
 import static com.example.demo.security.ApplicationUserRole.STUDENT;
 
+import java.util.concurrent.TimeUnit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -59,7 +61,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .permitAll()
       .defaultSuccessUrl("/courses", true)
       .passwordParameter("password")
-      .usernameParameter("username");
+      .usernameParameter("username")
+      .and()
+      .rememberMe()
+      .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+      .key("somethingverysecured")
+      .rememberMeParameter("remember-me")
+      .and()
+      .logout()
+      .logoutUrl("/logout")
+      .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // https://docs.spring.io/spring-security/site/docs/4.2.12.RELEASE/apidocs/org/springframework/security/config/annotation/web/configurers/LogoutConfigurer.html
+      .clearAuthentication(true)
+      .invalidateHttpSession(true)
+      .deleteCookies("JSESSIONID", "remember-me")
+      .logoutSuccessUrl("/login");
     // .httpBasic();
   }
 
