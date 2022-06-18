@@ -5,10 +5,14 @@ import static com.example.demo.security.ApplicationUserRole.ADMIN;
 import static com.example.demo.security.ApplicationUserRole.ADMINTRAINEE;
 import static com.example.demo.security.ApplicationUserRole.STUDENT;
 
+import com.example.demo.auth.ApplicationUserService;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,9 +31,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final PasswordEncoder passwordEncoder;
+  private final ApplicationUserService applicationUserService;
 
-  public SecurityConfig(PasswordEncoder passwordEncoder) {
+  public SecurityConfig(
+    PasswordEncoder passwordEncoder,
+    ApplicationUserService applicationUserService
+  ) {
     this.passwordEncoder = passwordEncoder;
+    this.applicationUserService = applicationUserService;
   }
 
   @Override
@@ -79,37 +88,47 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  @Override
-  protected UserDetailsService userDetailsService() {
-    UserDetails student = User
-      .builder()
-      .username("student")
-      .password(passwordEncoder.encode("student"))
-      // .roles(STUDENT.name()) // ROLE_Student
-      .authorities(STUDENT.getGrantedAuthorities())
-      .build();
-
-    UserDetails admin = User
-      .builder()
-      .username("admin")
-      .password(passwordEncoder.encode("admin"))
-      // .roles(ADMIN.name()) // ROLE_Admin
-      .authorities(ADMIN.getGrantedAuthorities())
-      .build();
-
-    UserDetails adminTrainee = User
-      .builder()
-      .username("adminTrainee")
-      .password(passwordEncoder.encode("adminTrainee"))
-      // .roles(ADMINTRAINEE.name()) // ROLE_Admin
-      .authorities(ADMINTRAINEE.getGrantedAuthorities())
-      .build();
-
-    return new InMemoryUserDetailsManager(student, admin, adminTrainee);
+  DaoAuthenticationProvider daoAuthenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+    provider.setPasswordEncoder(passwordEncoder);
+    provider.setUserDetailsService(applicationUserService);
+    return provider;
   }
-  //   @Override
-  //   public void configure(AuthenticationManagerBuilder authBuilder)
-  //     throws Exception {}
+
+  @Override
+  public void configure(AuthenticationManagerBuilder authBuilder)
+    throws Exception {
+    authBuilder.authenticationProvider(daoAuthenticationProvider());
+  }
+  // @Bean
+  // @Override
+  // protected UserDetailsService userDetailsService() {
+  //   UserDetails student = User
+  //     .builder()
+  //     .username("student")
+  //     .password(passwordEncoder.encode("student"))
+  //     // .roles(STUDENT.name()) // ROLE_Student
+  //     .authorities(STUDENT.getGrantedAuthorities())
+  //     .build();
+
+  //   UserDetails admin = User
+  //     .builder()
+  //     .username("admin")
+  //     .password(passwordEncoder.encode("admin"))
+  //     // .roles(ADMIN.name()) // ROLE_Admin
+  //     .authorities(ADMIN.getGrantedAuthorities())
+  //     .build();
+
+  //   UserDetails adminTrainee = User
+  //     .builder()
+  //     .username("adminTrainee")
+  //     .password(passwordEncoder.encode("adminTrainee"))
+  //     // .roles(ADMINTRAINEE.name()) // ROLE_Admin
+  //     .authorities(ADMINTRAINEE.getGrantedAuthorities())
+  //     .build();
+
+  //   return new InMemoryUserDetailsManager(student, admin, adminTrainee);
+  // }
 
   //   @Override
   //   public void configure(WebSecurity web) throws Exception {}
