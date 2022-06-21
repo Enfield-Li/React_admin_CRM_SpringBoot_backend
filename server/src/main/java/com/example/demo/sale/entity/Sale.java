@@ -1,8 +1,9 @@
 package com.example.demo.sale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Collection;
+import java.util.List;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,20 +12,19 @@ import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sale {
+public class Sale implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @Transient
-  private String username;
 
   @JsonIgnore
   @Column(nullable = false)
@@ -33,6 +33,12 @@ public class Sale {
   private String first_name;
   private String last_name;
   private String email;
+
+  @Transient
+  private String username;
+
+  @Transient
+  private List<GrantedAuthority> authorities;
 
   public Sale(
     String first_name,
@@ -55,22 +61,32 @@ public class Sale {
     return new Sale(first_name, last_name, email, password);
   }
 
-  public static String encode(
-    String rawPassword,
-    PasswordEncoder passwordEncoder
-  ) {
-    return passwordEncoder.encode(rawPassword);
-  }
-
-  public static Boolean matchPassword(
-    String rawPassword,
-    String password,
-    PasswordEncoder passwordEncoder
-  ) {
-    return passwordEncoder.matches(rawPassword, password);
-  }
-
   public String getUsername() {
     return this.getFirst_name() + " " + this.getLast_name();
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return authorities;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 }

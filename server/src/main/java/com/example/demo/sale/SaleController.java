@@ -63,10 +63,9 @@ class SaleController {
     if (sale.isPresent()) {
       Sale salePresent = sale.get();
 
-      Boolean matched = Sale.matchPassword(
+      Boolean matched = passwordEncoder.matches(
         dto.getRawPassword(),
-        salePresent.getPassword(),
-        passwordEncoder
+        salePresent.getPassword()
       );
 
       if (matched) {
@@ -184,8 +183,7 @@ class SaleController {
     sales.forEach(
       sale -> {
         String fullName = sale.getFirst_name() + " " + sale.getLast_name();
-        String password = Sale.encode(fullName, passwordEncoder);
-        sale.setPassword(password);
+        sale.setPassword(passwordEncoder.encode(fullName));
       }
     );
   }

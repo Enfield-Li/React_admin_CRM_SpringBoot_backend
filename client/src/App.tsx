@@ -31,10 +31,10 @@ const App = () => {
 
   return (
     <Admin
-      // dataProvider={dataProvider}
-      // authProvider={authProvider}
-      dataProvider={data}
-      authProvider={myAuth}
+      dataProvider={dataProvider}
+      authProvider={authProvider}
+      // dataProvider={data}
+      // authProvider={myAuth}
       layout={Layout}
       dashboard={Dashboard}
       theme={{
