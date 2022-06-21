@@ -3,7 +3,6 @@ package com.example.demo.sale;
 import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.sale.dto.LoginSaleDto;
 import com.example.demo.sale.dto.SaleResponseDto;
-import com.example.demo.sale.entity.Password;
 import com.example.demo.sale.entity.Sale;
 import com.example.demo.sale.repository.SaleMapper;
 import com.example.demo.sale.repository.SaleRepository;
@@ -64,9 +63,11 @@ class SaleController {
     if (sale.isPresent()) {
       Sale salePresent = sale.get();
 
-      Boolean matched = salePresent
-        .getPassword()
-        .matchPassword(dto.getRawPassword(), passwordEncoder);
+      Boolean matched = Sale.matchPassword(
+        dto.getRawPassword(),
+        salePresent.getPassword(),
+        passwordEncoder
+      );
 
       if (matched) {
         SaleResponseDto responseDto = new SaleResponseDto();
@@ -183,7 +184,7 @@ class SaleController {
     sales.forEach(
       sale -> {
         String fullName = sale.getFirst_name() + " " + sale.getLast_name();
-        Password password = Password.encode(fullName, passwordEncoder);
+        String password = Sale.encode(fullName, passwordEncoder);
         sale.setPassword(password);
       }
     );
