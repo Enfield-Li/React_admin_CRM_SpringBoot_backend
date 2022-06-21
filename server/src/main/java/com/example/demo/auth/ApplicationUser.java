@@ -2,9 +2,11 @@ package com.example.demo.auth;
 
 import java.util.Collection;
 import java.util.Set;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Data
 public class ApplicationUser implements UserDetails {
 
   private final String username;
