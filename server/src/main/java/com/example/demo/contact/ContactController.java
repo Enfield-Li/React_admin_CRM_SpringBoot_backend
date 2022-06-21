@@ -137,7 +137,7 @@ class ContactController {
     Contact contact = contactMapper.getContactById(id);
 
     if (contact == null) {
-      throw new ItemNotFoundException("Contact with id: " + id + " not found");
+      throw new ItemNotFoundException("Contact", id);
     }
 
     return ResponseEntity.ok().body(processContact(contact));
@@ -166,10 +166,7 @@ class ContactController {
     if (contactDto.getId() == null) {
       Contact contact = contactRepo
         .findById(id)
-        .orElseThrow(
-          () ->
-            new ItemNotFoundException("Contact with id: " + id + " not found")
-        );
+        .orElseThrow(() -> new ItemNotFoundException("Deal", id));
 
       contact.setTag_list(
         contactDto

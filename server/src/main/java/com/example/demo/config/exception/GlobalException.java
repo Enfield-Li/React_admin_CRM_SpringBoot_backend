@@ -14,12 +14,19 @@ public class GlobalException extends RuntimeException {
     GlobalException.class
   );
 
-  @ExceptionHandler(value = { Exception.class })
+  @ExceptionHandler(Exception.class)
   protected ResponseEntity<String> catchAllException(Exception e) {
     log.error("\n \n **************** Uncaught Error ****************", e);
 
     return ResponseEntity
       .status(HttpStatus.INTERNAL_SERVER_ERROR)
       .body("Something's gone wrong...");
+  }
+
+  @ExceptionHandler(ItemNotFoundException.class)
+  protected ItemNotFoundException catchItemNotFoundException(
+    ItemNotFoundException e
+  ) {
+    return e;
   }
 }

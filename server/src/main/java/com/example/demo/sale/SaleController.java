@@ -107,9 +107,7 @@ class SaleController {
 
     Sale sale = saleRepo
       .findById(id)
-      .orElseThrow(
-        () -> new ItemNotFoundException("Sales with id: " + id + " not found")
-      );
+      .orElseThrow(() -> new ItemNotFoundException("Sales", id));
 
     SaleResponseDto saleResponse = new SaleResponseDto();
 
@@ -143,9 +141,7 @@ class SaleController {
   ) {
     Sale sales = saleRepo
       .findById(id)
-      .orElseThrow(
-        () -> new ItemNotFoundException("Sales with id: " + id + " not found")
-      );
+      .orElseThrow(() -> new ItemNotFoundException("Sales", id));
 
     return ResponseEntity.ok().body(Arrays.asList(sales));
   }

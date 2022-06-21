@@ -134,9 +134,7 @@ class DealController {
   public ResponseEntity<Deal> getById(@PathVariable("id") Long id) {
     Deal deal = dealRepo
       .findById(id)
-      .orElseThrow(
-        () -> new ItemNotFoundException("Deal with id: " + id + " not found")
-      );
+      .orElseThrow(() -> new ItemNotFoundException("Deal", id));
 
     return ResponseEntity.ok().body(deal);
   }

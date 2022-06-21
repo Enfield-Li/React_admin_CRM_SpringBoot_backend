@@ -130,9 +130,7 @@ class CompanyController {
   public ResponseEntity<Company> getById(@PathVariable("id") Long id) {
     Company company = companyRepo
       .findById(id)
-      .orElseThrow(
-        () -> new ItemNotFoundException("Company with id: " + id + " not found")
-      );
+      .orElseThrow(() -> new ItemNotFoundException("Company", id));
 
     return ResponseEntity.ok().body(company);
   }

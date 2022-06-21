@@ -132,12 +132,7 @@ class ContactNoteController {
     System.out.println("saleId: " + session.getAttribute("saleId"));
     ContactNote updatedContactNote = contactNoteRepo
       .findById(id)
-      .orElseThrow(
-        () ->
-          new ItemNotFoundException(
-            "Contact note with id: " + id + " not found"
-          )
-      );
+      .orElseThrow(() -> new ItemNotFoundException("Contact note", id));
 
     updatedContactNote.setText(contactNote.getText());
 
