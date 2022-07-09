@@ -16,7 +16,7 @@ export const myAuth: AuthProvider = {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ saleName: username, rawPassword: password }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (!res.ok) throw new Error();
@@ -70,6 +70,11 @@ export async function initLoginSession() {
     const user: User = JSON.parse(userString);
 
     const res = await fetch(`http://localhost:3080/sales/verify/${user.id}`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    await fetch(`http://localhost:3080/sales/test`, {
       method: "GET",
       credentials: "include",
     });

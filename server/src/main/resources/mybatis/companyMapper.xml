@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.company.repository.companyMapper">
-    <select id="getFilteredCompany" resultType="com.example.demo.company.entity.Company">
+<mapper namespace="com.example.demo.repository.companyMapper">
+    <select id="getFilteredCompany" resultType="com.example.demo.entity.Company">
         SELECT * FROM company
         <where>
             <if test="sales_id != null">sales_id = #{sales_id}</if>
@@ -48,7 +48,7 @@
         </where> 
     </select>
 
-    <select id="getManyReferences" resultType="com.example.demo.company.entity.Company">
+    <select id="getManyReferences" resultType="com.example.demo.entity.Company">
         SELECT *
         FROM company
         WHERE id IN

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.task.repository.TaskMapper">
-    <select id="getAllTasks" resultType="com.example.demo.task.entity.Task">
+<mapper namespace="com.example.demo.repository.TaskMapper">
+    <select id="getAllTasks" resultType="com.example.demo.entity.Task">
         SELECT * FROM task
         <where>
             <if test="contact_id != null">contact_id = #{contact_id}</if>
@@ -34,7 +34,7 @@
         </where>
     </select>
 
-    <select id="getContactsByIds" resultType="com.example.demo.task.entity.Task">
+    <select id="getContactsByIds" resultType="com.example.demo.entity.Task">
         SELECT *
         FROM task
         WHERE id IN

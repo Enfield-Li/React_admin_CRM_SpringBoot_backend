@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.dealNote.repository.DealNoteMapper">
-    <select id="getNotesByDealId" resultType="com.example.demo.dealNote.entity.DealNote">
+<mapper namespace="com.example.demo.repository.DealNoteMapper">
+    <select id="getNotesByDealId" resultType="com.example.demo.entity.DealNote">
         SELECT * FROM deal_note
         <where>
             <if test="deal_id != null">deal_id = #{deal_id}</if>
@@ -34,7 +34,7 @@
         </where>
     </select>
 
-    <select id="idName" resultType="com.example.demo.dealNote.entity.DealNote">
+    <select id="idName" resultType="com.example.demo.entity.DealNote">
         SELECT *
         FROM deal_note
         WHERE id IN

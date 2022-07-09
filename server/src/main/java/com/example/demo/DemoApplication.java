@@ -10,10 +10,10 @@ public class DemoApplication {
 
   public static void main(String[] args) throws IOException {
     SpringApplication.run(DemoApplication.class, args);
-    // openHomePage();
+    // openSwaggerUI();
   }
 
-  private static void openHomePage() throws IOException {
+  private static void openSwaggerUI() throws IOException {
     Runtime rt = Runtime.getRuntime();
     rt.exec(
       "rundll32 url.dll,FileProtocolHandler " +
