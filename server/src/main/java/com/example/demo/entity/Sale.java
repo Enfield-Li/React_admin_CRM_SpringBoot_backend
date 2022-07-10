@@ -50,7 +50,7 @@ public class Sale {
     this.last_name = last_name;
     this.email = email;
     this.password = password;
-    this.role = "ROLE_" + saleRole.toString();
+    this.role = saleRole.toString();
   }
 
   public Sale of(
@@ -72,6 +72,6 @@ public class Sale {
   }
 
   public void setRole(ApplicationUserRole saleRole) {
-    this.role = "ROLE_" + saleRole.toString();
+    this.role = saleRole.toString();
   }
 }

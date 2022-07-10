@@ -1,12 +1,12 @@
 package com.example.demo.controller;
 
+import com.example.demo.auth.users.ApplicationUser;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.ContactNote;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.repository.ContactNoteMapper;
 import com.example.demo.repository.ContactNoteRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -14,6 +14,8 @@ import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -130,14 +132,23 @@ class ContactNoteController {
     @RequestBody ContactNote contactNote,
     HttpSession session
   ) {
-    System.out.println("saleId: " + session.getAttribute("saleId"));
-    ContactNote updatedContactNote = contactNoteRepo
+    Authentication auth = SecurityContextHolder
+      .getContext()
+      .getAuthentication();
+    ApplicationUser user = (ApplicationUser) auth.getPrincipal();
+
+    ContactNote contactNoteForUpdate = contactNoteRepo
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Contact note", id));
 
-    updatedContactNote.setText(contactNote.getText());
+    // Check if the contact_note belong to the same sales person
+    if (contactNoteForUpdate.getSales_id() != user.getId()) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+    }
 
-    return ResponseEntity.ok().body(updatedContactNote);
+    contactNoteForUpdate.setText(contactNote.getText());
+
+    return ResponseEntity.ok().body(contactNoteForUpdate);
   }
 
   @DeleteMapping("{id}")
