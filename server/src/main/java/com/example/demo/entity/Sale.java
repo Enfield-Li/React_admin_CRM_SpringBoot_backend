@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import com.example.demo.auth.users.ApplicationUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,8 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
 @Entity
@@ -53,7 +50,7 @@ public class Sale {
     this.last_name = last_name;
     this.email = email;
     this.password = password;
-    this.role = saleRole.toString().toLowerCase();
+    this.role = "ROLE_" + saleRole.toString();
   }
 
   public Sale of(
@@ -75,6 +72,6 @@ public class Sale {
   }
 
   public void setRole(ApplicationUserRole saleRole) {
-    this.role = saleRole.toString().toLowerCase();
+    this.role = "ROLE_" + saleRole.toString();
   }
 }

@@ -1,12 +1,12 @@
 package com.example.demo.auth;
 
-import static com.example.demo.auth.users.ApplicationUserRole.*;
+import static com.example.demo.auth.users.ApplicationUserRole.SALE_ADMIN;
+import static com.example.demo.auth.users.ApplicationUserRole.SALE_PERSON;
 
 import com.example.demo.auth.filters.AuthenticationFilter;
 import com.example.demo.auth.filters.LoginFilter;
 import com.example.demo.auth.filters.LogoutFilter;
 import com.example.demo.auth.users.ApplicationUserService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -24,13 +23,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final PasswordEncoder passwordEncoder;
-  private final ApplicationUserService saleService;
   // https://stackoverflow.com/a/71858153/16648127
   private static final String SWAGGER_UI_PATH_1 = "/swagger-ui/**";
   private static final String SWAGGER_UI_PATH_2 = "/v3/api-docs/**";
+
   private static final String LOGIN_ENDPOINT = "/sales/login";
   private static final String LOGOUT_ENDPOINT = "/sales/logout";
+
+  private final PasswordEncoder passwordEncoder;
+  private final ApplicationUserService saleService;
 
   public SecurityConfig(
     PasswordEncoder passwordEncoder,
@@ -56,15 +57,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .antMatchers("/")
       .hasAnyRole(SALE_PERSON.name(), SALE_ADMIN.name())
       .and()
-      .addFilterBefore(
+      .addFilterBefore( // Login
         new LoginFilter(LOGIN_ENDPOINT, authenticationManager()),
         UsernamePasswordAuthenticationFilter.class
       )
-      .addFilterBefore(
+      .addFilterBefore( // Logout
         new LogoutFilter(LOGOUT_ENDPOINT),
         UsernamePasswordAuthenticationFilter.class
       )
-      .addFilterBefore(
+      .addFilterBefore( // Verify user on every request
         new AuthenticationFilter(),
         UsernamePasswordAuthenticationFilter.class
       );

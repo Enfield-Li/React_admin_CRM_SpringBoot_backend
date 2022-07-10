@@ -72,16 +72,7 @@ export async function me() {
       credentials: "include",
     });
 
-    // await fetch(`http://localhost:3080/sales/test`, {
-    //   method: "GET",
-    //   credentials: "include",
-    // });
-
-    console.log("me res: ", res);
     if (!res.ok) throw new Error();
-
-    // const successLoginUser: User = await res.json();
-    // localStorage.setItem("user", JSON.stringify(successLoginUser));
   } catch (error) {
     localStorage.removeItem("user");
     console.log(error);

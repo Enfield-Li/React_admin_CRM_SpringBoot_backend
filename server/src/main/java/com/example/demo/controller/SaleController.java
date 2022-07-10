@@ -1,23 +1,17 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LoginSaleDto;
-import com.example.demo.dto.SaleResponseDto;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.repository.SaleMapper;
 import com.example.demo.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,42 +44,23 @@ class SaleController {
 
   @GetMapping("test")
   public void test(HttpSession session) {
-    System.out.println(session.getAttribute("saleId"));
-    Enumeration<String> attributes = session.getAttributeNames();
-    System.out.println("attributes: ");
-    while (attributes.hasMoreElements()) {
-      String attribute = (String) attributes.nextElement();
-      System.out.println(
-        attribute + " : " + session.getAttribute(attribute).toString()
-      );
-    }
+    // System.out.println("********** test start **********");
+    // Enumeration<String> attributes = session.getAttributeNames();
+    // System.out.println("attributes: ");
+    // while (attributes.hasMoreElements()) {
+    //   String attribute = (String) attributes.nextElement();
+    //   System.out.println(
+    //     attribute + " : " + session.getAttribute(attribute).toString()
+    //   );
+    // }
 
-    Authentication auth = SecurityContextHolder
-      .getContext()
-      .getAuthentication();
-    String username = auth.getName(); //get logged in username
-    System.out.println("username: " + username);
+    // Authentication auth = SecurityContextHolder
+    //   .getContext()
+    //   .getAuthentication();
+    // String username = auth.getName(); //get logged in username
+    // System.out.println("username: " + username);
+    // System.out.println("********** test end **********");
   }
-
-  // @PostMapping("login")
-  // public Boolean login(HttpSession session) { // Javonte Mills
-  //   System.out.println(session.getAttribute("saleId"));
-  //   Enumeration<String> attributes = session.getAttributeNames();
-  //   System.out.println("attributes: ");
-  //   while (attributes.hasMoreElements()) {
-  //     String attribute = (String) attributes.nextElement();
-  //     System.out.println(
-  //       attribute + " : " + session.getAttribute(attribute).toString()
-  //     );
-  //   }
-
-  //   Authentication auth = SecurityContextHolder
-  //     .getContext()
-  //     .getAuthentication();
-  //   String username = auth.getName(); //get logged in username
-  //   System.out.println("username: " + username);
-  //   return true;
-  // }
 
   // Javonte Mills
   @PostMapping("login")
@@ -95,35 +70,10 @@ class SaleController {
   public void register(@RequestBody LoginSaleDto dto) {}
 
   @PostMapping("logout")
-  public ResponseEntity<Boolean> logout(HttpSession session) {
-    session.removeAttribute("saleId");
-    return ResponseEntity.ok().body(true);
-  }
+  public void logout() {}
 
   @GetMapping("me")
-  public void me() {
-    // System.out.println(session.getId());
-    // System.out.println(session.getAttribute("saleId"));
-    // Long id = (Long) session.getAttribute("saleId");
-
-    // if (id == null || saleId != id) {
-    //   return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    // }
-
-    // Sale sale = saleRepo
-    //   .findById(id)
-    //   .orElseThrow(() -> new ItemNotFoundException("Sales", id));
-
-    // SaleResponseDto saleResponse = new SaleResponseDto();
-
-    // saleResponse.setId(sale.getId());
-    // saleResponse.setFullName(sale.getFirst_name() + " " + sale.getLast_name());
-    // saleResponse.setAvatar(
-    //   "https://robohash.org/" + saleResponse.getFullName() + ".png"
-    // );
-
-    // return ResponseEntity.ok().body(saleResponse);
-  }
+  public void me() {}
 
   @GetMapping
   public ResponseEntity<List<Sale>> getAll(
