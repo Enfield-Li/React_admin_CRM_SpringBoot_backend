@@ -1,25 +1,25 @@
-package com.example.demo.auth;
+package com.example.demo.auth.users;
 
+import com.example.demo.entity.Sale;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.demo.entity.Sale;
-
-import lombok.Data;
-
 @Data
-public class SaleDetails implements UserDetails {
+public class ApplicationUser implements UserDetails {
 
+  private Long id;
   private String userName;
   private String password;
   private List<GrantedAuthority> authorities;
 
-  public SaleDetails(Sale sale) {
+  public ApplicationUser(Sale sale) {
+    this.id = sale.getId();
     this.userName = sale.getUsername();
     this.password = sale.getPassword();
     this.authorities =

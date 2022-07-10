@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.dto.UpdateDealDto;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.Sale;
+import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.repository.DealMapper;
 import com.example.demo.repository.DealRespository;
 

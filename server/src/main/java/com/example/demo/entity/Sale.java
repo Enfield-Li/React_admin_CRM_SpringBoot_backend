@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import com.example.demo.auth.SaleRole;
+import com.example.demo.auth.users.ApplicationUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +47,7 @@ public class Sale {
     String last_name,
     String email,
     String password,
-    SaleRole saleRole
+    ApplicationUserRole saleRole
   ) {
     this.first_name = first_name;
     this.last_name = last_name;
@@ -61,7 +61,7 @@ public class Sale {
     String last_name,
     String email,
     String password,
-    SaleRole saleRole
+    ApplicationUserRole saleRole
   ) {
     return new Sale(first_name, last_name, email, password, saleRole);
   }
@@ -74,7 +74,7 @@ public class Sale {
     return role;
   }
 
-  public void setRole(SaleRole saleRole) {
+  public void setRole(ApplicationUserRole saleRole) {
     this.role = saleRole.toString().toLowerCase();
   }
 }

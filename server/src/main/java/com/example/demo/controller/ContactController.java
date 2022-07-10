@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Tags;
+import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.repository.ContactMapper;
 import com.example.demo.repository.ContactRepository;
 

@@ -62,27 +62,26 @@ export const myAuth: AuthProvider = {
   getPermissions: () => Promise.resolve(""),
 };
 
-export async function initLoginSession() {
+export async function me() {
   try {
-    const userString = localStorage.getItem("user");
-    if (userString === null) return;
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return;
 
-    const user: User = JSON.parse(userString);
-
-    const res = await fetch(`http://localhost:3080/sales/verify/${user.id}`, {
+    const res = await fetch(`http://localhost:3080/sales/me`, {
       method: "GET",
       credentials: "include",
     });
 
-    await fetch(`http://localhost:3080/sales/test`, {
-      method: "GET",
-      credentials: "include",
-    });
+    // await fetch(`http://localhost:3080/sales/test`, {
+    //   method: "GET",
+    //   credentials: "include",
+    // });
 
+    console.log("me res: ", res);
     if (!res.ok) throw new Error();
 
-    const successLoginUser: User = await res.json();
-    localStorage.setItem("user", JSON.stringify(successLoginUser));
+    // const successLoginUser: User = await res.json();
+    // localStorage.setItem("user", JSON.stringify(successLoginUser));
   } catch (error) {
     localStorage.removeItem("user");
     console.log(error);

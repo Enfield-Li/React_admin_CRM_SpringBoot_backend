@@ -1,5 +1,12 @@
 package com.example.demo.auth;
 
+import static com.example.demo.auth.users.ApplicationUserRole.*;
+
+import com.example.demo.auth.filters.AuthenticationFilter;
+import com.example.demo.auth.filters.LoginFilter;
+import com.example.demo.auth.filters.LogoutFilter;
+import com.example.demo.auth.users.ApplicationUserService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -8,7 +15,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -16,14 +25,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final PasswordEncoder passwordEncoder;
-  private final SaleService saleService;
+  private final ApplicationUserService saleService;
   // https://stackoverflow.com/a/71858153/16648127
   private static final String SWAGGER_UI_PATH_1 = "/swagger-ui/**";
   private static final String SWAGGER_UI_PATH_2 = "/v3/api-docs/**";
+  private static final String LOGIN_ENDPOINT = "/sales/login";
+  private static final String LOGOUT_ENDPOINT = "/sales/logout";
 
   public SecurityConfig(
     PasswordEncoder passwordEncoder,
-    SaleService saleService
+    ApplicationUserService saleService
   ) {
     this.passwordEncoder = passwordEncoder;
     this.saleService = saleService;
@@ -43,25 +54,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .disable()
       .authorizeRequests()
       .antMatchers("/")
-      .permitAll()// .anyRequest()
-    //   .authenticated()
-    // .hasAnyRole(SALE_PERSON.name(), SALE_ADMIN.name());
-    // .antMatchers("/")
-    // .authorizeRequests()
-    // .antMatchers("/")
-    // .permitAll()
-    // .antMatchers("/sign-up")
-    // .permitAll()
-    // .antMatchers("/sign-in")
-    // .permitAll()
-    // .anyRequest()
-    // .authenticated()
-    // .and()
-    // .formLogin()
-    // .loginPage("/")
-    // .loginProcessingUrl("/sales/login")
-    //   .permitAll()
-    ;
+      .hasAnyRole(SALE_PERSON.name(), SALE_ADMIN.name())
+      .and()
+      .addFilterBefore(
+        new LoginFilter(LOGIN_ENDPOINT, authenticationManager()),
+        UsernamePasswordAuthenticationFilter.class
+      )
+      .addFilterBefore(
+        new LogoutFilter(LOGOUT_ENDPOINT),
+        UsernamePasswordAuthenticationFilter.class
+      )
+      .addFilterBefore(
+        new AuthenticationFilter(),
+        UsernamePasswordAuthenticationFilter.class
+      );
   }
 
   @Override

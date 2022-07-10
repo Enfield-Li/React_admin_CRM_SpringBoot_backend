@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.exception.ItemNotFoundException;
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleResponseDto;
 import com.example.demo.entity.Sale;
+import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.repository.SaleMapper;
 import com.example.demo.repository.SaleRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -36,18 +35,15 @@ import org.springframework.web.bind.annotation.RestController;
 class SaleController {
 
   private final SaleRepository saleRepo;
-  private final EntityManager entityManager;
   private final SaleMapper saleMapper;
   private final PasswordEncoder passwordEncoder;
 
   public SaleController(
     SaleRepository saleRepo,
-    EntityManager entityManager,
     SaleMapper saleMapper,
     PasswordEncoder passwordEncoder
   ) {
     this.saleRepo = saleRepo;
-    this.entityManager = entityManager;
     this.saleMapper = saleMapper;
     this.passwordEncoder = passwordEncoder;
   }
@@ -91,44 +87,12 @@ class SaleController {
   //   return true;
   // }
 
+  // Javonte Mills
   @PostMapping("login")
-  public ResponseEntity<SaleResponseDto> login(
-    @RequestBody LoginSaleDto dto,
-    HttpSession session
-  ) { // Javonte Mills
-    System.out.println(session.getId());
-    System.out.println(session.getAttribute("saleId"));
-    System.out.println("saleCtr login");
-    Optional<Sale> sale = saleRepo.findByFullName(dto.getUsername());
-    System.out.println(dto.toString());
+  public void login(@RequestBody LoginSaleDto dto) {}
 
-    if (sale.isPresent()) {
-      Sale salePresent = sale.get();
-
-      Boolean matched = passwordEncoder.matches(
-        dto.getPassword(),
-        salePresent.getPassword()
-      );
-
-      if (matched) {
-        SaleResponseDto responseDto = new SaleResponseDto();
-
-        responseDto.setId(salePresent.getId());
-        responseDto.setFullName(
-          salePresent.getFirst_name() + " " + salePresent.getLast_name()
-        );
-        responseDto.setAvatar(
-          "https://robohash.org/" + responseDto.getFullName() + ".png"
-        );
-
-        session.setAttribute("saleId", salePresent.getId());
-
-        return ResponseEntity.ok().body(responseDto);
-      }
-    }
-
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-  }
+  @PostMapping("register")
+  public void register(@RequestBody LoginSaleDto dto) {}
 
   @PostMapping("logout")
   public ResponseEntity<Boolean> logout(HttpSession session) {
@@ -136,32 +100,29 @@ class SaleController {
     return ResponseEntity.ok().body(true);
   }
 
-  @GetMapping("verify/{id}")
-  public ResponseEntity<SaleResponseDto> verify(
-    HttpSession session,
-    @PathVariable("id") Long saleId
-  ) {
-    System.out.println(session.getId());
-    System.out.println(session.getAttribute("saleId"));
-    Long id = (Long) session.getAttribute("saleId");
+  @GetMapping("me")
+  public void me() {
+    // System.out.println(session.getId());
+    // System.out.println(session.getAttribute("saleId"));
+    // Long id = (Long) session.getAttribute("saleId");
 
-    if (id == null || saleId != id) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+    // if (id == null || saleId != id) {
+    //   return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    // }
 
-    Sale sale = saleRepo
-      .findById(id)
-      .orElseThrow(() -> new ItemNotFoundException("Sales", id));
+    // Sale sale = saleRepo
+    //   .findById(id)
+    //   .orElseThrow(() -> new ItemNotFoundException("Sales", id));
 
-    SaleResponseDto saleResponse = new SaleResponseDto();
+    // SaleResponseDto saleResponse = new SaleResponseDto();
 
-    saleResponse.setId(sale.getId());
-    saleResponse.setFullName(sale.getFirst_name() + " " + sale.getLast_name());
-    saleResponse.setAvatar(
-      "https://robohash.org/" + saleResponse.getFullName() + ".png"
-    );
+    // saleResponse.setId(sale.getId());
+    // saleResponse.setFullName(sale.getFirst_name() + " " + sale.getLast_name());
+    // saleResponse.setAvatar(
+    //   "https://robohash.org/" + saleResponse.getFullName() + ".png"
+    // );
 
-    return ResponseEntity.ok().body(saleResponse);
+    // return ResponseEntity.ok().body(saleResponse);
   }
 
   @GetMapping

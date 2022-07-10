@@ -1,24 +1,23 @@
-package com.example.demo.auth;
+package com.example.demo.auth.users;
+
+import static com.example.demo.auth.users.ApplicationUserPermission.*;
 
 import com.google.common.collect.Sets;
-
-import static com.example.demo.auth.SalePermission.*;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public enum SaleRole {
+public enum ApplicationUserRole {
   SALE_PERSON(Sets.newHashSet()),
   SALE_ADMIN(Sets.newHashSet(EDIT_TAG, EDIT_COMPANY));
 
-  private final Set<SalePermission> permissions;
+  private final Set<ApplicationUserPermission> permissions;
 
-  SaleRole(Set<SalePermission> permissions) {
+  ApplicationUserRole(Set<ApplicationUserPermission> permissions) {
     this.permissions = permissions;
   }
 
-  public Set<SalePermission> getPermissions() {
+  public Set<ApplicationUserPermission> getPermissions() {
     return permissions;
   }
 

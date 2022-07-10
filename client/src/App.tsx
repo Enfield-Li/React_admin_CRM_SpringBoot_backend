@@ -14,7 +14,7 @@ import companies from "./companies";
 import deals from "./deals";
 import { Dashboard } from "./dashboard/Dashboard";
 import simpleRestProvider from "ra-data-json-server";
-import { initLoginSession, myAuth } from "./myAuth";
+import { me, myAuth } from "./myAuth";
 import * as ra_core from "ra-core";
 
 // https://stackoverflow.com/questions/72637511/react-admin-unable-to-include-credtials-in-dataprovider-with-typescript/72638247#72638247
@@ -26,7 +26,7 @@ const httpClient = (url: any, options = {} as ra_core.Options) => {
 const data = simpleRestProvider("http://localhost:3080", httpClient);
 const App = () => {
   React.useEffect(() => {
-    initLoginSession();
+    me();
   }, []);
 
   return (

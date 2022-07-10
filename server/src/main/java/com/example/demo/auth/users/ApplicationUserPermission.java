@@ -1,12 +1,12 @@
-package com.example.demo.auth;
+package com.example.demo.auth.users;
 
-public enum SalePermission {
+public enum ApplicationUserPermission {
   EDIT_TAG("edit:tag"),
   EDIT_COMPANY("edit:company");
 
   private final String permission;
 
-  SalePermission(String permission) {
+  ApplicationUserPermission(String permission) {
     this.permission = permission;
   }
 

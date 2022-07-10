@@ -1,4 +1,4 @@
-package com.example.demo.config.exception;
+package com.example.demo.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
