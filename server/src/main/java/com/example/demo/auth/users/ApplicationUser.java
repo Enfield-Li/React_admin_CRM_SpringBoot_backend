@@ -14,17 +14,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class ApplicationUser implements UserDetails {
 
   private Long id;
-  private String userName;
+  private String username;
   private String password;
   private List<GrantedAuthority> authorities;
 
   public ApplicationUser(Sale sale) {
     this.id = sale.getId();
-    this.userName = sale.getUsername();
+    this.username = sale.getUsername();
     this.password = sale.getPassword();
     this.authorities =
       Arrays
-        .stream(sale.getRoles().split(","))
+        .stream(sale.getRole().split(","))
         .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
   }
@@ -41,7 +41,7 @@ public class ApplicationUser implements UserDetails {
 
   @Override
   public String getUsername() {
-    return userName;
+    return username;
   }
 
   @Override

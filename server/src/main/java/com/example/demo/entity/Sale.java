@@ -28,16 +28,14 @@ public class Sale {
   @Column(nullable = false)
   private String password;
 
-  private String first_name;
-  private String last_name;
-  private String email;
   private String role;
+  private String email;
+  private String status;
+  private String last_name;
+  private String first_name;
 
   @Transient
   private String username;
-
-  @Transient
-  private List<GrantedAuthority> authorities;
 
   public Sale(
     String first_name,
@@ -50,7 +48,7 @@ public class Sale {
     this.last_name = last_name;
     this.email = email;
     this.password = password;
-    this.role = saleRole.toString();
+    this.role = saleRole.name();
   }
 
   public Sale of(
@@ -64,14 +62,18 @@ public class Sale {
   }
 
   public String getUsername() {
-    return this.getFirst_name() + " " + this.getLast_name();
+    if (this.getLast_name() != null) {
+      return (this.getFirst_name() + " " + this.getLast_name());
+    }
+
+    return this.getFirst_name();
   }
 
-  public String getRoles() {
-    return role;
+  public String getRole() {
+    return "ROLE_" + role;
   }
 
   public void setRole(ApplicationUserRole saleRole) {
-    this.role = saleRole.toString();
+    this.role = saleRole.name();
   }
 }

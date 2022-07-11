@@ -1,7 +1,6 @@
 package com.example.demo.auth;
 
-import static com.example.demo.auth.users.ApplicationUserRole.SALE_ADMIN;
-import static com.example.demo.auth.users.ApplicationUserRole.SALE_PERSON;
+import static com.example.demo.auth.users.ApplicationUserRole.*;
 
 import com.example.demo.auth.filters.AuthenticationFilter;
 import com.example.demo.auth.filters.LoginFilter;
@@ -55,7 +54,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .disable()
       .authorizeRequests()
       .antMatchers("/")
-      .hasAnyRole(SALE_PERSON.name(), SALE_ADMIN.name())
+      .permitAll()
+      .antMatchers("/sales/update_role")
+      .hasRole(SUPER_USER.name())
       .and()
       .addFilterBefore( // Login
         new LoginFilter(LOGIN_ENDPOINT, authenticationManager()),
