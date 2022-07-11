@@ -43,31 +43,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers(SWAGGER_UI_PATH_1, SWAGGER_UI_PATH_2);
-  }
-
-  @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
       .authorizeRequests()
-      .antMatchers("/")
+      .antMatchers("/", SWAGGER_UI_PATH_1, SWAGGER_UI_PATH_2)
       .permitAll()
       /*
-       * Authorization
+       * 认证部分（Authorization）
        */
       // Authorities based permission
       .antMatchers(HttpMethod.POST, "/tags")
       .hasAuthority(CREATE_TAG.getPermission())
       .antMatchers(HttpMethod.PUT, "/companies")
       .hasAuthority(EDIT_COMPANY.getPermission())
-      
       // Role based permission
       .antMatchers("/sales/update_role")
       .hasRole(SUPER_USER.name())
-      
       /*
-       * Authentication
+       * 授权部分（Authentication）
        */
       .and()
       .addFilterBefore( // Login

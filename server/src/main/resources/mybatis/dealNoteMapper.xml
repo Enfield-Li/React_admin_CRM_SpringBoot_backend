@@ -5,14 +5,6 @@
         SELECT * FROM deal_note
         <where>
             <if test="deal_id != null">deal_id = #{deal_id}</if>
-            <!-- <if test="searchText != null">
-                AND 
-                (
-                    description LIKE '%${searchText}%'
-                    OR
-                    reference LIKE '%${searchText}%'
-                )
-            </if> -->
         </where>
         ORDER BY ${sort} ${order}
         LIMIT #{take}
@@ -23,14 +15,6 @@
         SELECT count(*) FROM deal_note
         <where>
             <if test="deal_id != null">deal_id = #{deal_id}</if>
-            <!-- <if test="searchText != null">
-                AND 
-                (
-                    description LIKE '%${searchText}%'
-                    OR 
-                    reference LIKE '%${searchText}%'
-                )
-            </if> -->
         </where>
     </select>
 

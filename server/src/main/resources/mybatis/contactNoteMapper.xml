@@ -6,14 +6,6 @@
         <where>
             <if test="sales_id != null">sales_id = #{sales_id}</if>
             <if test="contact_id != null">AND contact_id = #{contact_id}</if>
-            <!-- <if test="searchText != null">
-                AND 
-                (
-                    description LIKE '%${searchText}%'
-                    OR
-                    reference LIKE '%${searchText}%'
-                )
-            </if> -->
         </where>
         ORDER BY ${sort} ${order}
         LIMIT #{take}
@@ -25,14 +17,6 @@
         <where>
             <if test="sales_id != null">sales_id = #{sales_id}</if>
             <if test="contact_id != null">AND contact_id = #{contact_id}</if>
-            <!-- <if test="searchText != null">
-                AND 
-                (
-                    description LIKE '%${searchText}%'
-                    OR 
-                    reference LIKE '%${searchText}%'
-                )
-            </if> -->
         </where>
     </select>
 
