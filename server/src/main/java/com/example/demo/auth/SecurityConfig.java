@@ -50,14 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      .cors()
-      .and()
-      .csrf()
-      .disable()
       .authorizeRequests()
       .antMatchers("/")
       .permitAll()
-      
       /*
        * Authorization
        */
@@ -66,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .hasAuthority(CREATE_TAG.getPermission())
       .antMatchers(HttpMethod.PUT, "/companies")
       .hasAuthority(EDIT_COMPANY.getPermission())
+      
       // Role based permission
       .antMatchers("/sales/update_role")
       .hasRole(SUPER_USER.name())
@@ -85,7 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .addFilterBefore( // Verify user on every request
         new AuthenticationFilter(),
         UsernamePasswordAuthenticationFilter.class
-      );
+      )
+      .cors().disable()
+      .csrf().disable()
+      .formLogin().disable()
+      .formLogin().disable()
+      .logout().disable();
   }
 
   @Override

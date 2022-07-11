@@ -12,7 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 public enum ApplicationUserRole {
   SALE_PERSON(Sets.newHashSet(EDIT_COMPANY)),
   SALE_ADMIN(Sets.newHashSet(CREATE_TAG)),
-  SUPER_USER(Sets.newHashSet());
+  SUPER_USER(Sets.newHashSet(CREATE_TAG, EDIT_COMPANY));
 
   private final Set<ApplicationUserPermission> permissions;
 

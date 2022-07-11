@@ -20,8 +20,8 @@ public class LogoutFilter extends AbstractAuthenticationProcessingFilter {
     HttpServletResponse res
   )
     throws AuthenticationException, IOException {
-    res.getWriter().println(true);
     req.getSession().invalidate();
+    res.getWriter().println(true);
 
     return null;
   }

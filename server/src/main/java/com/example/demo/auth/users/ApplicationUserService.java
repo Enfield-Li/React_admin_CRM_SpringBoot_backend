@@ -3,7 +3,6 @@ package com.example.demo.auth.users;
 import com.example.demo.entity.Sale;
 import com.example.demo.repository.SaleRepository;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

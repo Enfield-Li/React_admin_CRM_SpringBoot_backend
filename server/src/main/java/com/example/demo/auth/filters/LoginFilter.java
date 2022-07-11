@@ -1,5 +1,7 @@
 package com.example.demo.auth.filters;
 
+import static com.example.demo.utils.ConstantUtils.userInSession;
+
 import com.example.demo.auth.users.ApplicationUser;
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleResponseDto;
@@ -51,7 +53,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     throws IOException, ServletException {
     ApplicationUser user = (ApplicationUser) auth.getPrincipal();
 
-    req.getSession().setAttribute("appUser", user);
+    req.getSession().setAttribute(userInSession, user);
 
     res.setContentType("application/json");
     res.getOutputStream().print(SaleResponseDto.toJSON(user));
