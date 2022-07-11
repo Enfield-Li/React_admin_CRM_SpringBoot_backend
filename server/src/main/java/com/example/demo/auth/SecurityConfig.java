@@ -1,5 +1,6 @@
 package com.example.demo.auth;
 
+import static com.example.demo.auth.users.ApplicationUserPermission.*;
 import static com.example.demo.auth.users.ApplicationUserRole.*;
 
 import com.example.demo.auth.filters.AuthenticationFilter;
@@ -7,6 +8,7 @@ import com.example.demo.auth.filters.LoginFilter;
 import com.example.demo.auth.filters.LogoutFilter;
 import com.example.demo.auth.users.ApplicationUserService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -55,8 +57,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       .antMatchers("/")
       .permitAll()
+      
+      /*
+       * Authorization
+       */
+      // Authorities based permission
+      .antMatchers(HttpMethod.POST, "/tags")
+      .hasAuthority(CREATE_TAG.getPermission())
+      .antMatchers(HttpMethod.PUT, "/companies")
+      .hasAuthority(EDIT_COMPANY.getPermission())
+      // Role based permission
       .antMatchers("/sales/update_role")
       .hasRole(SUPER_USER.name())
+      
+      /*
+       * Authentication
+       */
       .and()
       .addFilterBefore( // Login
         new LoginFilter(LOGIN_ENDPOINT, authenticationManager()),

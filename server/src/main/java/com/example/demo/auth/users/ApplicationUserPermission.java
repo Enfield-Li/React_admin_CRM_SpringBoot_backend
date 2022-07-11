@@ -1,7 +1,7 @@
 package com.example.demo.auth.users;
 
 public enum ApplicationUserPermission {
-  EDIT_TAG("edit:tag"),
+  CREATE_TAG("create:tag"),
   EDIT_COMPANY("edit:company");
 
   private final String permission;

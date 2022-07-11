@@ -1,5 +1,9 @@
 package com.example.demo.entity;
 
+import static com.example.demo.auth.users.ApplicationUserRole.SALE_ADMIN;
+import static com.example.demo.auth.users.ApplicationUserRole.SALE_PERSON;
+import static com.example.demo.auth.users.ApplicationUserRole.SUPER_USER;
+
 import com.example.demo.auth.users.ApplicationUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
@@ -37,40 +41,33 @@ public class Sale {
   @Transient
   private String username;
 
-  public Sale(
-    String first_name,
-    String last_name,
-    String email,
-    String password,
-    ApplicationUserRole saleRole
-  ) {
-    this.first_name = first_name;
-    this.last_name = last_name;
-    this.email = email;
-    this.password = password;
-    this.role = saleRole.name();
-  }
-
-  public Sale of(
-    String first_name,
-    String last_name,
-    String email,
-    String password,
-    ApplicationUserRole saleRole
-  ) {
-    return new Sale(first_name, last_name, email, password, saleRole);
-  }
-
   public String getUsername() {
-    if (this.getLast_name() != null) {
-      return (this.getFirst_name() + " " + this.getLast_name());
+    if (last_name == null) {
+      return first_name;
     }
 
-    return this.getFirst_name();
+    return first_name + " " + last_name;
   }
 
-  public String getRole() {
-    return "ROLE_" + role;
+  // Based on user role, return respective authorities
+  public List<GrantedAuthority> getUserAuthorities() {
+    List<GrantedAuthority> authorities = null;
+
+    switch (role) {
+      case "SALE_PERSON":
+        authorities = SALE_PERSON.getGrantedAuthorities();
+        break;
+      case "SALE_ADMIN":
+        authorities = SALE_ADMIN.getGrantedAuthorities();
+        break;
+      case "SUPER_USER":
+        authorities = SUPER_USER.getGrantedAuthorities();
+        break;
+      default:
+        break;
+    }
+
+    return authorities;
   }
 
   public void setRole(ApplicationUserRole saleRole) {
