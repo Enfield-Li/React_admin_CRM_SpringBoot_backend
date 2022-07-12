@@ -45,8 +45,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      .cors()
+      .and()
+      .csrf()
+      .disable()
+      .formLogin()
+      .disable()
+      .formLogin()
+      .disable()
+      .logout()
+      .disable()
       .authorizeRequests()
-      .antMatchers("/", SWAGGER_UI_PATH_1, SWAGGER_UI_PATH_2)
+      .antMatchers(
+        "/",
+        "/sales/register",
+        "/sales/test",
+        SWAGGER_UI_PATH_1,
+        SWAGGER_UI_PATH_2
+      )
       .permitAll()
       /*
        * 认证部分（Authorization）
@@ -59,6 +75,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       // Role based permission
       .antMatchers("/sales/update_role")
       .hasRole(SUPER_USER.name())
+      .antMatchers(HttpMethod.DELETE, "/companies")
+      .hasAnyRole(SALE_ADMIN.name(), SUPER_USER.name())
       /*
        * 授权部分（Authentication）
        */
@@ -74,12 +92,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .addFilterBefore( // Verify user on every request
         new AuthenticationFilter(),
         UsernamePasswordAuthenticationFilter.class
-      )
-      .cors().disable()
-      .csrf().disable()
-      .formLogin().disable()
-      .formLogin().disable()
-      .logout().disable();
+      );
+
+    // Disable anonymousUser
+    http.authorizeRequests().anyRequest().authenticated();
   }
 
   @Override

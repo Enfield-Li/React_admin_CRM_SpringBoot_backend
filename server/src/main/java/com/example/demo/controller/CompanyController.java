@@ -5,7 +5,6 @@ import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.companyMapper;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -92,7 +91,7 @@ class CompanyController {
           sizeMax = 250;
           break;
         case 500:
-          sizeMin = 249;
+          sizeMin = 250;
           break;
         default:
           break;
@@ -164,7 +163,8 @@ class CompanyController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
+    companyRepo.deleteById(id);
+    return ResponseEntity.ok().body(true);
   }
 }

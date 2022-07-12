@@ -26,7 +26,9 @@ public class AuthenticationFilter extends GenericFilterBean {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpSession session = req.getSession();
 
-    ApplicationUser user = (ApplicationUser) session.getAttribute(userInSession);
+    ApplicationUser user = (ApplicationUser) session.getAttribute(
+      userInSession
+    );
 
     if (user != null) {
       UsernamePasswordAuthenticationToken authUser = new UsernamePasswordAuthenticationToken(

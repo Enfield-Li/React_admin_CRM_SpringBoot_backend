@@ -31,8 +31,9 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     HttpServletResponse res
   )
     throws AuthenticationException, IOException {
-    LoginSaleDto dto = new ObjectMapper()
-    .readValue(req.getInputStream(), LoginSaleDto.class);
+      LoginSaleDto dto = new ObjectMapper()
+      .readValue(req.getInputStream(), LoginSaleDto.class);
+      System.out.println(dto.toString());
 
     String username = dto.getUsername();
     String password = dto.getPassword();

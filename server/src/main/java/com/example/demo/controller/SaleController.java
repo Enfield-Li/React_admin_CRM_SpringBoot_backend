@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LoginSaleDto;
+import com.example.demo.dto.SaleRegisterResponseDto;
 import com.example.demo.dto.SaleResponseDto;
 import com.example.demo.dto.UpdateSaleDto;
 import com.example.demo.entity.Sale;
@@ -13,6 +14,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -51,25 +53,10 @@ class SaleController {
     this.passwordEncoder = passwordEncoder;
   }
 
-  @GetMapping("test")
-  public String test(HttpSession session) {
-    return "test passed";
-    // System.out.println("********** test start **********");
-    // Enumeration<String> attributes = session.getAttributeNames();
-    // System.out.println("attributes: ");
-    // while (attributes.hasMoreElements()) {
-    //   String attribute = (String) attributes.nextElement();
-    //   System.out.println(
-    //     attribute + " : " + session.getAttribute(attribute).toString()
-    //   );
-    // }
-
-    // Authentication auth = SecurityContextHolder
-    //   .getContext()
-    //   .getAuthentication();
-    // String username = auth.getName(); //get logged in username
-    // System.out.println("username: " + username);
-    // System.out.println("********** test end **********");
+  @PostMapping("test")
+  public String test(@RequestBody LoginSaleDto dto) {
+    System.out.println(dto.toString());
+    return "Have access";
   }
 
   // Javonte Mills
@@ -77,37 +64,43 @@ class SaleController {
   public void login(@RequestBody LoginSaleDto dto) {}
 
   @PostMapping("register")
-  public SaleResponseDto register(@RequestBody LoginSaleDto dto) {
-    String firstName = null;
-    String lastName = null;
+  public SaleRegisterResponseDto register(@RequestBody LoginSaleDto dto) {
+    try {
+      String firstName = null;
+      String lastName = null;
 
-    String username = dto.getUsername();
-    boolean isFullName = username.contains(" ");
+      String username = dto.getUsername();
+      boolean isFullName = username.contains(" ");
 
-    if (isFullName) {
-      String[] usernameArr = username.split(" ");
-      firstName = usernameArr[0];
-      lastName = usernameArr[1];
-    } else {
-      firstName = username;
+      if (isFullName) {
+        String[] usernameArr = username.split(" ");
+        firstName = usernameArr[0];
+        lastName = usernameArr[1];
+      } else {
+        firstName = username;
+      }
+
+      Sale newSale = new Sale();
+      newSale.setStatus(PENDING);
+      newSale.setFirst_name(firstName);
+      newSale.setLast_name(lastName);
+      newSale.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+      Sale savedSale = saleRepo.save(newSale);
+
+      return new SaleRegisterResponseDto(savedSale, null);
+    } catch (ConstraintViolationException err) {
+      return new SaleRegisterResponseDto(null, "Username already exist.");
     }
-
-    Sale newSale = new Sale();
-    newSale.setStatus(PENDING);
-    newSale.setFirst_name(firstName);
-    newSale.setLast_name(lastName);
-    newSale.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-    Sale savedSale = saleRepo.save(newSale);
-
-    return new SaleResponseDto(savedSale);
   }
 
   @PostMapping("logout")
   public void logout() {}
 
   @GetMapping("me")
-  public void me() {}
+  public Authentication me() {
+    return SecurityContextHolder.getContext().getAuthentication();
+  }
 
   @GetMapping
   public ResponseEntity<List<Sale>> getAll(
@@ -169,7 +162,8 @@ class SaleController {
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    saleRepo.deleteById(id);
+    return ResponseEntity.ok().body(null);
   }
 
   @PostMapping("bulk_insert")

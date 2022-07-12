@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.DeleteTagsDto;
 import com.example.demo.entity.Tags;
 import com.example.demo.repository.TagsMapper;
 import com.example.demo.repository.TagsRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,8 +71,14 @@ class TagsController {
     return ResponseEntity.ok().body(contacts);
   }
 
-  @GetMapping("{id}")
-  public ResponseEntity<Tags> getById(@PathVariable("id") Integer id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  @DeleteMapping
+  public ResponseEntity<Boolean> deleteTag(@RequestBody DeleteTagsDto dto) {
+    if (dto.getId() != null) {
+      tagsRepo.deleteById(dto.getId());
+    } else {
+      tagsRepo.deleteTagsByName(dto.getName());
+    }
+
+    return ResponseEntity.ok().body(true);
   }
 }
