@@ -15,12 +15,15 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,8 +57,7 @@ class SaleController {
   }
 
   @PostMapping("test")
-  public String test(@RequestBody LoginSaleDto dto) {
-    System.out.println(dto.toString());
+  public String test(@Valid @RequestBody LoginSaleDto dto) {
     return "Have access";
   }
 
@@ -64,7 +66,9 @@ class SaleController {
   public void login(@RequestBody LoginSaleDto dto) {}
 
   @PostMapping("register")
-  public SaleRegisterResponseDto register(@RequestBody LoginSaleDto dto) {
+  public SaleRegisterResponseDto register(
+    @Valid @RequestBody LoginSaleDto dto
+  ) {
     try {
       String firstName = null;
       String lastName = null;
