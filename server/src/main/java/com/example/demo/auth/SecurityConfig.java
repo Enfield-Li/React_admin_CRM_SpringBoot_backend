@@ -45,6 +45,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      .cors()
+      .and()
+      .csrf()
+      .disable()
+      .formLogin()
+      .disable()
+      .formLogin()
+      .disable()
+      .logout()
+      .disable()
       .authorizeRequests()
       .antMatchers("/", SWAGGER_UI_PATH_1, SWAGGER_UI_PATH_2)
       .permitAll()
@@ -74,12 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .addFilterBefore( // Verify user on every request
         new AuthenticationFilter(),
         UsernamePasswordAuthenticationFilter.class
-      )
-      .cors().disable()
-      .csrf().disable()
-      .formLogin().disable()
-      .formLogin().disable()
-      .logout().disable();
+      );
   }
 
   @Override
