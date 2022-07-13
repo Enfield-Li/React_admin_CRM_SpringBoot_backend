@@ -44,21 +44,7 @@ class DealNoteController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<DealNote> dealNotes) {
-    dealNotes.forEach(
-      dealNote -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          dealNote.getSales_id()
-        );
-        Deal deal = entityManager.getReference(
-          Deal.class,
-          dealNote.getDeal_id()
-        );
-
-        dealNote.setSale(sale);
-        dealNote.setDeal(deal);
-      }
-    );
+    dealNotes.forEach(dealNote -> formRelationship(dealNote));
 
     dealNoteRepo.saveAll(dealNotes);
   }
@@ -113,5 +99,14 @@ class DealNoteController {
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     dealNoteRepo.deleteById(id);
     return ResponseEntity.ok().build();
+  }
+
+  private DealNote formRelationship(DealNote dealNote) {
+    Sale sale = entityManager.getReference(Sale.class, dealNote.getSales_id());
+    Deal deal = entityManager.getReference(Deal.class, dealNote.getDeal_id());
+
+    dealNote.setSale(sale);
+    dealNote.setDeal(deal);
+    return dealNote;
   }
 }

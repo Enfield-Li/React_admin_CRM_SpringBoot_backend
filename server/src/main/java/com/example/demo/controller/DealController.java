@@ -50,33 +50,7 @@ class DealController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Deal> deals) {
-    deals.forEach(
-      deal -> {
-        Sale sale = entityManager.getReference(Sale.class, deal.getSales_id());
-
-        Company company = entityManager.getReference(
-          Company.class,
-          deal.getCompany_id()
-        );
-
-        Set<Contact> contact_list = new HashSet<>();
-        deal
-          .getContact_list()
-          .forEach(
-            contactId -> {
-              Contact contact = entityManager.getReference(
-                Contact.class,
-                contactId
-              );
-              contact_list.add(contact);
-            }
-          );
-
-        deal.setSale(sale);
-        deal.setCompany(company);
-        deal.setContact_list(contact_list);
-      }
-    );
+    deals.forEach(deal -> formRelationship(deal));
 
     dealRepo.saveAll(deals);
   }
@@ -160,5 +134,32 @@ class DealController {
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     dealRepo.deleteById(id);
     return ResponseEntity.ok().build();
+  }
+
+  private Deal formRelationship(Deal deal) {
+    Sale sale = entityManager.getReference(Sale.class, deal.getSales_id());
+
+    Company company = entityManager.getReference(
+      Company.class,
+      deal.getCompany_id()
+    );
+
+    Set<Contact> contact_list = new HashSet<>();
+    deal
+      .getContact_list()
+      .forEach(
+        contactId -> {
+          Contact contact = entityManager.getReference(
+            Contact.class,
+            contactId
+          );
+          contact_list.add(contact);
+        }
+      );
+
+    deal.setSale(sale);
+    deal.setCompany(company);
+    deal.setContact_list(contact_list);
+    return deal;
   }
 }
