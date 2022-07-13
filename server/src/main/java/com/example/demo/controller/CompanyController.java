@@ -123,7 +123,7 @@ class CompanyController {
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Company", id));
 
-    return ResponseEntity.ok().body(company);
+    return ResponseEntity.ok(company);
   }
 
   @GetMapping(params = "id")
@@ -131,13 +131,13 @@ class CompanyController {
     @RequestParam("id") List<Long> ids
   ) {
     List<Company> products = companyMapper.getManyReferences(ids);
-    return ResponseEntity.ok().body(products);
+    return ResponseEntity.ok(products);
   }
 
   @PostMapping
   public ResponseEntity<Company> create(@RequestBody Company company) {
     Company savedCompany = companyRepo.save(company);
-    return ResponseEntity.ok().body(savedCompany);
+    return ResponseEntity.ok(savedCompany);
   }
 
   @PutMapping("{id}")
@@ -146,7 +146,7 @@ class CompanyController {
     @RequestBody Company item
   ) {
     Company savedCompany = companyRepo.save(item);
-    return ResponseEntity.ok().body(savedCompany);
+    return ResponseEntity.ok(savedCompany);
   }
 
   @DeleteMapping("{id}")

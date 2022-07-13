@@ -80,9 +80,9 @@ class DealNoteController {
   }
 
   @PostMapping
-  public ResponseEntity<DealNote> create(@RequestBody DealNote item) {
-    DealNote createdNote = dealNoteRepo.save(item);
-    return ResponseEntity.ok().body(createdNote);
+  public ResponseEntity<DealNote> create(@RequestBody DealNote dealNote) {
+    DealNote createdNote = dealNoteRepo.save(setRelationship(dealNote));
+    return ResponseEntity.ok(createdNote);
   }
 
   @PutMapping("{id}")
@@ -91,7 +91,7 @@ class DealNoteController {
     @RequestBody DealNote item
   ) {
     DealNote updatednote = dealNoteRepo.save(item);
-    return ResponseEntity.ok().body(updatednote);
+    return ResponseEntity.ok(updatednote);
   }
 
   @DeleteMapping("{id}")

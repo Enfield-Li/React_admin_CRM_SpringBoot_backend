@@ -1,29 +1,26 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.DeleteTagsDto;
-import com.example.demo.entity.Contact;
-import com.example.demo.entity.Tags;
-import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.mapper.TagsMapper;
-import com.example.demo.repository.TagsRepository;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import javax.persistence.EntityManager;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.dto.DeleteTagsDto;
+import com.example.demo.entity.Tags;
+import com.example.demo.exception.ItemNotFoundException;
+import com.example.demo.mapper.TagsMapper;
+import com.example.demo.repository.TagsRepository;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Tag(name = "Tag")
@@ -49,7 +46,7 @@ class TagsController {
   @PostMapping
   public ResponseEntity<Tags> createTag(@RequestBody Tags tag) {
     Tags savedtag = tagsRepo.save(tag);
-    return ResponseEntity.ok().body(savedtag);
+    return ResponseEntity.ok(savedtag);
   }
 
   @GetMapping
@@ -72,12 +69,12 @@ class TagsController {
   ) {
     List<Tags> contacts = tagsMapper.getTagsByIds(ids);
 
-    return ResponseEntity.ok().body(contacts);
+    return ResponseEntity.ok(contacts);
   }
 
   @Transactional
   @DeleteMapping
-  public ResponseEntity<Boolean> deleteTag(@RequestBody DeleteTagsDto dto) {
+  public ResponseEntity<HttpStatus> deleteTag(@RequestBody DeleteTagsDto dto) {
     try {
       if (dto.getId() != null) {
         tagsRepo.deleteById(dto.getId());
@@ -85,7 +82,7 @@ class TagsController {
         tagsRepo.deleteTagsByName(dto.getName());
       }
 
-      return ResponseEntity.ok().body(true);
+      return ResponseEntity.ok().build();
     } catch (EmptyResultDataAccessException e) {
       throw new ItemNotFoundException("Tag", dto.getId());
     }

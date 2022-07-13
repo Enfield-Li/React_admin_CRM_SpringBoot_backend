@@ -106,7 +106,7 @@ class DealController {
   ) {
     List<Deal> deals = dealMapper.getDealsReference(ids);
 
-    return ResponseEntity.ok().body(deals);
+    return ResponseEntity.ok(deals);
   }
 
   @GetMapping("{id}")
@@ -115,12 +115,13 @@ class DealController {
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Deal", id));
 
-    return ResponseEntity.ok().body(deal);
+    return ResponseEntity.ok(deal);
   }
 
   @PostMapping
-  public ResponseEntity<Deal> create(@RequestBody Deal item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Deal> create(@RequestBody Deal deal) {
+    Deal savedDeal = dealRepo.save(setRelationship(deal));
+    return ResponseEntity.ok(savedDeal);
   }
 
   @PutMapping("{id}")
@@ -128,9 +129,9 @@ class DealController {
     @PathVariable("id") Long id,
     @RequestBody UpdateDealDto item
   ) {
-    Integer updateResult = dealMapper.updateDealStatus(id, item.getStage());
+    Integer rowsAffected = dealMapper.updateDealStatus(id, item.getStage());
 
-    return ResponseEntity.ok().body(updateResult > 0);
+    return ResponseEntity.ok(rowsAffected > 0);
   }
 
   @DeleteMapping("{id}")
@@ -167,16 +168,35 @@ class DealController {
   }
 
   private List<Deal> processDeal(List<Deal> deals) {
-    for (Deal deal : deals) {
-      String[] ids = deal.getContactIdsString().split(",");
-      List<String> idsString = Arrays.asList(ids);
+    deals.forEach(
+      deal -> {
+        String contactIdsString = deal.getContactIdsString();
+        
+        if (contactIdsString != null) {
+          String[] ids = contactIdsString.split(",");
+          List<String> idsString = Arrays.asList(ids);
 
-      List<Long> idsLong = new ArrayList<>();
-      idsString.forEach(id -> idsLong.add(Long.parseLong(id)));
+          List<Long> idsLong = new ArrayList<>();
+          idsString.forEach(id -> idsLong.add(Long.parseLong(id)));
 
-      deal.setContact_ids(idsLong);
-      deal.setContactIdsString(null);
-    }
+          deal.setContact_ids(idsLong);
+          deal.setContactIdsString(null);
+        }
+      }
+    );
+    // for (Deal deal : deals) {
+    //   String contactIdsString = deal.getContactIdsString();
+    //   if (contactIdsString == null) break;
+
+    //   String[] ids = contactIdsString.split(",");
+    //   List<String> idsString = Arrays.asList(ids);
+
+    //   List<Long> idsLong = new ArrayList<>();
+    //   idsString.forEach(id -> idsLong.add(Long.parseLong(id)));
+
+    //   deal.setContact_ids(idsLong);
+    //   deal.setContactIdsString(null);
+    // }
 
     return deals;
   }

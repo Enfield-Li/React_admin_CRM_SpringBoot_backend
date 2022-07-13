@@ -95,19 +95,14 @@ class ContactNoteController {
   }
 
   @PostMapping
-  public ResponseEntity<ContactNote> create(@RequestBody ContactNote item) {
-    Sale sale = entityManager.getReference(Sale.class, item.getSales_id());
-    Contact contact = entityManager.getReference(
-      Contact.class,
-      item.getContact_id()
+  public ResponseEntity<ContactNote> create(
+    @RequestBody ContactNote contactNote
+  ) {
+    ContactNote savedContactNote = contactNoteRepo.save(
+      setRelationship(contactNote)
     );
 
-    item.setSale(sale);
-    item.setContact(contact);
-
-    ContactNote saved = contactNoteRepo.save(item);
-
-    return ResponseEntity.ok().body(saved);
+    return ResponseEntity.ok(savedContactNote);
   }
 
   @Transactional
@@ -133,7 +128,7 @@ class ContactNoteController {
 
     contactNoteForUpdate.setText(contactNote.getText());
 
-    return ResponseEntity.ok().body(contactNoteForUpdate);
+    return ResponseEntity.ok(contactNoteForUpdate);
   }
 
   @DeleteMapping("{id}")

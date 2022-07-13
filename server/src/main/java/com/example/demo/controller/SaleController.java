@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleRegisterResponseDto;
-import com.example.demo.dto.SaleResponseDto;
 import com.example.demo.dto.UpdateSaleDto;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
@@ -10,10 +9,8 @@ import com.example.demo.mapper.SaleMapper;
 import com.example.demo.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,8 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -128,17 +123,12 @@ class SaleController {
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Sales", id));
 
-    return ResponseEntity.ok().body(Arrays.asList(sales));
+    return ResponseEntity.ok(Arrays.asList(sales));
   }
 
   @GetMapping("{id}")
   public ResponseEntity<Sale> getById(@PathVariable("id") Long id) {
     System.out.println(id);
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-  }
-
-  @PostMapping
-  public ResponseEntity<Sale> create(@RequestBody Sale item) {
     return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
@@ -160,13 +150,13 @@ class SaleController {
     sale.get().setRole(dto.getRole());
     sale.get().setStatus(FORMAL);
 
-    return ResponseEntity.ok().body(sale.get());
+    return ResponseEntity.ok(sale.get());
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     saleRepo.deleteById(id);
-    return ResponseEntity.ok().body(null);
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("bulk_insert")

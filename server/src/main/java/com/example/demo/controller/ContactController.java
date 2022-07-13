@@ -118,7 +118,7 @@ class ContactController {
       throw new ItemNotFoundException("Contact", id);
     }
 
-    return ResponseEntity.ok().body(processContact(contact));
+    return ResponseEntity.ok(processContact(contact));
   }
 
   @GetMapping(params = "id")
@@ -127,13 +127,13 @@ class ContactController {
   ) {
     List<Contact> contacts = contactMapper.getContactsByIds(ids);
 
-    return ResponseEntity.ok().body(contacts);
+    return ResponseEntity.ok(contacts);
   }
 
   @PostMapping
-  public ResponseEntity<Contact> create(@RequestBody Contact item) {
-    Contact contact = contactRepo.save(item);
-    return ResponseEntity.ok().body(contact);
+  public ResponseEntity<Contact> create(@RequestBody Contact contact) {
+    Contact savedContact = contactRepo.save(setRelationship(contact));
+    return ResponseEntity.ok(savedContact);
   }
 
   @Transactional
@@ -170,7 +170,7 @@ class ContactController {
 
     Contact savedContact = contactRepo.save(contactDto);
 
-    return ResponseEntity.ok().body(savedContact);
+    return ResponseEntity.ok(savedContact);
   }
 
   @DeleteMapping("{id}")
