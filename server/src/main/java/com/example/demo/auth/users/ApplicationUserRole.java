@@ -25,7 +25,7 @@ public enum ApplicationUserRole {
   }
 
   public List<GrantedAuthority> getGrantedAuthorities() {
-    List<GrantedAuthority> permissions = getPermissions()
+    List<GrantedAuthority> grantedAuthorities = getPermissions()
       .stream()
       .map(
         permission ->
@@ -35,7 +35,7 @@ public enum ApplicationUserRole {
       )
       .collect(Collectors.toList());
 
-    permissions.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-    return permissions;
+    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+    return grantedAuthorities;
   }
 }

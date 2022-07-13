@@ -126,12 +126,6 @@ class SaleController {
     return ResponseEntity.ok(Arrays.asList(sales));
   }
 
-  @GetMapping("{id}")
-  public ResponseEntity<Sale> getById(@PathVariable("id") Long id) {
-    System.out.println(id);
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-  }
-
   @Transactional
   @PutMapping("update_role")
   public ResponseEntity<Sale> update(@Valid @RequestBody UpdateSaleDto dto) {
