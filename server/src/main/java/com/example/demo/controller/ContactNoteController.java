@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.auth.users.ApplicationUser;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.ContactNote;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Contact_Notes")
-@RequestMapping("/contactNotes")
+@RequestMapping(CONTACTNOTES_ENDPOINT)
 class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.DealNote;
 import com.example.demo.entity.Sale;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Deal_Note")
-@RequestMapping("/dealNotes")
+@RequestMapping(DEALNOTES_ENDPOINT)
 class DealNoteController {
 
   private final DealNoteRepository dealNoteRepo;

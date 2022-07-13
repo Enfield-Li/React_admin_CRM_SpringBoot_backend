@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Task;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Tasks")
-@RequestMapping("/tasks")
+@RequestMapping(TASKS_ENDPOINT)
 class TaskController {
 
   private final TaskRepository taskRepo;

@@ -2,6 +2,7 @@ package com.example.demo.auth;
 
 import static com.example.demo.auth.users.ApplicationUserPermission.*;
 import static com.example.demo.auth.users.ApplicationUserRole.*;
+import static com.example.demo.utils.ConstantUtils.*;
 
 import com.example.demo.auth.filters.AuthenticationFilter;
 import com.example.demo.auth.filters.LoginFilter;
@@ -13,7 +14,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,13 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-  // https://stackoverflow.com/a/71858153/16648127
-  private static final String SWAGGER_UI_PATH_1 = "/swagger-ui/**";
-  private static final String SWAGGER_UI_PATH_2 = "/v3/api-docs/**";
-
-  private static final String LOGIN_ENDPOINT = "/sales/login";
-  private static final String LOGOUT_ENDPOINT = "/sales/logout";
 
   private final PasswordEncoder passwordEncoder;
   private final ApplicationUserService saleService;
@@ -58,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       .antMatchers(
         "/",
-        "/sales/register",
-        "/sales/test",
+        TEST_ENDPOINT,
+        REGISTER_ENDPOINT,
         SWAGGER_UI_PATH_1,
         SWAGGER_UI_PATH_2
       )
@@ -68,16 +61,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        * 认证部分（Authorization）
        */
       // Authorities based permission
-      .antMatchers(HttpMethod.POST, "/tags")
+      .antMatchers(HttpMethod.POST, TAGS_ENDPOINT)
       .hasAuthority(CREATE_TAG.getPermission())
-      .antMatchers(HttpMethod.PUT, "/companies")
+      .antMatchers(HttpMethod.PUT, COMPANIES_ENDPOINT)
       .hasAuthority(EDIT_COMPANY.getPermission())
       // Role based permission
-      .antMatchers("/sales/update_role")
+      .antMatchers(UPDATE_SALE_ENDPOINT)
       .hasRole(SUPER_USER.name())
-      .antMatchers(HttpMethod.DELETE, "/companies")
+      .antMatchers(HttpMethod.DELETE, COMPANIES_ENDPOINT)
       .hasAnyRole(SALE_ADMIN.name(), SUPER_USER.name())
-      .antMatchers(HttpMethod.DELETE, "/deals")
+      .antMatchers(HttpMethod.DELETE, DEALS_ENDPOINT)
       .hasAnyRole(SALE_ADMIN.name(), SUPER_USER.name())
       /*
        * 授权部分（Authentication）

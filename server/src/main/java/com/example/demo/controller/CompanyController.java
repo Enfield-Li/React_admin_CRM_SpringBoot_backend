@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Company")
-@RequestMapping("/companies")
+@RequestMapping(COMPANIES_ENDPOINT)
 class CompanyController {
 
   private final CompanyRepository companyRepo;

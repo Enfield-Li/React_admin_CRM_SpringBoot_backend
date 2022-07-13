@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.dto.UpdateDealDto;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
@@ -30,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Deal")
-@RequestMapping("/deals")
+@RequestMapping(DEALS_ENDPOINT)
 class DealController {
 
   private final DealRespository dealRepo;

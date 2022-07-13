@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Contact")
-@RequestMapping("/contacts")
+@RequestMapping(CONTACTS_ENDPOINT)
 class ContactController {
 
   private final ContactRepository contactRepo;

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import static com.example.demo.utils.ConstantUtils.*;
+
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleRegisterResponseDto;
 import com.example.demo.dto.UpdateSaleDto;
@@ -31,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Sale")
-@RequestMapping("/sales")
+@RequestMapping(SALES_ENDPOINT)
 class SaleController {
 
   private static final String PENDING = "pending";

@@ -1,7 +1,14 @@
 package com.example.demo.controller;
 
-import java.util.List;
+import static com.example.demo.utils.ConstantUtils.*;
 
+import com.example.demo.dto.DeleteTagsDto;
+import com.example.demo.entity.Tags;
+import com.example.demo.exception.ItemNotFoundException;
+import com.example.demo.mapper.TagsMapper;
+import com.example.demo.repository.TagsRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.DeleteTagsDto;
-import com.example.demo.entity.Tags;
-import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.mapper.TagsMapper;
-import com.example.demo.repository.TagsRepository;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 @RestController
 @Tag(name = "Tag")
-@RequestMapping("/tags")
+@RequestMapping(TAGS_ENDPOINT)
 class TagsController {
 
   private final TagsRepository tagsRepo;
