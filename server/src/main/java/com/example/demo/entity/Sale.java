@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,15 +41,19 @@ public class Sale {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @JsonIgnore
-  @Column(nullable = false)
-  private String password;
-
-  private String role;
   private String email;
   private String status;
   private String last_name;
   private String first_name;
+
+  @JsonIgnore
+  @Column(nullable = false)
+  private String password;
+
+  // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
+  @Column(length = 20)
+  @Enumerated(EnumType.STRING)
+  private ApplicationUserRole role;
 
   @Transient
   private String username;
@@ -84,30 +90,7 @@ public class Sale {
     return first_name + " " + last_name;
   }
 
-  // Based on user role, return respective authorities
   public List<GrantedAuthority> getUserAuthorities() {
-    List<GrantedAuthority> authorities = null;
-
-    switch (role) {
-      case "SALE_PERSON":
-        authorities = SALE_PERSON.getGrantedAuthorities();
-        break;
-      case "SALE_ADMIN":
-        authorities = SALE_ADMIN.getGrantedAuthorities();
-        break;
-      case "SUPER_USER":
-        authorities = SUPER_USER.getGrantedAuthorities();
-        break;
-      default:
-        throw new IllegalStateException(
-          "User role is not valid, cannot get granted authorities."
-        );
-    }
-
-    return authorities;
-  }
-
-  public void setRole(ApplicationUserRole saleRole) {
-    this.role = saleRole.name();
+    return role.getGrantedAuthorities();
   }
 }
