@@ -24,10 +24,12 @@ const initialDeals: DealsByColumn = stages.reduce(
 );
 
 const getDealsByColumn = (data: Deal[]): DealsByColumn => {
+    // console.log(data)
     // group deals by column
     const columns = data.reduce(
         (acc, record) => {
-            acc[record.stage].push(record);
+            // console.log(record.stage);
+            if (acc[record.stage]) acc[record.stage].push(record);
             return acc;
         },
         stages.reduce((obj, stage) => ({ ...obj, [stage]: [] }), {} as any)
