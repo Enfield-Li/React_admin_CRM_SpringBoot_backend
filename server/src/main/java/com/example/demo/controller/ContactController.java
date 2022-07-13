@@ -197,10 +197,9 @@ class ContactController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
+  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     contactRepo.deleteById(id);
-
-    return ResponseEntity.ok().body(true);
+    return ResponseEntity.ok().build();
   }
 
   private Contact processContact(Contact contact) {

@@ -5,8 +5,8 @@ import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,9 +44,9 @@ public class Deal {
   @Column(name = "_index")
   private Integer index;
 
-  private Instant created_at;
-  private Instant updated_at;
-  private Instant start_at;
+  private Date created_at;
+  private Date updated_at;
+  private Date start_at;
 
   private String name;
   private Long amount;

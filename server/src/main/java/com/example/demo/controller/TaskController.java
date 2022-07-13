@@ -107,7 +107,8 @@ class TaskController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
+    taskRepo.deleteById(id);
+    return ResponseEntity.ok().body(true);
   }
 }

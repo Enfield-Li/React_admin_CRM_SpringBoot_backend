@@ -158,6 +158,7 @@ class DealController {
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    dealRepo.deleteById(id);
+    return ResponseEntity.ok().build();
   }
 }

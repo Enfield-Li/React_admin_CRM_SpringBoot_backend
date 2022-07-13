@@ -77,6 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .hasRole(SUPER_USER.name())
       .antMatchers(HttpMethod.DELETE, "/companies")
       .hasAnyRole(SALE_ADMIN.name(), SUPER_USER.name())
+      .antMatchers(HttpMethod.DELETE, "/deals")
+      .hasAnyRole(SALE_ADMIN.name(), SUPER_USER.name())
       /*
        * 授权部分（Authentication）
        */

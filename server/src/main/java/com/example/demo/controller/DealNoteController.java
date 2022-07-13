@@ -5,13 +5,8 @@ import com.example.demo.entity.DealNote;
 import com.example.demo.entity.Sale;
 import com.example.demo.mapper.DealNoteMapper;
 import com.example.demo.repository.DealNoteRepository;
-import com.example.demo.repository.DealRespository;
-import com.example.demo.repository.SaleRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,7 +96,8 @@ class DealNoteController {
 
   @PostMapping
   public ResponseEntity<DealNote> create(@RequestBody DealNote item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    DealNote createdNote = dealNoteRepo.save(item);
+    return ResponseEntity.ok().body(createdNote);
   }
 
   @PutMapping("{id}")
@@ -109,11 +105,13 @@ class DealNoteController {
     @PathVariable("id") Long id,
     @RequestBody DealNote item
   ) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    DealNote updatednote = dealNoteRepo.save(item);
+    return ResponseEntity.ok().body(updatednote);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    dealNoteRepo.deleteById(id);
+    return ResponseEntity.ok().build();
   }
 }

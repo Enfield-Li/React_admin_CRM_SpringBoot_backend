@@ -1,9 +1,8 @@
 package com.example.demo.entity;
 
-import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.LAZY;
 
-import java.time.Instant;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +26,7 @@ public class Task {
 
   private String type;
   private String text;
-  private Instant due_date;
+  private Date due_date;
 
   @Column(updatable = false, insertable = false)
   private Long sales_id;

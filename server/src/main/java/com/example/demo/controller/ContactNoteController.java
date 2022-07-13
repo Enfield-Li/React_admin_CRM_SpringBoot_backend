@@ -155,6 +155,6 @@ class ContactNoteController {
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     contactNoteRepo.deleteById(id);
 
-    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    return ResponseEntity.ok().build();
   }
 }

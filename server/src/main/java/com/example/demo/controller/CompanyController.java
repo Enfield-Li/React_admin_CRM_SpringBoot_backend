@@ -140,7 +140,6 @@ class CompanyController {
     @RequestParam("id") List<Long> ids
   ) {
     List<Company> products = companyMapper.getManyReferences(ids);
-
     return ResponseEntity.ok().body(products);
   }
 
@@ -160,8 +159,8 @@ class CompanyController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
+  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     companyRepo.deleteById(id);
-    return ResponseEntity.ok().body(true);
+    return ResponseEntity.ok().build();
   }
 }
