@@ -6,12 +6,13 @@ import com.example.demo.entity.Contact;
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.DealMapper;
+import com.example.demo.mapper.DealMapper;
 import com.example.demo.repository.DealRespository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,7 @@ class DealController {
           deal.getCompany_id()
         );
 
-        List<Contact> contact_list = new ArrayList<>();
+        Set<Contact> contact_list = new HashSet<>();
         deal
           .getContact_list()
           .forEach(

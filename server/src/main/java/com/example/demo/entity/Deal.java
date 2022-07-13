@@ -1,13 +1,15 @@
 package com.example.demo.entity;
 
 import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -54,24 +57,28 @@ public class Deal {
   @Transient
   private List<Long> contact_ids = new ArrayList<>();
 
+  @JsonIgnore
+  @OneToMany(mappedBy = "deal", cascade = { DETACH, DETACH }, fetch = LAZY)
+  private Set<DealNote> dealNote = new HashSet<>();
+
   @Column(updatable = false, insertable = false)
   private Long sales_id;
+
+  @JsonIgnore
+  @ManyToOne(fetch = LAZY)
+  @JoinColumn(name = "sales_id")
+  private Sale sale;
 
   @Column(updatable = false, insertable = false)
   private Long company_id;
 
   @JsonIgnore
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
-  @JoinColumn(name = "sales_id")
-  private Sale sale;
-
-  @JsonIgnore
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
 
   @JsonIgnore
-  @ManyToMany(cascade = DETACH, fetch = LAZY)
+  @ManyToMany(cascade = { PERSIST, DETACH }, fetch = LAZY)
   @JoinTable(
     name = "deal_contact",
     joinColumns = @JoinColumn(name = "deal_id"),
@@ -80,5 +87,5 @@ public class Deal {
       columnNames = { "deal_id", "contact_id" }
     )
   )
-  private List<Contact> contact_list = new ArrayList<>();
+  private Set<Contact> contact_list = new HashSet<>();
 }

@@ -6,7 +6,7 @@ import com.example.demo.dto.SaleResponseDto;
 import com.example.demo.dto.UpdateSaleDto;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.SaleMapper;
+import com.example.demo.mapper.SaleMapper;
 import com.example.demo.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
@@ -61,7 +61,6 @@ class SaleController {
     return "Have access";
   }
 
-  // Javonte Mills
   @PostMapping("login")
   public void login(@RequestBody LoginSaleDto dto) {}
 

@@ -30,16 +30,16 @@ public class Task {
   private Instant due_date;
 
   @Column(updatable = false, insertable = false)
-  private Long contact_id;
-
-  @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @Column(updatable = false, insertable = false)
+  private Long contact_id;
+
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
 }

@@ -37,14 +37,14 @@ public class DealNote {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @Column(updatable = false, insertable = false)
-  private Long deal_id;
-
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @Column(updatable = false, insertable = false)
+  private Long deal_id;
+
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "deal_id")
   private Deal deal;
 }

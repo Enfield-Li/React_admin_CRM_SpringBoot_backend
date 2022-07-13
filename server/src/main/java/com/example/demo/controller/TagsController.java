@@ -1,15 +1,20 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.DeleteTagsDto;
+import com.example.demo.entity.Contact;
 import com.example.demo.entity.Tags;
-import com.example.demo.repository.TagsMapper;
+import com.example.demo.exception.ItemNotFoundException;
+import com.example.demo.mapper.TagsMapper;
 import com.example.demo.repository.TagsRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,14 +76,19 @@ class TagsController {
     return ResponseEntity.ok().body(contacts);
   }
 
+  @Transactional
   @DeleteMapping
   public ResponseEntity<Boolean> deleteTag(@RequestBody DeleteTagsDto dto) {
-    if (dto.getId() != null) {
-      tagsRepo.deleteById(dto.getId());
-    } else {
-      tagsRepo.deleteTagsByName(dto.getName());
-    }
+    try {
+      if (dto.getId() != null) {
+        tagsRepo.deleteById(dto.getId());
+      } else {
+        tagsRepo.deleteTagsByName(dto.getName());
+      }
 
-    return ResponseEntity.ok().body(true);
+      return ResponseEntity.ok().body(true);
+    } catch (EmptyResultDataAccessException e) {
+      throw new ItemNotFoundException("Tag", dto.getId());
+    }
   }
 }

@@ -5,9 +5,8 @@ import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Tags;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.ContactMapper;
+import com.example.demo.mapper.ContactMapper;
 import com.example.demo.repository.ContactRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,7 +73,7 @@ class ContactController {
             .getTags()
             .stream()
             .map(tag -> entityManager.getReference(Tags.class, tag))
-            .collect(Collectors.toList())
+            .collect(Collectors.toSet())
         );
       }
     );
@@ -155,10 +155,11 @@ class ContactController {
 
   @PostMapping
   public ResponseEntity<Contact> create(@RequestBody Contact item) {
-    System.out.println(item.toString());
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    Contact contact = contactRepo.save(item);
+    return ResponseEntity.ok().body(contact);
   }
 
+  @Transactional
   @PutMapping("{id}")
   public ResponseEntity<Contact> update(
     @PathVariable("id") Long id,
@@ -174,7 +175,7 @@ class ContactController {
           .getTags()
           .stream()
           .map(tag -> entityManager.getReference(Tags.class, tag))
-          .collect(Collectors.toList())
+          .collect(Collectors.toSet())
       );
 
       contactRepo.save(contact);
@@ -187,7 +188,7 @@ class ContactController {
         .getTags()
         .stream()
         .map(tag -> entityManager.getReference(Tags.class, tag))
-        .collect(Collectors.toList())
+        .collect(Collectors.toSet())
     );
 
     Contact savedContact = contactRepo.save(contactDto);
@@ -196,8 +197,10 @@ class ContactController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
+    contactRepo.deleteById(id);
+
+    return ResponseEntity.ok().body(true);
   }
 
   private Contact processContact(Contact contact) {

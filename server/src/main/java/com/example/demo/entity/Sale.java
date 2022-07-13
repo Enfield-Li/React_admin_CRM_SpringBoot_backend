@@ -1,17 +1,21 @@
 package com.example.demo.entity;
 
-import static com.example.demo.auth.users.ApplicationUserRole.SALE_ADMIN;
-import static com.example.demo.auth.users.ApplicationUserRole.SALE_PERSON;
-import static com.example.demo.auth.users.ApplicationUserRole.SUPER_USER;
+import static com.example.demo.auth.users.ApplicationUserRole.*;
+import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.auth.users.ApplicationUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -48,6 +52,30 @@ public class Sale {
   @Transient
   private String username;
 
+  @JsonIgnore
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  private Set<Company> companies = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  private Set<Task> tasks = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  private Set<Deal> deals = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  private Set<DealNote> dealNote = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  private Set<Contact> contacts = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  private Set<ContactNote> contactNotes = new HashSet<>();
+
   public String getUsername() {
     if (last_name == null) {
       return first_name;
@@ -71,7 +99,9 @@ public class Sale {
         authorities = SUPER_USER.getGrantedAuthorities();
         break;
       default:
-        break;
+        throw new IllegalStateException(
+          "User role is not valid, cannot get granted authorities."
+        );
     }
 
     return authorities;

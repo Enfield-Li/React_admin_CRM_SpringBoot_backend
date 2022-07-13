@@ -4,6 +4,7 @@ import static com.example.demo.utils.ConstantUtils.userInSession;
 
 import com.example.demo.auth.users.ApplicationUser;
 import java.io.IOException;
+import java.util.Enumeration;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -25,6 +26,12 @@ public class AuthenticationFilter extends GenericFilterBean {
     throws IOException, ServletException {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpSession session = req.getSession();
+
+    // Enumeration<String> attributes = session.getAttributeNames();
+    // while (attributes.hasMoreElements()) {
+    //   String attribute = (String) attributes.nextElement();
+    //   System.out.println(attribute + " : " + session.getAttribute(attribute));
+    // }
 
     ApplicationUser user = (ApplicationUser) session.getAttribute(
       userInSession

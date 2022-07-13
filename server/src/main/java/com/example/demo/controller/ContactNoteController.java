@@ -5,7 +5,7 @@ import com.example.demo.entity.Contact;
 import com.example.demo.entity.ContactNote;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.ContactNoteMapper;
+import com.example.demo.mapper.ContactNoteMapper;
 import com.example.demo.repository.ContactNoteRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

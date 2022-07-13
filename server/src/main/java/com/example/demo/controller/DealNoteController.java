@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.DealNote;
 import com.example.demo.entity.Sale;
-import com.example.demo.repository.DealNoteMapper;
+import com.example.demo.mapper.DealNoteMapper;
 import com.example.demo.repository.DealNoteRepository;
 import com.example.demo.repository.DealRespository;
 import com.example.demo.repository.SaleRepository;
