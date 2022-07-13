@@ -53,22 +53,7 @@ class ContactNoteController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<ContactNote> contactNotes) {
-    contactNotes.forEach(
-      contactNote -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          contactNote.getSales_id()
-        );
-        Contact contact = entityManager.getReference(
-          Contact.class,
-          contactNote.getContact_id()
-        );
-
-        contactNote.setSale(sale);
-        contactNote.setContact(contact);
-      }
-    );
-
+    contactNotes.forEach(contactNote -> setRelationship(contactNote));
     contactNoteRepo.saveAll(contactNotes);
   }
 
@@ -156,5 +141,21 @@ class ContactNoteController {
     contactNoteRepo.deleteById(id);
 
     return ResponseEntity.ok().build();
+  }
+
+  private ContactNote setRelationship(ContactNote contactNote) {
+    Sale sale = entityManager.getReference(
+      Sale.class,
+      contactNote.getSales_id()
+    );
+    Contact contact = entityManager.getReference(
+      Contact.class,
+      contactNote.getContact_id()
+    );
+
+    contactNote.setSale(sale);
+    contactNote.setContact(contact);
+
+    return contactNote;
   }
 }

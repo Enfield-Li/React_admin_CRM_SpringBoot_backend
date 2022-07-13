@@ -49,7 +49,6 @@ class TagsController {
   @PostMapping
   public ResponseEntity<Tags> createTag(@RequestBody Tags tag) {
     Tags savedtag = tagsRepo.save(tag);
-
     return ResponseEntity.ok().body(savedtag);
   }
 

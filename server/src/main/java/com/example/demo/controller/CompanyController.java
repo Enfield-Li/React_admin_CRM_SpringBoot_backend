@@ -44,16 +44,7 @@ class CompanyController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Company> companies) {
-    companies.forEach(
-      company -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          company.getSales_id()
-        );
-        company.setSale(sale);
-      }
-    );
-
+    companies.forEach(company -> setRelationship(company));
     companyRepo.saveAll(companies);
   }
 
@@ -162,5 +153,11 @@ class CompanyController {
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     companyRepo.deleteById(id);
     return ResponseEntity.ok().build();
+  }
+
+  private Company setRelationship(Company company) {
+    Sale sale = entityManager.getReference(Sale.class, company.getSales_id());
+    company.setSale(sale);
+    return company;
   }
 }

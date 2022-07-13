@@ -54,30 +54,7 @@ class ContactController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Contact> contacts) {
-    contacts.forEach(
-      contact -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          contact.getSales_id()
-        );
-        Company company = entityManager.getReference(
-          Company.class,
-          contact.getCompany_id()
-        );
-
-        contact.setSale(sale);
-        contact.setCompany(company);
-
-        contact.setTag_list(
-          contact
-            .getTags()
-            .stream()
-            .map(tag -> entityManager.getReference(Tags.class, tag))
-            .collect(Collectors.toSet())
-        );
-      }
-    );
-
+    contacts.forEach(contact -> setRelationship(contact));
     contactRepo.saveAll(contacts);
   }
 
@@ -217,6 +194,27 @@ class ContactController {
       contact.setRaw_tags(null);
       contact.setTags(tags);
     }
+
+    return contact;
+  }
+
+  private Contact setRelationship(Contact contact) {
+    Sale sale = entityManager.getReference(Sale.class, contact.getSales_id());
+    Company company = entityManager.getReference(
+      Company.class,
+      contact.getCompany_id()
+    );
+
+    contact.setSale(sale);
+    contact.setCompany(company);
+
+    contact.setTag_list(
+      contact
+        .getTags()
+        .stream()
+        .map(tag -> entityManager.getReference(Tags.class, tag))
+        .collect(Collectors.toSet())
+    );
 
     return contact;
   }

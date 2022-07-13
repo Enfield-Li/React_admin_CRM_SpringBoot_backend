@@ -7,7 +7,6 @@ import com.example.demo.mapper.TaskMapper;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
 import com.example.demo.repository.TaskRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +48,7 @@ class TaskController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Task> tasks) {
-    tasks.forEach(
-      task -> {
-        Sale sale = entityManager.getReference(Sale.class, task.getSales_id());
-        Contact contact = entityManager.getReference(
-          Contact.class,
-          task.getContact_id()
-        );
-
-        task.setSale(sale);
-        task.setContact(contact);
-      }
-    );
-
+    tasks.forEach(task -> setRelationship(task));
     taskRepo.saveAll(tasks);
   }
 
@@ -110,5 +97,18 @@ class TaskController {
   public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
     taskRepo.deleteById(id);
     return ResponseEntity.ok().body(true);
+  }
+
+  private Task setRelationship(Task task) {
+    Sale sale = entityManager.getReference(Sale.class, task.getSales_id());
+    Contact contact = entityManager.getReference(
+      Contact.class,
+      task.getContact_id()
+    );
+
+    task.setSale(sale);
+    task.setContact(contact);
+
+    return task;
   }
 }

@@ -10,6 +10,7 @@ import com.example.demo.mapper.DealMapper;
 import com.example.demo.repository.DealRespository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,12 +47,14 @@ class DealController {
   }
 
   @PostMapping("test")
-  public void test() {}
+  public List<Deal> test() {
+    // return dealMapper.getCompanyDeals();
+    return null;
+  }
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Deal> deals) {
-    deals.forEach(deal -> formRelationship(deal));
-
+    deals.forEach(deal -> setRelationship(deal));
     dealRepo.saveAll(deals);
   }
 
@@ -94,7 +97,7 @@ class DealController {
     return ResponseEntity
       .ok()
       .header("X-Total-Count", dealCount)
-      .body(companyDeals);
+      .body(processDeal(companyDeals));
   }
 
   @GetMapping(params = "id")
@@ -136,7 +139,7 @@ class DealController {
     return ResponseEntity.ok().build();
   }
 
-  private Deal formRelationship(Deal deal) {
+  private Deal setRelationship(Deal deal) {
     Sale sale = entityManager.getReference(Sale.class, deal.getSales_id());
 
     Company company = entityManager.getReference(
@@ -161,5 +164,20 @@ class DealController {
     deal.setCompany(company);
     deal.setContact_list(contact_list);
     return deal;
+  }
+
+  private List<Deal> processDeal(List<Deal> deals) {
+    for (Deal deal : deals) {
+      String[] ids = deal.getContactIdsString().split(",");
+      List<String> idsString = Arrays.asList(ids);
+
+      List<Long> idsLong = new ArrayList<>();
+      idsString.forEach(id -> idsLong.add(Long.parseLong(id)));
+
+      deal.setContact_ids(idsLong);
+      deal.setContactIdsString(null);
+    }
+
+    return deals;
   }
 }

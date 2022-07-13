@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.DealMapper">
     <select id="getCompanyDeals" resultType="com.example.demo.entity.Deal">
-        SELECT *, _index as 'index', _description as description FROM deal
+        SELECT d.*, d._index as 'index', d._description as description, 
+            GROUP_CONCAT(DISTINCT dc.contact_id) AS contactIdString
+        FROM deal d
+        LEFT JOIN deal_contact dc on d.id = dc.deal_id
         <where>
             <if test="company_id != null">company_id = #{company_id}</if>
             <if test="sales_id != null">AND sales_id = #{sales_id}</if>
@@ -17,6 +20,7 @@
                 )
             </if>
         </where>
+        GROUP BY d.id
         ORDER BY ${sort} ${order}
         LIMIT #{take}
         OFFSET #{start}

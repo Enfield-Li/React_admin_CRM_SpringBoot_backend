@@ -55,6 +55,9 @@ public class Deal {
   private String stage;
 
   @Transient
+  private String contactIdsString;
+
+  @Transient
   private List<Long> contact_ids = new ArrayList<>();
 
   @JsonIgnore

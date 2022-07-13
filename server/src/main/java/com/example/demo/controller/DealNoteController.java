@@ -44,8 +44,7 @@ class DealNoteController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<DealNote> dealNotes) {
-    dealNotes.forEach(dealNote -> formRelationship(dealNote));
-
+    dealNotes.forEach(dealNote -> setRelationship(dealNote));
     dealNoteRepo.saveAll(dealNotes);
   }
 
@@ -101,7 +100,7 @@ class DealNoteController {
     return ResponseEntity.ok().build();
   }
 
-  private DealNote formRelationship(DealNote dealNote) {
+  private DealNote setRelationship(DealNote dealNote) {
     Sale sale = entityManager.getReference(Sale.class, dealNote.getSales_id());
     Deal deal = entityManager.getReference(Deal.class, dealNote.getDeal_id());
 
