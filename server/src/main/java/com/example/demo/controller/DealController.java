@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -127,10 +128,9 @@ class DealController {
   @PutMapping("{id}")
   public ResponseEntity<Boolean> update(
     @PathVariable("id") Long id,
-    @RequestBody UpdateDealDto item
+    @Valid @RequestBody UpdateDealDto item
   ) {
     Integer rowsAffected = dealMapper.updateDealStatus(id, item.getStage());
-
     return ResponseEntity.ok(rowsAffected > 0);
   }
 
@@ -171,7 +171,7 @@ class DealController {
     deals.forEach(
       deal -> {
         String contactIdsString = deal.getContactIdsString();
-        
+
         if (contactIdsString != null) {
           String[] ids = contactIdsString.split(",");
           List<String> idsString = Arrays.asList(ids);

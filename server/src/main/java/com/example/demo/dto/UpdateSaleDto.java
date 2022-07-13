@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.example.demo.auth.users.ApplicationUserRole;
 import lombok.Data;
 
@@ -8,5 +10,7 @@ public class UpdateSaleDto {
 
   private Long id;
   private String username;
+
+  @NotNull
   private ApplicationUserRole role;
 }

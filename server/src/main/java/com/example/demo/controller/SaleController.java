@@ -57,7 +57,7 @@ class SaleController {
   }
 
   @PostMapping("login")
-  public void login(@RequestBody LoginSaleDto dto) {}
+  public void login(@Valid @RequestBody LoginSaleDto dto) {}
 
   @PostMapping("register")
   public SaleRegisterResponseDto register(
@@ -134,7 +134,7 @@ class SaleController {
 
   @Transactional
   @PutMapping("update_role")
-  public ResponseEntity<Sale> update(@RequestBody UpdateSaleDto dto) {
+  public ResponseEntity<Sale> update(@Valid @RequestBody UpdateSaleDto dto) {
     Optional<Sale> sale = null;
 
     if (dto.getId() != null) {

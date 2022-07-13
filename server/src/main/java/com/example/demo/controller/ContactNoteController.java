@@ -69,7 +69,7 @@ class ContactNoteController {
   ) {
     Integer take = end - start;
 
-    List<ContactNote> contacts = contactNoteMapper.getAllContactNotes(
+    List<ContactNote> contactNotes = contactNoteMapper.getAllContactNotes(
       start,
       take,
       sort,
@@ -86,7 +86,7 @@ class ContactNoteController {
     return ResponseEntity
       .ok()
       .header("X-Total-Count", contactNoteCount)
-      .body(contacts);
+      .body(contactNotes);
   }
 
   @GetMapping("{id}")
