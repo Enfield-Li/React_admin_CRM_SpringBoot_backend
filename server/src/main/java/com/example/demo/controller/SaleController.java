@@ -53,15 +53,15 @@ class SaleController {
     this.passwordEncoder = passwordEncoder;
   }
 
-  @PostMapping("test")
+  @PostMapping(TEST)
   public String test() {
     return "Have access";
   }
 
-  @PostMapping("login")
+  @PostMapping(LOGIN)
   public void login(@Valid @RequestBody LoginSaleDto dto) {}
 
-  @PostMapping("register")
+  @PostMapping(REGISTER)
   public SaleRegisterResponseDto register(
     @Valid @RequestBody LoginSaleDto dto
   ) {
@@ -94,7 +94,7 @@ class SaleController {
     }
   }
 
-  @PostMapping("logout")
+  @PostMapping(LOGOUT)
   public void logout() {}
 
   @GetMapping("me")
@@ -129,7 +129,7 @@ class SaleController {
   }
 
   @Transactional
-  @PutMapping("update_role")
+  @PutMapping(UPDATE_ROLE)
   public ResponseEntity<Sale> update(@Valid @RequestBody UpdateSaleDto dto) {
     Optional<Sale> sale = null;
 
