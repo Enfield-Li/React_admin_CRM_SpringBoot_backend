@@ -1,4 +1,4 @@
-package com.example.demo.auth.users;
+package com.example.demo.auth.user;
 
 import com.example.demo.entity.Sale;
 import java.util.Collection;

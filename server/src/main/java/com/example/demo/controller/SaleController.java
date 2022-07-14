@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import static com.example.demo.utils.ConstantUtils.*;
+import static com.example.demo.util.Constants.*;
 
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleRegisterResponseDto;
@@ -54,7 +54,7 @@ class SaleController {
   }
 
   @PostMapping("test")
-  public String test(@Valid @RequestBody LoginSaleDto dto) {
+  public String test() {
     return "Have access";
   }
 

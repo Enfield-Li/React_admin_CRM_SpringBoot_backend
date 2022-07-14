@@ -1,11 +1,11 @@
 package com.example.demo.entity;
 
-import static com.example.demo.auth.users.ApplicationUserRole.*;
+import static com.example.demo.auth.user.ApplicationUserRole.*;
 import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
-import com.example.demo.auth.users.ApplicationUserRole;
+import com.example.demo.auth.user.ApplicationUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.HashSet;
 import java.util.List;

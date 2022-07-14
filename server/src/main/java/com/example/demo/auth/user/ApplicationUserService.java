@@ -1,4 +1,4 @@
-package com.example.demo.auth.users;
+package com.example.demo.auth.user;
 
 import com.example.demo.repository.SaleRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicationUserService implements UserDetailsService {
 
-  private final SaleRepository saleRepository;
+  private final SaleRepository repo;
 
-  public ApplicationUserService(SaleRepository applicationUserDao) {
-    this.saleRepository = applicationUserDao;
+  public ApplicationUserService(SaleRepository repo) {
+    this.repo = repo;
   }
 
   @Override
   public UserDetails loadUserByUsername(String username)
     throws UsernameNotFoundException {
-    ApplicationUser saleDetails = saleRepository
+    return repo
       .findByFullName(username)
       .map(ApplicationUser::new)
       .orElseThrow(
@@ -27,7 +27,5 @@ public class ApplicationUserService implements UserDetailsService {
             String.format("Username %s not found", username)
           )
       );
-
-    return saleDetails;
   }
 }

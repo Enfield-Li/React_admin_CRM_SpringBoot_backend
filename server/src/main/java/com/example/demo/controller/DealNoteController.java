@@ -1,13 +1,14 @@
 package com.example.demo.controller;
 
-import static com.example.demo.utils.ConstantUtils.*;
-
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.DealNote;
 import com.example.demo.entity.Sale;
 import com.example.demo.mapper.DealNoteMapper;
 import com.example.demo.repository.DealNoteRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import static com.example.demo.util.Constants.*;
+
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.example.demo.auth.filters;
+package com.example.demo.auth.filter;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;

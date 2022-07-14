@@ -2,7 +2,8 @@ package com.example.demo.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.example.demo.auth.users.ApplicationUserRole;
+import com.example.demo.auth.user.ApplicationUserRole;
+
 import lombok.Data;
 
 @Data

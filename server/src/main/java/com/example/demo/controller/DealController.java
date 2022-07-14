@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import static com.example.demo.utils.ConstantUtils.*;
+import static com.example.demo.util.Constants.*;
 
 import com.example.demo.dto.UpdateDealDto;
 import com.example.demo.entity.Company;
@@ -166,6 +166,7 @@ class DealController {
     deal.setSale(sale);
     deal.setCompany(company);
     deal.setContact_list(contact_list);
+
     return deal;
   }
 
@@ -186,19 +187,6 @@ class DealController {
         }
       }
     );
-    // for (Deal deal : deals) {
-    //   String contactIdsString = deal.getContactIdsString();
-    //   if (contactIdsString == null) break;
-
-    //   String[] ids = contactIdsString.split(",");
-    //   List<String> idsString = Arrays.asList(ids);
-
-    //   List<Long> idsLong = new ArrayList<>();
-    //   idsString.forEach(id -> idsLong.add(Long.parseLong(id)));
-
-    //   deal.setContact_ids(idsLong);
-    //   deal.setContactIdsString(null);
-    // }
 
     return deals;
   }

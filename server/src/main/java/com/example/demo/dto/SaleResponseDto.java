@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.auth.users.ApplicationUser;
+import com.example.demo.auth.user.ApplicationUser;
 import com.example.demo.entity.Sale;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;

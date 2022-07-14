@@ -1,8 +1,9 @@
-package com.example.demo.auth.users;
-
-import static com.example.demo.auth.users.ApplicationUserPermission.*;
+package com.example.demo.auth.user;
 
 import com.google.common.collect.Sets;
+
+import static com.example.demo.auth.user.ApplicationUserPermission.*;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

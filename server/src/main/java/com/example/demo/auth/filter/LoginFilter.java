@@ -1,8 +1,8 @@
-package com.example.demo.auth.filters;
+package com.example.demo.auth.filter;
 
-import static com.example.demo.utils.ConstantUtils.userInSession;
+import static com.example.demo.util.Constants.ApplicationUserInSession;
 
-import com.example.demo.auth.users.ApplicationUser;
+import com.example.demo.auth.user.ApplicationUser;
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,12 +35,12 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     .readValue(req.getInputStream(), LoginSaleDto.class);
     System.out.println(dto.toString());
 
-    String username = dto.getUsername();
-    String password = dto.getPassword();
-
     return getAuthenticationManager()
       .authenticate(
-        new UsernamePasswordAuthenticationToken(username, password)
+        new UsernamePasswordAuthenticationToken(
+          dto.getUsername(),
+          dto.getPassword()
+        )
       );
   }
 
@@ -52,11 +52,11 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     Authentication auth
   )
     throws IOException, ServletException {
-    ApplicationUser user = (ApplicationUser) auth.getPrincipal();
+    ApplicationUser applicationUser = (ApplicationUser) auth.getPrincipal();
 
-    req.getSession().setAttribute(userInSession, user);
+    req.getSession().setAttribute(ApplicationUserInSession, applicationUser);
 
     res.setContentType("application/json");
-    res.getOutputStream().print(SaleResponseDto.toJSON(user));
+    res.getOutputStream().print(SaleResponseDto.toJSON(applicationUser));
   }
 }
