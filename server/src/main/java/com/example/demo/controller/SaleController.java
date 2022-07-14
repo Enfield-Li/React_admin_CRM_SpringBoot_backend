@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import static com.example.demo.util.Constants.*;
 
 import com.example.demo.dto.LoginSaleDto;
+import com.example.demo.dto.RegisterSaleDto;
 import com.example.demo.dto.SaleRegisterResponseDto;
 import com.example.demo.dto.UpdateSaleDto;
 import com.example.demo.entity.Sale;
@@ -13,8 +14,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.ConstraintViolationException;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -62,8 +64,9 @@ class SaleController {
   public void login(@Valid @RequestBody LoginSaleDto dto) {}
 
   @PostMapping(REGISTER)
-  public SaleRegisterResponseDto register(
-    @Valid @RequestBody LoginSaleDto dto
+  public ResponseEntity<SaleRegisterResponseDto> register(
+    @Valid @RequestBody RegisterSaleDto dto,
+    HttpSession session
   ) {
     try {
       String firstName = null;
@@ -85,12 +88,16 @@ class SaleController {
       newSale.setFirst_name(firstName);
       newSale.setLast_name(lastName);
       newSale.setPassword(passwordEncoder.encode(dto.getPassword()));
+      newSale.setRole(dto.getRole());
 
       Sale savedSale = saleRepo.save(newSale);
+      session.setAttribute(ApplicationUserInSession, savedSale);
 
-      return new SaleRegisterResponseDto(savedSale, null);
-    } catch (ConstraintViolationException err) {
-      return new SaleRegisterResponseDto(null, "Username already exist.");
+      return ResponseEntity.ok(new SaleRegisterResponseDto(savedSale, null));
+    } catch (DataIntegrityViolationException err) {
+      return ResponseEntity
+        .badRequest()
+        .body(new SaleRegisterResponseDto(null, "Username already exist."));
     }
   }
 

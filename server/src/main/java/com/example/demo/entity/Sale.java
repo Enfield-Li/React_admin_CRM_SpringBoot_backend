@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,14 +44,19 @@ public class Sale {
 
   private String email;
   private String status;
+
+  @NotNull
   private String last_name;
+
+  @NotNull
   private String first_name;
 
+  @NotNull
   @JsonIgnore
-  @Column(nullable = false)
   private String password;
 
   // https://vladmihalcea.com/the-best-way-to-map-an-enum-type-with-jpa-and-hibernate/
+  @NotNull
   @Column(length = 20)
   @Enumerated(EnumType.STRING)
   private ApplicationUserRole role;
