@@ -1,13 +1,14 @@
 package com.example.demo.controller;
 
+import static com.example.demo.util.Constants.*;
+
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Tags;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.ContactMapper;
+import com.example.demo.mapper.ContactMapper;
 import com.example.demo.repository.ContactRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Contact")
-@RequestMapping("/contacts")
+@RequestMapping(CONTACTS_ENDPOINT)
 class ContactController {
 
   private final ContactRepository contactRepo;
@@ -54,30 +56,7 @@ class ContactController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Contact> contacts) {
-    contacts.forEach(
-      contact -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          contact.getSales_id()
-        );
-        Company company = entityManager.getReference(
-          Company.class,
-          contact.getCompany_id()
-        );
-
-        contact.setSale(sale);
-        contact.setCompany(company);
-
-        contact.setTag_list(
-          contact
-            .getTags()
-            .stream()
-            .map(tag -> entityManager.getReference(Tags.class, tag))
-            .collect(Collectors.toList())
-        );
-      }
-    );
-
+    contacts.forEach(contact -> setRelationship(contact));
     contactRepo.saveAll(contacts);
   }
 
@@ -141,7 +120,7 @@ class ContactController {
       throw new ItemNotFoundException("Contact", id);
     }
 
-    return ResponseEntity.ok().body(processContact(contact));
+    return ResponseEntity.ok(processContact(contact));
   }
 
   @GetMapping(params = "id")
@@ -150,15 +129,16 @@ class ContactController {
   ) {
     List<Contact> contacts = contactMapper.getContactsByIds(ids);
 
-    return ResponseEntity.ok().body(contacts);
+    return ResponseEntity.ok(contacts);
   }
 
   @PostMapping
-  public ResponseEntity<Contact> create(@RequestBody Contact item) {
-    System.out.println(item.toString());
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Contact> create(@RequestBody Contact contact) {
+    Contact savedContact = contactRepo.save(setRelationship(contact));
+    return ResponseEntity.ok(savedContact);
   }
 
+  @Transactional
   @PutMapping("{id}")
   public ResponseEntity<Contact> update(
     @PathVariable("id") Long id,
@@ -174,7 +154,7 @@ class ContactController {
           .getTags()
           .stream()
           .map(tag -> entityManager.getReference(Tags.class, tag))
-          .collect(Collectors.toList())
+          .collect(Collectors.toSet())
       );
 
       contactRepo.save(contact);
@@ -187,17 +167,18 @@ class ContactController {
         .getTags()
         .stream()
         .map(tag -> entityManager.getReference(Tags.class, tag))
-        .collect(Collectors.toList())
+        .collect(Collectors.toSet())
     );
 
     Contact savedContact = contactRepo.save(contactDto);
 
-    return ResponseEntity.ok().body(savedContact);
+    return ResponseEntity.ok(savedContact);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    contactRepo.deleteById(id);
+    return ResponseEntity.ok().build();
   }
 
   private Contact processContact(Contact contact) {
@@ -215,6 +196,27 @@ class ContactController {
       contact.setRaw_tags(null);
       contact.setTags(tags);
     }
+
+    return contact;
+  }
+
+  private Contact setRelationship(Contact contact) {
+    Sale sale = entityManager.getReference(Sale.class, contact.getSales_id());
+    Company company = entityManager.getReference(
+      Company.class,
+      contact.getCompany_id()
+    );
+
+    contact.setSale(sale);
+    contact.setCompany(company);
+
+    contact.setTag_list(
+      contact
+        .getTags()
+        .stream()
+        .map(tag -> entityManager.getReference(Tags.class, tag))
+        .collect(Collectors.toSet())
+    );
 
     return contact;
   }

@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import java.io.IOException;
-import javax.swing.DesktopManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

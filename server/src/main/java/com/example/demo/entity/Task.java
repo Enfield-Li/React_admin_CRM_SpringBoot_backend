@@ -1,9 +1,8 @@
 package com.example.demo.entity;
 
-import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.LAZY;
 
-import java.time.Instant;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,19 +26,19 @@ public class Task {
 
   private String type;
   private String text;
-  private Instant due_date;
-
-  @Column(updatable = false, insertable = false)
-  private Long contact_id;
+  private Date due_date;
 
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @Column(updatable = false, insertable = false)
+  private Long contact_id;
+
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
 }

@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
-import com.example.demo.auth.users.ApplicationUser;
+import static com.example.demo.util.Constants.*;
+
+import com.example.demo.auth.user.ApplicationUser;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.ContactNote;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.ContactNoteMapper;
+import com.example.demo.mapper.ContactNoteMapper;
 import com.example.demo.repository.ContactNoteRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Contact_Notes")
-@RequestMapping("/contactNotes")
+@RequestMapping(CONTACTNOTES_ENDPOINT)
 class ContactNoteController {
 
   private final ContactNoteRepository contactNoteRepo;
@@ -53,22 +55,7 @@ class ContactNoteController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<ContactNote> contactNotes) {
-    contactNotes.forEach(
-      contactNote -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          contactNote.getSales_id()
-        );
-        Contact contact = entityManager.getReference(
-          Contact.class,
-          contactNote.getContact_id()
-        );
-
-        contactNote.setSale(sale);
-        contactNote.setContact(contact);
-      }
-    );
-
+    contactNotes.forEach(contactNote -> setRelationship(contactNote));
     contactNoteRepo.saveAll(contactNotes);
   }
 
@@ -84,7 +71,7 @@ class ContactNoteController {
   ) {
     Integer take = end - start;
 
-    List<ContactNote> contacts = contactNoteMapper.getAllContactNotes(
+    List<ContactNote> contactNotes = contactNoteMapper.getAllContactNotes(
       start,
       take,
       sort,
@@ -101,7 +88,7 @@ class ContactNoteController {
     return ResponseEntity
       .ok()
       .header("X-Total-Count", contactNoteCount)
-      .body(contacts);
+      .body(contactNotes);
   }
 
   @GetMapping("{id}")
@@ -110,19 +97,14 @@ class ContactNoteController {
   }
 
   @PostMapping
-  public ResponseEntity<ContactNote> create(@RequestBody ContactNote item) {
-    Sale sale = entityManager.getReference(Sale.class, item.getSales_id());
-    Contact contact = entityManager.getReference(
-      Contact.class,
-      item.getContact_id()
+  public ResponseEntity<ContactNote> create(
+    @RequestBody ContactNote contactNote
+  ) {
+    ContactNote savedContactNote = contactNoteRepo.save(
+      setRelationship(contactNote)
     );
 
-    item.setSale(sale);
-    item.setContact(contact);
-
-    ContactNote saved = contactNoteRepo.save(item);
-
-    return ResponseEntity.ok().body(saved);
+    return ResponseEntity.ok(savedContactNote);
   }
 
   @Transactional
@@ -148,13 +130,29 @@ class ContactNoteController {
 
     contactNoteForUpdate.setText(contactNote.getText());
 
-    return ResponseEntity.ok().body(contactNoteForUpdate);
+    return ResponseEntity.ok(contactNoteForUpdate);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     contactNoteRepo.deleteById(id);
 
-    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    return ResponseEntity.ok().build();
+  }
+
+  private ContactNote setRelationship(ContactNote contactNote) {
+    Sale sale = entityManager.getReference(
+      Sale.class,
+      contactNote.getSales_id()
+    );
+    Contact contact = entityManager.getReference(
+      Contact.class,
+      contactNote.getContact_id()
+    );
+
+    contactNote.setSale(sale);
+    contactNote.setContact(contact);
+
+    return contactNote;
   }
 }

@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import static javax.persistence.CascadeType.DETACH;
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,16 +38,16 @@ public class ContactNote {
   @Column(updatable = false, insertable = false)
   private Long contact_id;
 
+  @JsonIgnore
+  @OneToOne(fetch = LAZY)
+  @JoinColumn(name = "contact_id")
+  private Contact contact;
+
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
   @JsonIgnore
-  @OneToOne(cascade = DETACH, fetch = LAZY)
-  @JoinColumn(name = "contact_id")
-  private Contact contact;
-
-  @JsonIgnore
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 }

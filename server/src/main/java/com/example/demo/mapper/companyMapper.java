@@ -1,10 +1,9 @@
-package com.example.demo.repository;
+package com.example.demo.mapper;
 
+import com.example.demo.entity.Company;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import com.example.demo.entity.Company;
 
 @Mapper
 public interface companyMapper {
@@ -15,8 +14,8 @@ public interface companyMapper {
     @Param("query") String query,
     @Param("order") String order,
     @Param("sales_id") Long sales_id,
-    @Param("sizeMin") Integer sizeMin,
-    @Param("sizeMax") Integer sizeMax,
+    @Param("minSize") Integer minSize,
+    @Param("maxSize") Integer maxSize,
     @Param("sector") String sector,
     @Param("searchText") String searchText
   );
@@ -24,8 +23,8 @@ public interface companyMapper {
   public String getCompanyCount(
     @Param("query") String query,
     @Param("sales_id") Long sales_id,
-    @Param("sizeMin") Integer sizeMin,
-    @Param("sizeMax") Integer sizeMax,
+    @Param("minSize") Integer minSize,
+    @Param("maxSize") Integer maxSize,
     @Param("sector") String sector,
     @Param("searchText") String searchText
   );

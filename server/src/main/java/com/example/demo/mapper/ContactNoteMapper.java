@@ -1,11 +1,9 @@
-package com.example.demo.repository;
+package com.example.demo.mapper;
 
+import com.example.demo.entity.ContactNote;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-
-import com.example.demo.entity.ContactNote;
 
 @Mapper
 public interface ContactNoteMapper {

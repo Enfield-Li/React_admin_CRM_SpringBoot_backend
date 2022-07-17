@@ -3,15 +3,13 @@ package com.example.demo.controller;
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.DealNote;
 import com.example.demo.entity.Sale;
-import com.example.demo.repository.DealNoteMapper;
+import com.example.demo.mapper.DealNoteMapper;
 import com.example.demo.repository.DealNoteRepository;
-import com.example.demo.repository.DealRespository;
-import com.example.demo.repository.SaleRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
+
+import static com.example.demo.util.Constants.*;
+
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Deal_Note")
-@RequestMapping("/dealNotes")
+@RequestMapping(DEALNOTES_ENDPOINT)
 class DealNoteController {
 
   private final DealNoteRepository dealNoteRepo;
@@ -49,22 +47,7 @@ class DealNoteController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<DealNote> dealNotes) {
-    dealNotes.forEach(
-      dealNote -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          dealNote.getSales_id()
-        );
-        Deal deal = entityManager.getReference(
-          Deal.class,
-          dealNote.getDeal_id()
-        );
-
-        dealNote.setSale(sale);
-        dealNote.setDeal(deal);
-      }
-    );
-
+    dealNotes.forEach(dealNote -> setRelationship(dealNote));
     dealNoteRepo.saveAll(dealNotes);
   }
 
@@ -100,8 +83,9 @@ class DealNoteController {
   }
 
   @PostMapping
-  public ResponseEntity<DealNote> create(@RequestBody DealNote item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<DealNote> create(@RequestBody DealNote dealNote) {
+    DealNote createdNote = dealNoteRepo.save(setRelationship(dealNote));
+    return ResponseEntity.ok(createdNote);
   }
 
   @PutMapping("{id}")
@@ -109,11 +93,22 @@ class DealNoteController {
     @PathVariable("id") Long id,
     @RequestBody DealNote item
   ) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    DealNote updatednote = dealNoteRepo.save(item);
+    return ResponseEntity.ok(updatednote);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    dealNoteRepo.deleteById(id);
+    return ResponseEntity.ok().build();
+  }
+
+  private DealNote setRelationship(DealNote dealNote) {
+    Sale sale = entityManager.getReference(Sale.class, dealNote.getSales_id());
+    Deal deal = entityManager.getReference(Deal.class, dealNote.getDeal_id());
+
+    dealNote.setSale(sale);
+    dealNote.setDeal(deal);
+    return dealNote;
   }
 }

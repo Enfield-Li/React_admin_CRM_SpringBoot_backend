@@ -1,17 +1,14 @@
 package com.example.demo.controller;
 
+import static com.example.demo.util.Constants.*;
+
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Task;
-import com.example.demo.repository.ContactRepository;
-import com.example.demo.repository.SaleRepository;
-import com.example.demo.repository.TaskMapper;
+import com.example.demo.mapper.TaskMapper;
 import com.example.demo.repository.TaskRepository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Tasks")
-@RequestMapping("/tasks")
+@RequestMapping(TASKS_ENDPOINT)
 class TaskController {
 
   private final TaskRepository taskRepo;
@@ -49,19 +46,7 @@ class TaskController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Task> tasks) {
-    tasks.forEach(
-      task -> {
-        Sale sale = entityManager.getReference(Sale.class, task.getSales_id());
-        Contact contact = entityManager.getReference(
-          Contact.class,
-          task.getContact_id()
-        );
-
-        task.setSale(sale);
-        task.setContact(contact);
-      }
-    );
-
+    tasks.forEach(task -> setRelationship(task));
     taskRepo.saveAll(tasks);
   }
 
@@ -107,7 +92,21 @@ class TaskController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
+    taskRepo.deleteById(id);
+    return ResponseEntity.ok().body(true);
+  }
+
+  private Task setRelationship(Task task) {
+    Sale sale = entityManager.getReference(Sale.class, task.getSales_id());
+    Contact contact = entityManager.getReference(
+      Contact.class,
+      task.getContact_id()
+    );
+
+    task.setSale(sale);
+    task.setContact(contact);
+
+    return task;
   }
 }

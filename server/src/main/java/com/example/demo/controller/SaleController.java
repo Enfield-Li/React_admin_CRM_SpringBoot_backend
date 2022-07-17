@@ -1,18 +1,22 @@
 package com.example.demo.controller;
 
+import static com.example.demo.util.Constants.*;
+
 import com.example.demo.dto.LoginSaleDto;
-import com.example.demo.dto.SaleResponseDto;
+import com.example.demo.dto.RegisterSaleDto;
+import com.example.demo.dto.SaleRegisterResponseDto;
 import com.example.demo.dto.UpdateSaleDto;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.SaleMapper;
+import com.example.demo.mapper.SaleMapper;
 import com.example.demo.repository.SaleRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Sale")
-@RequestMapping("/sales")
+@RequestMapping(SALES_ENDPOINT)
 class SaleController {
 
   private static final String PENDING = "pending";
@@ -51,63 +55,59 @@ class SaleController {
     this.passwordEncoder = passwordEncoder;
   }
 
-  @GetMapping("test")
-  public String test(HttpSession session) {
-    return "test passed";
-    // System.out.println("********** test start **********");
-    // Enumeration<String> attributes = session.getAttributeNames();
-    // System.out.println("attributes: ");
-    // while (attributes.hasMoreElements()) {
-    //   String attribute = (String) attributes.nextElement();
-    //   System.out.println(
-    //     attribute + " : " + session.getAttribute(attribute).toString()
-    //   );
-    // }
-
-    // Authentication auth = SecurityContextHolder
-    //   .getContext()
-    //   .getAuthentication();
-    // String username = auth.getName(); //get logged in username
-    // System.out.println("username: " + username);
-    // System.out.println("********** test end **********");
+  @PostMapping(TEST)
+  public String test() {
+    return "Have access";
   }
 
-  // Javonte Mills
-  @PostMapping("login")
-  public void login(@RequestBody LoginSaleDto dto) {}
+  @PostMapping(LOGIN)
+  public void login(@Valid @RequestBody LoginSaleDto dto) {}
 
-  @PostMapping("register")
-  public SaleResponseDto register(@RequestBody LoginSaleDto dto) {
-    String firstName = null;
-    String lastName = null;
+  @PostMapping(REGISTER)
+  public ResponseEntity<SaleRegisterResponseDto> register(
+    @Valid @RequestBody RegisterSaleDto dto,
+    HttpSession session
+  ) {
+    try {
+      String firstName = null;
+      String lastName = null;
 
-    String username = dto.getUsername();
-    boolean isFullName = username.contains(" ");
+      String username = dto.getUsername();
+      boolean isFullName = username.contains(" ");
 
-    if (isFullName) {
-      String[] usernameArr = username.split(" ");
-      firstName = usernameArr[0];
-      lastName = usernameArr[1];
-    } else {
-      firstName = username;
+      if (isFullName) {
+        String[] usernameArr = username.split(" ");
+        firstName = usernameArr[0];
+        lastName = usernameArr[1];
+      } else {
+        firstName = username;
+      }
+
+      Sale newSale = new Sale();
+      newSale.setStatus(PENDING);
+      newSale.setFirst_name(firstName);
+      newSale.setLast_name(lastName);
+      newSale.setPassword(passwordEncoder.encode(dto.getPassword()));
+      newSale.setRole(dto.getRole());
+
+      Sale savedSale = saleRepo.save(newSale);
+      session.setAttribute(ApplicationUserInSession, savedSale);
+
+      return ResponseEntity.ok(new SaleRegisterResponseDto(savedSale, null));
+    } catch (DataIntegrityViolationException err) {
+      return ResponseEntity
+        .badRequest()
+        .body(new SaleRegisterResponseDto(null, "Username already exist."));
     }
-
-    Sale newSale = new Sale();
-    newSale.setStatus(PENDING);
-    newSale.setFirst_name(firstName);
-    newSale.setLast_name(lastName);
-    newSale.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-    Sale savedSale = saleRepo.save(newSale);
-
-    return new SaleResponseDto(savedSale);
   }
 
-  @PostMapping("logout")
+  @PostMapping(LOGOUT)
   public void logout() {}
 
   @GetMapping("me")
-  public void me() {}
+  public Authentication me() {
+    return SecurityContextHolder.getContext().getAuthentication();
+  }
 
   @GetMapping
   public ResponseEntity<List<Sale>> getAll(
@@ -132,23 +132,12 @@ class SaleController {
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Sales", id));
 
-    return ResponseEntity.ok().body(Arrays.asList(sales));
-  }
-
-  @GetMapping("{id}")
-  public ResponseEntity<Sale> getById(@PathVariable("id") Long id) {
-    System.out.println(id);
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-  }
-
-  @PostMapping
-  public ResponseEntity<Sale> create(@RequestBody Sale item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    return ResponseEntity.ok(Arrays.asList(sales));
   }
 
   @Transactional
-  @PutMapping("update_role")
-  public ResponseEntity<Sale> update(@RequestBody UpdateSaleDto dto) {
+  @PutMapping(UPDATE_ROLE)
+  public ResponseEntity<Sale> update(@Valid @RequestBody UpdateSaleDto dto) {
     Optional<Sale> sale = null;
 
     if (dto.getId() != null) {
@@ -164,12 +153,13 @@ class SaleController {
     sale.get().setRole(dto.getRole());
     sale.get().setStatus(FORMAL);
 
-    return ResponseEntity.ok().body(sale.get());
+    return ResponseEntity.ok(sale.get());
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    saleRepo.deleteById(id);
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("bulk_insert")

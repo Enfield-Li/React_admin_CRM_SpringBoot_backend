@@ -1,18 +1,23 @@
 package com.example.demo.controller;
 
+import static com.example.demo.util.Constants.*;
+
 import com.example.demo.dto.UpdateDealDto;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
-import com.example.demo.repository.DealMapper;
+import com.example.demo.mapper.DealMapper;
 import com.example.demo.repository.DealRespository;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Deal")
-@RequestMapping("/deals")
+@RequestMapping(DEALS_ENDPOINT)
 class DealController {
 
   private final DealRespository dealRepo;
@@ -45,38 +50,14 @@ class DealController {
   }
 
   @PostMapping("test")
-  public void test() {}
+  public List<Deal> test() {
+    // return dealMapper.getCompanyDeals();
+    return null;
+  }
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Deal> deals) {
-    deals.forEach(
-      deal -> {
-        Sale sale = entityManager.getReference(Sale.class, deal.getSales_id());
-
-        Company company = entityManager.getReference(
-          Company.class,
-          deal.getCompany_id()
-        );
-
-        List<Contact> contact_list = new ArrayList<>();
-        deal
-          .getContact_list()
-          .forEach(
-            contactId -> {
-              Contact contact = entityManager.getReference(
-                Contact.class,
-                contactId
-              );
-              contact_list.add(contact);
-            }
-          );
-
-        deal.setSale(sale);
-        deal.setCompany(company);
-        deal.setContact_list(contact_list);
-      }
-    );
-
+    deals.forEach(deal -> setRelationship(deal));
     dealRepo.saveAll(deals);
   }
 
@@ -119,7 +100,7 @@ class DealController {
     return ResponseEntity
       .ok()
       .header("X-Total-Count", dealCount)
-      .body(companyDeals);
+      .body(processDeal(companyDeals));
   }
 
   @GetMapping(params = "id")
@@ -128,7 +109,7 @@ class DealController {
   ) {
     List<Deal> deals = dealMapper.getDealsReference(ids);
 
-    return ResponseEntity.ok().body(deals);
+    return ResponseEntity.ok(deals);
   }
 
   @GetMapping("{id}")
@@ -137,26 +118,76 @@ class DealController {
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Deal", id));
 
-    return ResponseEntity.ok().body(deal);
+    return ResponseEntity.ok(deal);
   }
 
   @PostMapping
-  public ResponseEntity<Deal> create(@RequestBody Deal item) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+  public ResponseEntity<Deal> create(@RequestBody Deal deal) {
+    Deal savedDeal = dealRepo.save(setRelationship(deal));
+    return ResponseEntity.ok(savedDeal);
   }
 
   @PutMapping("{id}")
   public ResponseEntity<Boolean> update(
     @PathVariable("id") Long id,
-    @RequestBody UpdateDealDto item
+    @Valid @RequestBody UpdateDealDto item
   ) {
-    Integer updateResult = dealMapper.updateDealStatus(id, item.getStage());
-
-    return ResponseEntity.ok().body(updateResult > 0);
+    Integer rowsAffected = dealMapper.updateDealStatus(id, item.getStage());
+    return ResponseEntity.ok(rowsAffected > 0);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    dealRepo.deleteById(id);
+    return ResponseEntity.ok().build();
+  }
+
+  private Deal setRelationship(Deal deal) {
+    Sale sale = entityManager.getReference(Sale.class, deal.getSales_id());
+
+    Company company = entityManager.getReference(
+      Company.class,
+      deal.getCompany_id()
+    );
+
+    Set<Contact> contact_list = new HashSet<>();
+    deal
+      .getContact_list()
+      .forEach(
+        contactId -> {
+          Contact contact = entityManager.getReference(
+            Contact.class,
+            contactId
+          );
+          contact_list.add(contact);
+        }
+      );
+
+    deal.setSale(sale);
+    deal.setCompany(company);
+    deal.setContact_list(contact_list);
+
+    return deal;
+  }
+
+  private List<Deal> processDeal(List<Deal> deals) {
+    deals.forEach(
+      deal -> {
+        String contactIdsString = deal.getContactIdsString();
+
+        if (contactIdsString != null) {
+          String[] ids = contactIdsString.split(",");
+          List<String> idsString = Arrays.asList(ids);
+
+          List<Long> idsLong = new ArrayList<>();
+          idsString.forEach(id -> idsLong.add(Long.parseLong(id)));
+
+          deal.setContact_ids(idsLong);
+          deal.setContactIdsString(null);
+        }
+      }
+    );
+
+    return deals;
   }
 }

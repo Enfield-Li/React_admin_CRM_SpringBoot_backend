@@ -1,8 +1,9 @@
-package com.example.demo.auth.users;
-
-import static com.example.demo.auth.users.ApplicationUserPermission.*;
+package com.example.demo.auth.user;
 
 import com.google.common.collect.Sets;
+
+import static com.example.demo.auth.user.ApplicationUserPermission.*;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public enum ApplicationUserRole {
   }
 
   public List<GrantedAuthority> getGrantedAuthorities() {
-    List<GrantedAuthority> permissions = getPermissions()
+    List<GrantedAuthority> grantedAuthorities = getPermissions()
       .stream()
       .map(
         permission ->
@@ -35,7 +36,7 @@ public enum ApplicationUserRole {
       )
       .collect(Collectors.toList());
 
-    permissions.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-    return permissions;
+    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+    return grantedAuthorities;
   }
 }

@@ -1,11 +1,12 @@
 package com.example.demo.controller;
 
+import static com.example.demo.util.Constants.*;
+
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Sale;
 import com.example.demo.exception.ItemNotFoundException;
+import com.example.demo.mapper.companyMapper;
 import com.example.demo.repository.CompanyRepository;
-import com.example.demo.repository.companyMapper;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Company")
-@RequestMapping("/companies")
+@RequestMapping(COMPANIES_ENDPOINT)
 class CompanyController {
 
   private final CompanyRepository companyRepo;
@@ -45,16 +46,7 @@ class CompanyController {
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Company> companies) {
-    companies.forEach(
-      company -> {
-        Sale sale = entityManager.getReference(
-          Sale.class,
-          company.getSales_id()
-        );
-        company.setSale(sale);
-      }
-    );
-
+    companies.forEach(company -> setRelationship(company));
     companyRepo.saveAll(companies);
   }
 
@@ -71,28 +63,28 @@ class CompanyController {
   ) {
     Integer take = end - start;
 
-    Integer sizeMin = null;
-    Integer sizeMax = null;
+    Integer minSize = null;
+    Integer maxSize = null;
 
     if (size != null) {
       switch (size) {
         case 1:
-          sizeMax = 1;
+          maxSize = 1;
           break;
         case 10:
-          sizeMin = 1;
-          sizeMax = 10;
+          minSize = 1;
+          maxSize = 10;
           break;
         case 50:
-          sizeMin = 9;
-          sizeMax = 50;
+          minSize = 9;
+          maxSize = 50;
           break;
         case 250:
-          sizeMin = 49;
-          sizeMax = 250;
+          minSize = 49;
+          maxSize = 250;
           break;
         case 500:
-          sizeMin = 249;
+          minSize = 250;
           break;
         default:
           break;
@@ -106,8 +98,8 @@ class CompanyController {
       query,
       order,
       sales_id,
-      sizeMin,
-      sizeMax,
+      minSize,
+      maxSize,
       sector,
       query
     );
@@ -115,8 +107,8 @@ class CompanyController {
     String companyCount = companyMapper.getCompanyCount(
       query,
       sales_id,
-      sizeMin,
-      sizeMax,
+      minSize,
+      maxSize,
       sector,
       query
     );
@@ -133,7 +125,7 @@ class CompanyController {
       .findById(id)
       .orElseThrow(() -> new ItemNotFoundException("Company", id));
 
-    return ResponseEntity.ok().body(company);
+    return ResponseEntity.ok(company);
   }
 
   @GetMapping(params = "id")
@@ -141,17 +133,13 @@ class CompanyController {
     @RequestParam("id") List<Long> ids
   ) {
     List<Company> products = companyMapper.getManyReferences(ids);
-
-    return ResponseEntity.ok().body(products);
+    return ResponseEntity.ok(products);
   }
 
   @PostMapping
   public ResponseEntity<Company> create(@RequestBody Company company) {
-    // Sale sale = entityManager.getReference(Sale.class, company.getSales_id());
-    // company.setSale(sale);
-
     Company savedCompany = companyRepo.save(company);
-    return ResponseEntity.ok().body(savedCompany);
+    return ResponseEntity.ok(savedCompany);
   }
 
   @PutMapping("{id}")
@@ -160,11 +148,18 @@ class CompanyController {
     @RequestBody Company item
   ) {
     Company savedCompany = companyRepo.save(item);
-    return ResponseEntity.ok().body(savedCompany);
+    return ResponseEntity.ok(savedCompany);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    companyRepo.deleteById(id);
+    return ResponseEntity.ok().build();
+  }
+
+  private Company setRelationship(Company company) {
+    Sale sale = entityManager.getReference(Sale.class, company.getSales_id());
+    company.setSale(sale);
+    return company;
   }
 }

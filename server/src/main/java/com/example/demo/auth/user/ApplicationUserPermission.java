@@ -1,4 +1,4 @@
-package com.example.demo.auth.users;
+package com.example.demo.auth.user;
 
 public enum ApplicationUserPermission {
   CREATE_TAG("create:tag"),

@@ -1,12 +1,15 @@
 package com.example.demo.entity;
 
 import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -58,21 +62,26 @@ public class Contact {
   @Column(updatable = false, insertable = false)
   private Long company_id;
 
+  @JsonIgnore
+  @ManyToOne(fetch = LAZY)
+  @JoinColumn(name = "company_id")
+  private Company company;
+
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
   @JsonIgnore
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
-  @JoinColumn(name = "company_id")
-  private Company company;
-
-  @JsonIgnore
-  @ManyToOne(cascade = DETACH, fetch = LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
   @JsonIgnore
-  @ManyToMany(cascade = DETACH, fetch = LAZY)
+  @OneToOne(mappedBy = "contact", fetch = LAZY, cascade = DETACH)
+  private ContactNote contactNote;
+
+  // https://thorben-janssen.com/hibernate-tips-the-best-way-to-remove-entities-from-a-many-to-many-association/#1_Use_a_Set_instead_of_a_List
+  @JsonIgnore
+  @ManyToMany(cascade = { PERSIST, DETACH }, fetch = LAZY)
   @JoinTable(
     name = "contact_tag",
     joinColumns = @JoinColumn(name = "contact_id"),
@@ -81,5 +90,5 @@ public class Contact {
       columnNames = { "contact_id", "tag_id" }
     )
   )
-  private List<Tags> tag_list = new ArrayList<>();
+  private Set<Tags> tag_list = new HashSet<>();
 }

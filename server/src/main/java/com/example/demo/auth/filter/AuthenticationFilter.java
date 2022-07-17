@@ -1,9 +1,10 @@
-package com.example.demo.auth.filters;
+package com.example.demo.auth.filter;
 
-import static com.example.demo.utils.ConstantUtils.userInSession;
+import static com.example.demo.util.Constants.*;
 
-import com.example.demo.auth.users.ApplicationUser;
+import com.example.demo.auth.user.ApplicationUser;
 import java.io.IOException;
+import java.util.Enumeration;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -26,13 +27,21 @@ public class AuthenticationFilter extends GenericFilterBean {
     HttpServletRequest req = (HttpServletRequest) request;
     HttpSession session = req.getSession();
 
-    ApplicationUser user = (ApplicationUser) session.getAttribute(userInSession);
+    // Enumeration<String> attributes = session.getAttributeNames();
+    // while (attributes.hasMoreElements()) {
+    //   String attribute = (String) attributes.nextElement();
+    //   System.out.println(attribute + " : " + session.getAttribute(attribute));
+    // }
 
-    if (user != null) {
+    ApplicationUser applicationUser = (ApplicationUser) session.getAttribute(
+      ApplicationUserInSession
+    );
+
+    if (applicationUser != null) {
       UsernamePasswordAuthenticationToken authUser = new UsernamePasswordAuthenticationToken(
-        user,
-        user.getPassword(),
-        user.getAuthorities()
+        applicationUser,
+        applicationUser.getPassword(),
+        applicationUser.getAuthorities()
       );
 
       SecurityContextHolder.getContext().setAuthentication(authUser);

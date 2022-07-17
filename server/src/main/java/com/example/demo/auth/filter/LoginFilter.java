@@ -1,8 +1,8 @@
-package com.example.demo.auth.filters;
+package com.example.demo.auth.filter;
 
-import static com.example.demo.utils.ConstantUtils.userInSession;
+import static com.example.demo.util.Constants.ApplicationUserInSession;
 
-import com.example.demo.auth.users.ApplicationUser;
+import com.example.demo.auth.user.ApplicationUser;
 import com.example.demo.dto.LoginSaleDto;
 import com.example.demo.dto.SaleResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,12 +16,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
   public LoginFilter(String url, AuthenticationManager authManager) {
-    super(new AntPathRequestMatcher(url));
+    super(url);
     setAuthenticationManager(authManager);
   }
 
@@ -33,13 +32,14 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     throws AuthenticationException, IOException {
     LoginSaleDto dto = new ObjectMapper()
     .readValue(req.getInputStream(), LoginSaleDto.class);
-
-    String username = dto.getUsername();
-    String password = dto.getPassword();
+    System.out.println(dto.toString());
 
     return getAuthenticationManager()
       .authenticate(
-        new UsernamePasswordAuthenticationToken(username, password)
+        new UsernamePasswordAuthenticationToken(
+          dto.getUsername(),
+          dto.getPassword()
+        )
       );
   }
 
@@ -51,11 +51,11 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
     Authentication auth
   )
     throws IOException, ServletException {
-    ApplicationUser user = (ApplicationUser) auth.getPrincipal();
+    ApplicationUser applicationUser = (ApplicationUser) auth.getPrincipal();
 
-    req.getSession().setAttribute(userInSession, user);
+    req.getSession().setAttribute(ApplicationUserInSession, applicationUser);
 
     res.setContentType("application/json");
-    res.getOutputStream().print(SaleResponseDto.toJSON(user));
+    res.getOutputStream().print(SaleResponseDto.toJSON(applicationUser));
   }
 }
