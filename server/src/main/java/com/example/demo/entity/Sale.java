@@ -44,8 +44,6 @@ public class Sale {
 
   private String email;
   private String status;
-
-  @NotNull
   private String last_name;
 
   @NotNull
@@ -87,6 +85,22 @@ public class Sale {
   @JsonIgnore
   @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
   private Set<ContactNote> contactNotes = new HashSet<>();
+
+  public Sale(
+    String email,
+    String status,
+    String first_name,
+    String last_name,
+    String password,
+    ApplicationUserRole role
+  ) {
+    this.email = email;
+    this.status = status;
+    this.last_name = last_name;
+    this.first_name = first_name;
+    this.password = password;
+    this.role = role;
+  }
 
   public String getUsername() {
     if (last_name == null) {

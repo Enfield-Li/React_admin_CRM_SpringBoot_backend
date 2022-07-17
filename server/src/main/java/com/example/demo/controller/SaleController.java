@@ -69,10 +69,11 @@ class SaleController {
     HttpSession session
   ) {
     try {
+      String username = dto.getUsername();
+
       String firstName = null;
       String lastName = null;
 
-      String username = dto.getUsername();
       boolean isFullName = username.contains(" ");
 
       if (isFullName) {
