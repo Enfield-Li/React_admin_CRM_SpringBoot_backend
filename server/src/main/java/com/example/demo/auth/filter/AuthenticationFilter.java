@@ -2,6 +2,7 @@ package com.example.demo.auth.filter;
 
 import static com.example.demo.util.Constants.*;
 
+import com.example.demo.auth.user.ApplicationUser;
 import java.io.IOException;
 import java.util.Enumeration;
 import javax.servlet.FilterChain;
@@ -13,8 +14,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-
-import com.example.demo.auth.user.ApplicationUser;
 
 public class AuthenticationFilter extends GenericFilterBean {
 
@@ -40,7 +39,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 
     if (applicationUser != null) {
       UsernamePasswordAuthenticationToken authUser = new UsernamePasswordAuthenticationToken(
-        applicationUser.getUsername(),
+        applicationUser,
         applicationUser.getPassword(),
         applicationUser.getAuthorities()
       );

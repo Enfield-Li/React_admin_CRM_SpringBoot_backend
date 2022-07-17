@@ -16,12 +16,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 
   public LoginFilter(String url, AuthenticationManager authManager) {
-    super(new AntPathRequestMatcher(url));
+    super(url);
     setAuthenticationManager(authManager);
   }
 
