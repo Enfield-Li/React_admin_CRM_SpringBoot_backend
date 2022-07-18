@@ -64,7 +64,7 @@ class TagsController {
 
   @GetMapping(params = "id")
   public ResponseEntity<List<Tags>> getManyReference(
-    @RequestParam("id") List<Long> ids
+    @RequestParam("id") List<Integer> ids
   ) {
     List<Tags> contacts = tagsMapper.getTagsByIds(ids);
 

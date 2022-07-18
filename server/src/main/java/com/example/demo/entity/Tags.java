@@ -43,4 +43,10 @@ public class Tags {
     )
   )
   private Set<Contact> contacts = new HashSet<>();
+
+  public Tags(String name, String color, Set<Contact> contacts) {
+    this.name = name;
+    this.color = color;
+    this.contacts = contacts;
+  }
 }
