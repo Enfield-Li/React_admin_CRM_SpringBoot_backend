@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -60,6 +59,10 @@ public class Company {
   private Sale sale;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "company", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "company",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<Contact> contact = new HashSet<>();
 }

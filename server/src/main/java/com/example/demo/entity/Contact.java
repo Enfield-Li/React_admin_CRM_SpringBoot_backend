@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.*;
+
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -81,7 +81,7 @@ public class Contact {
 
   // https://thorben-janssen.com/hibernate-tips-the-best-way-to-remove-entities-from-a-many-to-many-association/#1_Use_a_Set_instead_of_a_List
   @JsonIgnore
-  @ManyToMany(cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @ManyToMany(cascade = { PERSIST, DETACH, MERGE }, fetch = LAZY)
   @JoinTable(
     name = "contact_tag",
     joinColumns = @JoinColumn(name = "contact_id"),

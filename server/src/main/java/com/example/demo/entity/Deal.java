@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -81,7 +80,7 @@ public class Deal {
   private Company company;
 
   @JsonIgnore
-  @ManyToMany(cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @ManyToMany(cascade = { PERSIST, DETACH, MERGE }, fetch = LAZY)
   @JoinTable(
     name = "deal_contact",
     joinColumns = @JoinColumn(name = "deal_id"),
