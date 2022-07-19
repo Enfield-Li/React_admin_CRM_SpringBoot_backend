@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.companyMapper">
-    <select id="getFilteredCompany" resultType="com.example.demo.entity.Company">
+    <select id="getFilteredCompanies" resultType="com.example.demo.entity.Company">
         SELECT * FROM company
         <where>
             <if test="sales_id != null">sales_id = #{sales_id}</if>
             <if test="sector != null">AND sector = #{sector}</if>
-            <if test="minSize != null">AND size > #{minSize} </if>
-            <if test="maxSize != null">
-                AND size
-                <![CDATA[ < ]]>
-                #{maxSize}
-            </if>
+            <if test="minSize != null">AND size >= #{minSize} </if>
+            <if test="maxSize != null">AND size <![CDATA[ <= ]]> #{maxSize}</if>
             <if test="query != null">
                 AND 
                 (
@@ -30,17 +26,13 @@
         OFFSET #{start}
     </select>
 
-    <select id="getCompanyCount" resultType="String">
+    <select id="getCompaniesCount" resultType="String">
         SELECT count(*) FROM company
         <where>
             <if test="sales_id != null">sales_id = #{sales_id}</if>
             <if test="sector != null">AND sector = #{sector}</if>
-            <if test="minSize != null">AND size > #{minSize} </if>
-            <if test="maxSize != null">
-                AND size
-                <![CDATA[ < ]]>
-                #{maxSize}
-            </if>
+            <if test="minSize != null">AND size >= #{minSize} </if>
+            <if test="maxSize != null"> AND size <![CDATA[ <= ]]> #{maxSize} </if>
             <if test="query != null">
                 AND 
                 (

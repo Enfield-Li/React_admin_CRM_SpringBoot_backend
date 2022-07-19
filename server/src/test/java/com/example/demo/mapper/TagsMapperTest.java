@@ -42,6 +42,7 @@ public class TagsMapperTest implements WithAssertions {
   void testGetTagsByIdsThatHaveNullReturns() {
     // given
     List<Tags> actual = tagsMapper.getTagsByIds(List.of(1, 4));
+    System.out.println(String.format("size: %s", actual.size()));
 
     // then
     assertThat(actual).isEmpty();

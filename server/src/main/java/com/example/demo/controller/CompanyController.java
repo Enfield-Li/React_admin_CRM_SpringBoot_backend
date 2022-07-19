@@ -12,6 +12,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +43,9 @@ class CompanyController {
   }
 
   @PostMapping("test")
-  public void test() {}
+  public List<Company> test() {
+    return companyRepo.findAll();
+  }
 
   @PostMapping("bulk_insert")
   public void saveAll(@RequestBody List<Company> companies) {
@@ -91,32 +94,34 @@ class CompanyController {
       }
     }
 
-    List<Company> filteredCompany = companyMapper.getFilteredCompany(
-      start,
-      take,
-      sort,
-      query,
-      order,
-      sales_id,
-      minSize,
-      maxSize,
-      sector,
-      query
-    );
+    try {
+      List<Company> filteredCompany = companyMapper.getFilteredCompanies(
+        start,
+        take,
+        sort,
+        order,
+        sales_id,
+        minSize,
+        maxSize,
+        sector,
+        query
+      );
 
-    String companyCount = companyMapper.getCompanyCount(
-      query,
-      sales_id,
-      minSize,
-      maxSize,
-      sector,
-      query
-    );
+      String companyCount = companyMapper.getCompaniesCount(
+        query,
+        sales_id,
+        minSize,
+        maxSize,
+        sector
+      );
 
-    return ResponseEntity
-      .ok()
-      .header("X-Total-Count", companyCount)
-      .body(filteredCompany);
+      return ResponseEntity
+        .ok()
+        .header("X-Total-Count", companyCount)
+        .body(filteredCompany);
+    } catch (BadSqlGrammarException e) {
+      return ResponseEntity.badRequest().build();
+    }
   }
 
   @GetMapping("{id}")

@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @ControllerAdvice
 public class GlobalException extends RuntimeException {
@@ -17,17 +18,30 @@ public class GlobalException extends RuntimeException {
     GlobalException.class
   );
 
+  // org.springframework.web.bind.MissingServletRequestParameterException
   @ExceptionHandler(Exception.class)
   protected ResponseEntity<String> catchAllException(Exception e) {
     log.error("\n \n **************** Uncaught Error ****************", e);
 
-    return ResponseEntity
-      .status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .body("Something's gone wrong...");
+    return ResponseEntity.badRequest().body(e.getMessage());
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  protected ResponseEntity<String> catchParamArgsMismatch(Exception e) {
+    log.error(e.getMessage());
+
+    return ResponseEntity.badRequest().body("Invalid url parameter recieved.");
+  }
+
+  @ExceptionHandler(ItemNotFoundException.class)
+  protected ItemNotFoundException catchItemNotFoundException(
+    ItemNotFoundException e
+  ) {
+    return e;
   }
 
   @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-  public ResponseEntity<ValidationErrorResponse> invalidInput(
+  public ResponseEntity<ValidationErrorResponse> catchInvalidRequestBodyInput(
     MethodArgumentNotValidException exception
   ) {
     FieldError fieldError = exception.getFieldError();
@@ -40,12 +54,5 @@ public class GlobalException extends RuntimeException {
           fieldError.getDefaultMessage()
         )
       );
-  }
-
-  @ExceptionHandler(ItemNotFoundException.class)
-  protected ItemNotFoundException catchItemNotFoundException(
-    ItemNotFoundException e
-  ) {
-    return e;
   }
 }
