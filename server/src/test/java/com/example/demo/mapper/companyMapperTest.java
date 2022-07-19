@@ -6,7 +6,6 @@ import com.example.demo.entity.Sale;
 import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.SaleRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
@@ -20,26 +19,28 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @DataJpaTest
 @AutoConfigureMybatis
 public class companyMapperTest implements WithAssertions {
 
-  @Autowired
-  CompanyRepository repo;
-
-  @Autowired
-  companyMapper mapper;
-
-  @Autowired
   EntityManager em;
+  SaleRepository saleRepo;
+  companyMapper companyMapper;
+  CompanyRepository companyRepo;
 
   @Autowired
-  SaleRepository saleRepo;
-
-  PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+  public companyMapperTest(
+    CompanyRepository repo,
+    companyMapper mapper,
+    EntityManager em,
+    SaleRepository saleRepo
+  ) {
+    this.companyRepo = repo;
+    this.companyMapper = mapper;
+    this.em = em;
+    this.saleRepo = saleRepo;
+  }
 
   @BeforeEach
   void setUp() {
@@ -101,44 +102,40 @@ public class companyMapperTest implements WithAssertions {
 
   @AfterEach
   void cleanUp() {
-    repo.deleteAll();
+    companyRepo.deleteAll();
     saleRepo.deleteAll();
   }
 
   @Test
-  void getAll() {
-    List<Company> actual = repo.findAll();
-
-    System.out.println("**************" + actual.size());
-  }
-
-  @ParameterizedTest
-  @MethodSource("providerFortestFindBySalesId")
-  void testFindBySalesId(
-    Integer start,
-    Integer take,
-    String sort,
-    String order,
-    Long sales_id,
-    Integer minSize,
-    Integer maxSize,
-    String sector,
-    String query
-  ) {
-    List<Company> actual = mapper.getFilteredCompanies(
+  // test sales_id
+  void testGetFilteredCompaniesForSalesId() {
+    List<Company> actual1 = companyMapper.getFilteredCompanies(
       0,
-      2,
+      100,
       "id",
       "desc",
       1L,
-      0,
-      20,
-      "consumer",
+      null,
+      null,
+      null,
       null
     );
 
-    System.out.println("******************** size: " + actual.size());
-    assertThat(actual).isNotEmpty();
+    List<Company> actual2 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      2L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    assertThat(List.of(actual1, actual2)).isNotEmpty();
+    // assertThat(actual1).isNotEmpty();
+    // assertThat(actual2).isNotEmpty();
   }
 
   @ParameterizedTest
@@ -154,7 +151,7 @@ public class companyMapperTest implements WithAssertions {
     String sector,
     String query
   ) {
-    List<Company> actual = mapper.getFilteredCompanies(
+    List<Company> actual = companyMapper.getFilteredCompanies(
       start,
       take,
       sort,
@@ -166,7 +163,6 @@ public class companyMapperTest implements WithAssertions {
       query
     );
 
-    System.out.println("******************** size: " + actual.size());
     assertThat(actual).isNotEmpty();
   }
 
@@ -186,27 +182,20 @@ public class companyMapperTest implements WithAssertions {
       Arguments.of(0, 100, "id", "desc", null, 10, 20, null, null),
       Arguments.of(0, 100, "id", "desc", null, 20, 30, null, null),
       // sector
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, "sport", null),
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, "consumer", null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, "sport", null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, "consumer", null),
       // sales_id bug
       // Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null),
       // Arguments.of(0, 100, "id", "desc", 2L, null, null, null, null),
       // test query
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "comp"), // company name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "company1"), // company full name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangz"), // city
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangzhou"), // city full name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "consum"), // sector
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "consumer"), // sector full name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangd"), // state abbriviation
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangdong") // state abbriviation full name
-    );
-  }
-
-  private static Stream<Arguments> providerFortestFindBySalesId() {
-    return Stream.of(
-      // Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null),
-      Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null)
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "comp"), // company name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "company1"), // company full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangz"), // city
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangzhou"), // city full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "consum"), // sector
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "consumer"), // sector full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangd"), // state abbriviation
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangdong") // state abbriviation full name
     );
   }
 

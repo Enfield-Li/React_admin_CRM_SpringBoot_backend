@@ -71,7 +71,6 @@ public class DemoApplication {
 
     sale1.setCompanies(Set.of(company1, company2));
     sale2.setCompanies(Set.of(company3, company4));
-
     // saleRepo.saveAll(List.of(sale1, sale2));
 
     // List<Company> res1 = mapper.getFilteredCompanies(
