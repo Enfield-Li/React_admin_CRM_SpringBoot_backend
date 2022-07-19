@@ -1,8 +1,7 @@
 package com.example.demo.entity;
 
 import static com.example.demo.auth.user.ApplicationUserRole.*;
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.*;
 import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.auth.user.ApplicationUserRole;
@@ -63,27 +62,51 @@ public class Sale {
   private String username;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE, MERGE },
+    fetch = LAZY
+  )
   private Set<Company> companies = new HashSet<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<Task> tasks = new HashSet<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<Deal> deals = new HashSet<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<DealNote> dealNote = new HashSet<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<Contact> contacts = new HashSet<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<ContactNote> contactNotes = new HashSet<>();
 
   public Sale(

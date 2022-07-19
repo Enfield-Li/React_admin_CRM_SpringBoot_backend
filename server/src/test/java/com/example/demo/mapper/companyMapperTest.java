@@ -7,6 +7,7 @@ import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.SaleRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import org.assertj.core.api.WithAssertions;
@@ -49,16 +50,16 @@ public class companyMapperTest implements WithAssertions {
     sale.setFirst_name("first_name");
     sale.setRole(ApplicationUserRole.SALE_ADMIN);
 
-    Sale savedSales = saleRepo.save(sale);
-
     Company company1 = new Company();
     company1.setSize(10);
-    company1.setSale(savedSales);
+    company1.setSale(sale);
     company1.setSales_id(1L);
     company1.setName("company1");
     company1.setCity("guangzhou");
     company1.setSector("consumer");
     company1.setStateAbbr("guangdong");
+
+    sale.setCompanies(Set.of(company1));
 
     Company company2 = new Company();
     company2.setSize(20);
@@ -67,7 +68,7 @@ public class companyMapperTest implements WithAssertions {
     company2.setSector("consumer");
     company2.setStateAbbr("guangdong");
 
-    repo.saveAll(List.of(company1, company2));
+    saleRepo.save(sale);
   }
 
   @AfterEach
@@ -80,7 +81,7 @@ public class companyMapperTest implements WithAssertions {
   void getAll() {
     List<Company> actual = repo.findAll();
 
-    actual.forEach(c -> System.out.println(c.toString()));
+    System.out.println("**************" + actual.size());
   }
 
   @ParameterizedTest
