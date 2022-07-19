@@ -49,9 +49,7 @@ public class DemoApplication {
     company2.setSector("consumer");
     company2.setStateAbbr("guangdong");
 
-    List<Company> coms = Arrays.asList(company1, company2);
-
-    sale.setCompanies(coms);
+    sale.setCompanies(Set.of(company1, company2));
     // sale.setCompanies(Set.of(company1, company2));
     Sale savedSales = saleRepo.save(sale);
   }

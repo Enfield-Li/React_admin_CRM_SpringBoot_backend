@@ -25,6 +25,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -37,6 +38,7 @@ import org.springframework.security.core.GrantedAuthority;
     @UniqueConstraint(columnNames = { "first_name", "last_name" }),
   }
 )
+@EqualsAndHashCode(exclude = "companies")
 public class Sale {
 
   @Id
@@ -66,15 +68,15 @@ public class Sale {
   @JsonIgnore
   @OneToMany(
     mappedBy = "sale",
-    cascade = { PERSIST, DETACH, MERGE, MERGE },
+    cascade = { PERSIST, DETACH, MERGE },
     fetch = LAZY
   )
-  private List<Company> companies = new ArrayList<>();
+  private Set<Company> companies = new HashSet<>();
 
   @JsonIgnore
   @OneToMany(
     mappedBy = "sale",
-    cascade = { PERSIST, DETACH, MERGE, MERGE },
+    cascade = { PERSIST, DETACH, MERGE },
     fetch = LAZY
   )
   private Set<Task> tasks = new HashSet<>();
