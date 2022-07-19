@@ -74,7 +74,7 @@ public class Sale {
   private List<Company> companies = new ArrayList<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
+  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH, MERGE }, fetch = LAZY)
   private Set<Task> tasks = new HashSet<>();
 
   @JsonIgnore
