@@ -59,8 +59,6 @@ public class companyMapperTest implements WithAssertions {
     company1.setSector("consumer");
     company1.setStateAbbr("guangdong");
 
-    sale.setCompanies(Set.of(company1));
-
     Company company2 = new Company();
     company2.setSize(20);
     company2.setName("company2");
@@ -68,6 +66,7 @@ public class companyMapperTest implements WithAssertions {
     company2.setSector("consumer");
     company2.setStateAbbr("guangdong");
 
+    sale.setCompanies(Set.of(company1, company2));
     saleRepo.save(sale);
   }
 
