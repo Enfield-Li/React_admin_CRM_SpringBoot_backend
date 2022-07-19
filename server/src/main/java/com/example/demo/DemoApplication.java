@@ -1,14 +1,11 @@
 package com.example.demo;
 
+import antlr.collections.List;
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Sale;
 import com.example.demo.repository.SaleRepository;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -73,7 +70,7 @@ public class DemoApplication {
     sale1.setCompanies(Set.of(company1, company2));
     sale2.setCompanies(Set.of(company3, company4));
 
-    saleRepo.saveAll(List.of(sale1, sale2));
+    saleRepo.saveAll(Set.of(sale1, sale2));
   }
 
   private static void openSwaggerUI() throws IOException {
