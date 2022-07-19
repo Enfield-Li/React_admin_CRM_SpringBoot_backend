@@ -4,6 +4,7 @@ import antlr.collections.List;
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Sale;
+import com.example.demo.mapper.companyMapper;
 import com.example.demo.repository.SaleRepository;
 import java.io.IOException;
 import java.util.Set;
@@ -22,6 +23,7 @@ public class DemoApplication {
     // openSwaggerUI();
 
     SaleRepository saleRepo = ctx.getBean(SaleRepository.class);
+    companyMapper mapper = ctx.getBean(companyMapper.class);
 
     Sale sale1 = new Sale();
     sale1.setPassword("password");

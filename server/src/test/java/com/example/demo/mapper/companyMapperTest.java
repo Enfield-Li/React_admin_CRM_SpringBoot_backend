@@ -87,10 +87,16 @@ public class companyMapperTest implements WithAssertions {
     company4.setSector("sport");
     company4.setStateAbbr("guangdong");
 
+    Sale sale3 = new Sale();
+    sale3.setPassword("password");
+    sale3.setLast_name("last_name3");
+    sale3.setFirst_name("first_name3");
+    sale3.setRole(ApplicationUserRole.SALE_ADMIN);
+
     sale1.setCompanies(Set.of(company1, company2));
     sale2.setCompanies(Set.of(company3, company4));
 
-    saleRepo.saveAll(List.of(sale1, sale2));
+    saleRepo.saveAll(List.of(sale1, sale2, sale3));
   }
 
   @AfterEach
@@ -107,8 +113,8 @@ public class companyMapperTest implements WithAssertions {
   }
 
   @ParameterizedTest
-  @MethodSource("testone")
-  void findOne(
+  @MethodSource("providerFortestFindBySalesId")
+  void testFindBySalesId(
     Integer start,
     Integer take,
     String sort,
@@ -131,12 +137,12 @@ public class companyMapperTest implements WithAssertions {
       null
     );
 
-    // System.out.println("******************** size: " + actual.size());
+    System.out.println("******************** size: " + actual.size());
     assertThat(actual).isNotEmpty();
   }
 
   @ParameterizedTest
-  @MethodSource("provideParamsForGetFilteredCompanies")
+  @MethodSource("providerForGetFilteredCompanies")
   void testGetFilteredCompanies(
     Integer start,
     Integer take,
@@ -160,47 +166,47 @@ public class companyMapperTest implements WithAssertions {
       query
     );
 
-    actual.forEach(c -> System.out.println(c.toString()));
+    System.out.println("******************** size: " + actual.size());
     assertThat(actual).isNotEmpty();
   }
 
-  private static Stream<Arguments> provideParamsForGetFilteredCompanies() {
+  private static Stream<Arguments> providerForGetFilteredCompanies() {
     return Stream.of(
       // test start & take
-      Arguments.of(0, 2, "id", "desc", null, 0, 20, null, null),
-      Arguments.of(1, 2, "id", "desc", null, 0, 20, null, null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null),
+      Arguments.of(1, 100, "id", "desc", null, null, null, null, null),
       // test order & sort
-      Arguments.of(0, 2, "id", "asc", null, 0, 20, null, null),
-      Arguments.of(0, 2, "name", "asc", null, 0, 20, null, null),
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, null),
+      Arguments.of(0, 100, "id", "asc", null, null, null, null, null),
+      Arguments.of(0, 100, "name", "asc", null, null, null, null, null),
+      Arguments.of(0, 100, "name", "desc", null, null, null, null, null),
       // test minSize & maxSize
-      Arguments.of(0, 2, "id", "desc", null, null, 20, null, null),
-      Arguments.of(0, 2, "id", "desc", null, 0, null, null, null),
-      Arguments.of(0, 2, "id", "desc", null, 0, 10, null, null),
-      Arguments.of(0, 2, "id", "desc", null, 10, 20, null, null),
-      Arguments.of(0, 2, "id", "desc", null, 20, 30, null, null),
+      Arguments.of(0, 100, "id", "desc", null, null, 20, null, null),
+      Arguments.of(0, 100, "id", "desc", null, 0, null, null, null),
+      Arguments.of(0, 100, "id", "desc", null, 0, 10, null, null),
+      Arguments.of(0, 100, "id", "desc", null, 10, 20, null, null),
+      Arguments.of(0, 100, "id", "desc", null, 20, 30, null, null),
       // sector
-      Arguments.of(0, 2, "id", "desc", null, 0, 20, "sport", null),
-      Arguments.of(0, 2, "id", "desc", null, 0, 20, "consumer", null),
-      // // sales_id
-      // Arguments.of(0, 2, "id", "desc", 1L, 0, 20, null, null),
-      // Arguments.of(0, 2, "id", "desc", 2L, 0, 20, null, null),
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, "sport", null),
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, "consumer", null),
+      // sales_id bug
+      // Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null),
+      // Arguments.of(0, 100, "id", "desc", 2L, null, null, null, null),
       // test query
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "comp"), // company name
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "company1"), // company full name
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "guangz"), // city
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "guangzhou"), // city full name
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "consum"), // sector
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "consumer"), // sector full name
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "guangd"), // state abbriviation
-      Arguments.of(0, 2, "name", "desc", null, 0, 20, null, "guangdong") // state abbriviation full name
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "comp"), // company name
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "company1"), // company full name
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangz"), // city
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangzhou"), // city full name
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "consum"), // sector
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "consumer"), // sector full name
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangd"), // state abbriviation
+      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangdong") // state abbriviation full name
     );
   }
 
-  private static Stream<Arguments> testone() {
+  private static Stream<Arguments> providerFortestFindBySalesId() {
     return Stream.of(
-      Arguments.of(0, 2, "id", "desc", 1L, 0, 20, null, null),
-      Arguments.of(0, 2, "id", "desc", 2L, 0, 20, null, null)
+      // Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null),
+      Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null)
     );
   }
 
