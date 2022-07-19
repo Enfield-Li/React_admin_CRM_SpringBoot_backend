@@ -2,14 +2,17 @@ package com.example.demo.entity;
 
 import static com.example.demo.auth.user.ApplicationUserRole.*;
 import static javax.persistence.CascadeType.DETACH;
+import static javax.persistence.CascadeType.MERGE;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.LAZY;
 
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -63,8 +66,12 @@ public class Sale {
   private String username;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
-  private Set<Company> companies = new HashSet<>();
+  @OneToMany(
+    mappedBy = "sale",
+    cascade = { PERSIST, DETACH, MERGE },
+    fetch = LAZY
+  )
+  private List<Company> companies = new ArrayList<>();
 
   @JsonIgnore
   @OneToMany(mappedBy = "sale", cascade = { PERSIST, DETACH }, fetch = LAZY)
