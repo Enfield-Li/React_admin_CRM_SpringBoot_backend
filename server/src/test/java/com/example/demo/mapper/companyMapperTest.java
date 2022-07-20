@@ -6,7 +6,6 @@ import com.example.demo.entity.Sale;
 import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.SaleRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
@@ -20,26 +19,28 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @DataJpaTest
 @AutoConfigureMybatis
 public class companyMapperTest implements WithAssertions {
 
-  @Autowired
-  CompanyRepository repo;
-
-  @Autowired
-  companyMapper mapper;
-
-  @Autowired
   EntityManager em;
+  SaleRepository saleRepo;
+  companyMapper companyMapper;
+  CompanyRepository companyRepo;
 
   @Autowired
-  SaleRepository saleRepo;
-
-  PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+  companyMapperTest(
+    CompanyRepository repo,
+    companyMapper mapper,
+    EntityManager em,
+    SaleRepository saleRepo
+  ) {
+    this.companyRepo = repo;
+    this.companyMapper = mapper;
+    this.em = em;
+    this.saleRepo = saleRepo;
+  }
 
   @BeforeEach
   void setUp() {
@@ -101,44 +102,8 @@ public class companyMapperTest implements WithAssertions {
 
   @AfterEach
   void cleanUp() {
-    repo.deleteAll();
+    companyRepo.deleteAll();
     saleRepo.deleteAll();
-  }
-
-  @Test
-  void getAll() {
-    List<Company> actual = repo.findAll();
-
-    System.out.println("**************" + actual.size());
-  }
-
-  @ParameterizedTest
-  @MethodSource("providerFortestFindBySalesId")
-  void testFindBySalesId(
-    Integer start,
-    Integer take,
-    String sort,
-    String order,
-    Long sales_id,
-    Integer minSize,
-    Integer maxSize,
-    String sector,
-    String query
-  ) {
-    List<Company> actual = mapper.getFilteredCompanies(
-      0,
-      2,
-      "id",
-      "desc",
-      1L,
-      0,
-      20,
-      "consumer",
-      null
-    );
-
-    System.out.println("******************** size: " + actual.size());
-    assertThat(actual).isNotEmpty();
   }
 
   @ParameterizedTest
@@ -154,7 +119,8 @@ public class companyMapperTest implements WithAssertions {
     String sector,
     String query
   ) {
-    List<Company> actual = mapper.getFilteredCompanies(
+    // test with @ParameterizedTest
+    List<Company> actual1 = companyMapper.getFilteredCompanies(
       start,
       take,
       sort,
@@ -166,8 +132,32 @@ public class companyMapperTest implements WithAssertions {
       query
     );
 
-    System.out.println("******************** size: " + actual.size());
-    assertThat(actual).isNotEmpty();
+    // test sales_id
+    List<Company> actual2 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      2L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    List<Company> actual3 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      1L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    assertThat(List.of(actual3, actual2, actual1)).isNotEmpty();
   }
 
   private static Stream<Arguments> providerForGetFilteredCompanies() {
@@ -175,6 +165,7 @@ public class companyMapperTest implements WithAssertions {
       // test start & take
       Arguments.of(0, 100, "id", "desc", null, null, null, null, null),
       Arguments.of(1, 100, "id", "desc", null, null, null, null, null),
+      Arguments.of(0, 99, "id", "desc", null, null, null, null, null),
       // test order & sort
       Arguments.of(0, 100, "id", "asc", null, null, null, null, null),
       Arguments.of(0, 100, "name", "asc", null, null, null, null, null),
@@ -186,30 +177,75 @@ public class companyMapperTest implements WithAssertions {
       Arguments.of(0, 100, "id", "desc", null, 10, 20, null, null),
       Arguments.of(0, 100, "id", "desc", null, 20, 30, null, null),
       // sector
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, "sport", null),
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, "consumer", null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, "sport", null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, "consumer", null),
       // sales_id bug
       // Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null),
       // Arguments.of(0, 100, "id", "desc", 2L, null, null, null, null),
       // test query
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "comp"), // company name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "company1"), // company full name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangz"), // city
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangzhou"), // city full name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "consum"), // sector
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "consumer"), // sector full name
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangd"), // state abbriviation
-      Arguments.of(0, 100, "id", "desc", null, 0, 20, null, "guangdong") // state abbriviation full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "comp"), // company name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "company1"), // company full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangz"), // city
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangzhou"), // city full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "consum"), // sector
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "consumer"), // sector full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangd"), // state abbriviation
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangdong") // state abbriviation full name
     );
   }
 
-  private static Stream<Arguments> providerFortestFindBySalesId() {
+  @ParameterizedTest
+  @MethodSource("providerForGetCompaniesCount")
+  void testGetCompaniesCount(
+    String query,
+    Long sales_id,
+    Integer minSize,
+    Integer maxSize,
+    String sector
+  ) {
+    String actual = companyMapper.getCompaniesCount(
+      query,
+      sales_id,
+      minSize,
+      maxSize,
+      sector
+    );
+
+    assertThat(Integer.parseInt(actual)).isGreaterThanOrEqualTo(0);
+  }
+
+  private static Stream<Arguments> providerForGetCompaniesCount() {
     return Stream.of(
-      // Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null),
-      Arguments.of(0, 100, "id", "desc", 1L, null, null, null, null)
+      // default case
+      Arguments.of(null, null, null, null, null),
+      // test query
+      Arguments.of("comp", null, null, null, null),
+      Arguments.of("company1", null, null, null, null),
+      Arguments.of("guangz", null, null, null, null),
+      Arguments.of("guangzhou", null, null, null, null),
+      Arguments.of("consum", null, null, null, null),
+      Arguments.of("consumer", null, null, null, null),
+      Arguments.of("guangd", null, null, null, null),
+      Arguments.of("guangdong", null, null, null, null),
+      // test sales_id
+      Arguments.of(null, 1L, null, null, null),
+      Arguments.of(null, 2L, null, null, null),
+      // test size
+      Arguments.of(null, null, null, 20, null),
+      Arguments.of(null, null, 0, null, null),
+      Arguments.of(null, null, 0, 20, null),
+      // test sector
+      Arguments.of(null, null, null, null, "sport"),
+      Arguments.of(null, null, null, null, "consumer")
     );
   }
 
   @Test
-  void testGetManyReferences() {}
+  void testGetManyReferences() {
+    List<Company> actual1 = companyMapper.getManyReferences(List.of(1L));
+    List<Company> actual2 = companyMapper.getManyReferences(List.of(2L));
+    List<Company> actual3 = companyMapper.getManyReferences(List.of(1L, 2L));
+
+    assertThat(List.of(actual1, actual2, actual3)).isNotEmpty();
+  }
 }
