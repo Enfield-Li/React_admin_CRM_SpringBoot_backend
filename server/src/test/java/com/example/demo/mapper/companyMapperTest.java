@@ -26,23 +26,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureMybatis
 public class companyMapperTest implements WithAssertions {
 
+  @Autowired
   EntityManager em;
-  SaleRepository saleRepo;
-  companyMapper companyMapper;
-  CompanyRepository companyRepo;
 
   @Autowired
-  companyMapperTest(
-    CompanyRepository repo,
-    companyMapper mapper,
-    EntityManager em,
-    SaleRepository saleRepo
-  ) {
-    this.companyRepo = repo;
-    this.companyMapper = mapper;
-    this.em = em;
-    this.saleRepo = saleRepo;
-  }
+  SaleRepository saleRepo;
+
+  @Autowired
+  companyMapper underTest;
+
+  @Autowired
+  CompanyRepository companyRepo;
 
   @BeforeEach
   void setUp(final TestInfo info) {
@@ -50,60 +44,67 @@ public class companyMapperTest implements WithAssertions {
     final Set<String> testTags = info.getTags();
     if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
 
-    Sale sale1 = new Sale();
-    sale1.setPassword("password");
-    sale1.setLast_name("last_name1");
-    sale1.setFirst_name("first_name1");
-    sale1.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale1 = new Sale(
+      "first_name1",
+      "last_name1",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Company company1 = new Company();
-    company1.setSale(sale1);
-    company1.setSize(10);
-    company1.setName("company1");
-    company1.setCity("guangzhou");
-    company1.setSector("consumer");
-    company1.setStateAbbr("guangdong");
+    Sale sale2 = new Sale(
+      "first_name2",
+      "last_name2",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Company company2 = new Company();
-    company2.setSale(sale1);
-    company2.setSize(20);
-    company2.setName("company2");
-    company2.setCity("guangzhou");
-    company2.setSector("consumer");
-    company2.setStateAbbr("guangdong");
+    Sale sale3 = new Sale(
+      "first_name3",
+      "last_name3",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Sale sale2 = new Sale();
-    sale2.setPassword("password");
-    sale2.setLast_name("last_name2");
-    sale2.setFirst_name("first_name2");
-    sale2.setRole(ApplicationUserRole.SALE_ADMIN);
+    Company company1 = new Company(
+      sale1,
+      "company1",
+      "guangzhou",
+      10,
+      "consumer",
+      "GD"
+    );
 
-    Company company3 = new Company();
-    company3.setSale(sale2);
-    company3.setSize(10);
-    company3.setName("company3");
-    company3.setCity("guangzhou");
-    company3.setSector("sport");
-    company3.setStateAbbr("guangdong");
+    Company company2 = new Company(
+      sale1,
+      "company2",
+      "guangzhou",
+      20,
+      "consumer",
+      "GD"
+    );
 
-    Company company4 = new Company();
-    company4.setSale(sale2);
-    company4.setSize(20);
-    company4.setName("company4");
-    company4.setCity("guangzhou");
-    company4.setSector("sport");
-    company4.setStateAbbr("guangdong");
+    Company company3 = new Company(
+      sale2,
+      "company3",
+      "shenzhen",
+      10,
+      "sport",
+      "GD"
+    );
 
-    Sale sale3 = new Sale();
-    sale3.setPassword("password");
-    sale3.setLast_name("last_name3");
-    sale3.setFirst_name("first_name3");
-    sale3.setRole(ApplicationUserRole.SALE_ADMIN);
+    Company company4 = new Company(
+      sale2,
+      "company4",
+      "shenzhen",
+      20,
+      "sport",
+      "GD"
+    );
 
     sale1.setCompanies(Set.of(company1, company2));
     sale2.setCompanies(Set.of(company3, company4));
 
-    saleRepo.saveAll(List.of(sale1, sale2, sale3));
+    saleRepo.saveAll(Set.of(sale1, sale2, sale3));
   }
 
   @AfterEach
@@ -126,7 +127,7 @@ public class companyMapperTest implements WithAssertions {
     String query
   ) {
     // test with @ParameterizedTest
-    List<Company> actual1 = companyMapper.getFilteredCompanies(
+    List<Company> actual1 = underTest.getFilteredCompanies(
       start,
       take,
       sort,
@@ -166,31 +167,19 @@ public class companyMapperTest implements WithAssertions {
       // test query
       Arguments.of(0, 100, "id", "desc", null, null, null, null, "comp"), // company name
       Arguments.of(0, 100, "id", "desc", null, null, null, null, "company1"), // company full name
-      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangz"), // city
-      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangzhou"), // city full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "shenzhen"), // city
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "GD"), // city full name
       Arguments.of(0, 100, "id", "desc", null, null, null, null, "consum"), // sector
       Arguments.of(0, 100, "id", "desc", null, null, null, null, "consumer"), // sector full name
-      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangd"), // state abbriviation
-      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangdong") // state abbriviation full name
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangz"), // state abbriviation
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, "G") // state abbriviation full name
     );
   }
 
   @Test
   void testGetFilteredCompaniesForSalesIdParam() {
     // test sales_id
-    List<Company> actual2 = companyMapper.getFilteredCompanies(
-      0,
-      100,
-      "id",
-      "desc",
-      2L,
-      null,
-      null,
-      null,
-      null
-    );
-
-    List<Company> actual3 = companyMapper.getFilteredCompanies(
+    List<Company> actual2 = underTest.getFilteredCompanies(
       0,
       100,
       "id",
@@ -203,7 +192,6 @@ public class companyMapperTest implements WithAssertions {
     );
 
     assertThat(actual2).isNotEmpty();
-    assertThat(actual3).isNotEmpty();
   }
 
   @ParameterizedTest
@@ -215,7 +203,7 @@ public class companyMapperTest implements WithAssertions {
     Integer maxSize,
     String sector
   ) {
-    String actual = companyMapper.getCompaniesCount(
+    String actual = underTest.getCompaniesCount(
       query,
       sales_id,
       minSize,
@@ -254,9 +242,9 @@ public class companyMapperTest implements WithAssertions {
 
   @Test
   void testGetManyReferences() {
-    List<Company> actual1 = companyMapper.getManyReferences(List.of(1L));
-    List<Company> actual2 = companyMapper.getManyReferences(List.of(2L));
-    List<Company> actual3 = companyMapper.getManyReferences(List.of(1L, 2L));
+    List<Company> actual1 = underTest.getManyReferences(List.of(1L));
+    List<Company> actual2 = underTest.getManyReferences(List.of(2L));
+    List<Company> actual3 = underTest.getManyReferences(List.of(1L, 2L));
 
     assertThat(actual1).isNotEmpty();
     assertThat(actual2).isNotEmpty();
@@ -278,7 +266,7 @@ public class companyMapperTest implements WithAssertions {
     String query
   ) {
     // test with @ParameterizedTest
-    List<Company> actual1 = companyMapper.getFilteredCompanies(
+    List<Company> actual1 = underTest.getFilteredCompanies(
       start,
       take,
       sort,
@@ -297,7 +285,7 @@ public class companyMapperTest implements WithAssertions {
   @Tag("skipBeforeEach")
   void testGetFilteredCompaniesForSalesIdParamShouldFindNull() {
     // test sales_id
-    List<Company> actual2 = companyMapper.getFilteredCompanies(
+    List<Company> actual2 = underTest.getFilteredCompanies(
       0,
       100,
       "id",
@@ -309,7 +297,7 @@ public class companyMapperTest implements WithAssertions {
       null
     );
 
-    List<Company> actual3 = companyMapper.getFilteredCompanies(
+    List<Company> actual3 = underTest.getFilteredCompanies(
       0,
       100,
       "id",
@@ -328,9 +316,9 @@ public class companyMapperTest implements WithAssertions {
   @Test
   @Tag("skipBeforeEach")
   void testGetManyReferencesShouldFindNull() {
-    List<Company> actual1 = companyMapper.getManyReferences(List.of(1L));
-    List<Company> actual2 = companyMapper.getManyReferences(List.of(2L));
-    List<Company> actual3 = companyMapper.getManyReferences(List.of(1L, 2L));
+    List<Company> actual1 = underTest.getManyReferences(List.of(1L));
+    List<Company> actual2 = underTest.getManyReferences(List.of(2L));
+    List<Company> actual3 = underTest.getManyReferences(List.of(1L, 2L));
 
     assertThat(actual1).isEmpty();
     assertThat(actual2).isEmpty();
@@ -347,7 +335,7 @@ public class companyMapperTest implements WithAssertions {
     Integer maxSize,
     String sector
   ) {
-    String actual = companyMapper.getCompaniesCount(
+    String actual = underTest.getCompaniesCount(
       query,
       sales_id,
       minSize,

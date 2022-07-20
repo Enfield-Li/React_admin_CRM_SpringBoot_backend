@@ -25,49 +25,55 @@ public class DemoApplication {
     SaleRepository saleRepo = ctx.getBean(SaleRepository.class);
     companyMapper mapper = ctx.getBean(companyMapper.class);
 
-    Sale sale1 = new Sale();
-    sale1.setPassword("password");
-    sale1.setLast_name("last_name1");
-    sale1.setFirst_name("first_name1");
-    sale1.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale1 = new Sale(
+      "first_name1",
+      "last_name1",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Company company1 = new Company();
-    company1.setSale(sale1);
-    company1.setSize(10);
-    company1.setName("company1");
-    company1.setCity("guangzhou");
-    company1.setSector("consumer");
-    company1.setStateAbbr("guangdong");
+    Company company1 = new Company(
+      sale1,
+      "company1",
+      "guangzhou",
+      10,
+      "consumer",
+      "GD"
+    );
 
-    Company company2 = new Company();
-    company2.setSale(sale1);
-    company2.setSize(20);
-    company2.setName("company2");
-    company2.setCity("guangzhou");
-    company2.setSector("consumer");
-    company2.setStateAbbr("guangdong");
+    Company company2 = new Company(
+      sale1,
+      "company2",
+      "guangzhou",
+      20,
+      "consumer",
+      "GD"
+    );
 
-    Sale sale2 = new Sale();
-    sale2.setPassword("password");
-    sale2.setLast_name("last_name2");
-    sale2.setFirst_name("first_name2");
-    sale2.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale2 = new Sale(
+      "first_name2",
+      "last_name2",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Company company3 = new Company();
-    company3.setSale(sale2);
-    company3.setSize(10);
-    company3.setName("company3");
-    company3.setCity("guangzhou");
-    company3.setSector("sport");
-    company3.setStateAbbr("guangdong");
+    Company company3 = new Company(
+      sale1,
+      "company2",
+      "shenzhen",
+      10,
+      "sport",
+      "GD"
+    );
 
-    Company company4 = new Company();
-    company4.setSale(sale2);
-    company4.setSize(20);
-    company4.setName("company4");
-    company4.setCity("guangzhou");
-    company4.setSector("sport");
-    company4.setStateAbbr("guangdong");
+    Company company4 = new Company(
+      sale2,
+      "company4",
+      "shenzhen",
+      20,
+      "sport",
+      "GD"
+    );
 
     sale1.setCompanies(Set.of(company1, company2));
     sale2.setCompanies(Set.of(company3, company4));

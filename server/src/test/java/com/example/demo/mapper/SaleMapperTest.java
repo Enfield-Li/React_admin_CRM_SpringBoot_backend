@@ -23,40 +23,39 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureMybatis
 public class SaleMapperTest implements WithAssertions {
 
+  @Autowired
   SaleMapper saleMapper;
-  SaleRepository saleRepo;
 
   @Autowired
-  SaleMapperTest(SaleMapper saleMapper, SaleRepository saleRepo) {
-    this.saleMapper = saleMapper;
-    this.saleRepo = saleRepo;
-  }
+  SaleRepository saleRepo;
 
   @BeforeEach
   void setUp(final TestInfo info) {
-    // exclude method https://stackoverflow.com/a/69825777/16648127
     final Set<String> testTags = info.getTags();
     if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
 
-    Sale sale1 = new Sale();
-    sale1.setPassword("password");
-    sale1.setLast_name("last_name1");
-    sale1.setFirst_name("first_name1");
-    sale1.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale1 = new Sale(
+      "first_name1",
+      "last_name1",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Sale sale2 = new Sale();
-    sale2.setPassword("password");
-    sale2.setLast_name("last_name2");
-    sale2.setFirst_name("first_name2");
-    sale2.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale2 = new Sale(
+      "first_name2",
+      "last_name2",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Sale sale3 = new Sale();
-    sale3.setPassword("password");
-    sale3.setLast_name("last_name3");
-    sale3.setFirst_name("first_name3");
-    sale3.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale3 = new Sale(
+      "first_name3",
+      "last_name3",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    saleRepo.saveAll(List.of(sale1, sale2, sale3));
+    saleRepo.saveAll(Set.of(sale1, sale2, sale3));
   }
 
   @AfterEach

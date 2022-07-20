@@ -65,4 +65,20 @@ public class Company {
     fetch = LAZY
   )
   private Set<Contact> contact = new HashSet<>();
+
+  public Company(
+    Sale sale,
+    String name,
+    String city,
+    Integer size,
+    String sector,
+    String stateAbbr
+  ) {
+    this.sale = sale;
+    this.name = name;
+    this.city = city;
+    this.size = size;
+    this.sector = sector;
+    this.stateAbbr = stateAbbr;
+  }
 }

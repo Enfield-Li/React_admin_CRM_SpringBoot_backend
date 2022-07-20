@@ -129,6 +129,18 @@ public class Sale {
     this.role = role;
   }
 
+  public Sale(
+    String first_name,
+    String last_name,
+    String password,
+    ApplicationUserRole role
+  ) {
+    this.last_name = last_name;
+    this.first_name = first_name;
+    this.password = password;
+    this.role = role;
+  }
+
   public String getUsername() {
     if (last_name == null) {
       return first_name;
