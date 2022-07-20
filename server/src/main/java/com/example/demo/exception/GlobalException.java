@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,7 +19,6 @@ public class GlobalException extends RuntimeException {
     GlobalException.class
   );
 
-  // org.springframework.web.bind.MissingServletRequestParameterException
   @ExceptionHandler(Exception.class)
   protected ResponseEntity<String> catchAllException(Exception e) {
     log.error("\n \n **************** Uncaught Error ****************", e);
@@ -26,11 +26,20 @@ public class GlobalException extends RuntimeException {
     return ResponseEntity.badRequest().body(e.getMessage());
   }
 
+  @ExceptionHandler(BadSqlGrammarException.class)
+  protected ResponseEntity<String> catchBadSqlGrammarException(Exception e) {
+    log.error(e.getMessage());
+
+    return ResponseEntity
+      .badRequest()
+      .body("Invalid url parameter for sort/order/start/end options recieved.");
+  }
+
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   protected ResponseEntity<String> catchParamArgsMismatch(Exception e) {
     log.error(e.getMessage());
 
-    return ResponseEntity.badRequest().body("Invalid url parameter recieved.");
+    return ResponseEntity.badRequest().body("Required url parameter missing.");
   }
 
   @ExceptionHandler(ItemNotFoundException.class)

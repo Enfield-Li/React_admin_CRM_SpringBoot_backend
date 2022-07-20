@@ -12,7 +12,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,34 +93,30 @@ class CompanyController {
       }
     }
 
-    try {
-      List<Company> filteredCompany = companyMapper.getFilteredCompanies(
-        start,
-        take,
-        sort,
-        order,
-        sales_id,
-        minSize,
-        maxSize,
-        sector,
-        query
-      );
+    List<Company> filteredCompany = companyMapper.getFilteredCompanies(
+      start,
+      take,
+      sort,
+      order,
+      sales_id,
+      minSize,
+      maxSize,
+      sector,
+      query
+    );
 
-      String companyCount = companyMapper.getCompaniesCount(
-        query,
-        sales_id,
-        minSize,
-        maxSize,
-        sector
-      );
+    String companyCount = companyMapper.getCompaniesCount(
+      query,
+      sales_id,
+      minSize,
+      maxSize,
+      sector
+    );
 
-      return ResponseEntity
-        .ok()
-        .header("X-Total-Count", companyCount)
-        .body(filteredCompany);
-    } catch (BadSqlGrammarException e) {
-      return ResponseEntity.badRequest().build();
-    }
+    return ResponseEntity
+      .ok()
+      .header("X-Total-Count", companyCount)
+      .body(filteredCompany);
   }
 
   @GetMapping("{id}")
