@@ -12,12 +12,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @DataJpaTest
 public class SaleRepositoryTest implements WithAssertions {
 
-  @Autowired
   SaleRepository saleRepositoryTest;
+
+  @Autowired
+  SaleRepositoryTest(SaleRepository saleRepositoryTest) {
+    this.saleRepositoryTest = saleRepositoryTest;
+  }
 
   @AfterEach
   void cleanUp() {
-    // saleRepositoryTest.deleteAll();
+    saleRepositoryTest.deleteAll();
   }
 
   @Test

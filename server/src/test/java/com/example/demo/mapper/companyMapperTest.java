@@ -12,7 +12,9 @@ import javax.persistence.EntityManager;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -43,7 +45,11 @@ public class companyMapperTest implements WithAssertions {
   }
 
   @BeforeEach
-  void setUp() {
+  void setUp(final TestInfo info) {
+    // exclude method https://stackoverflow.com/a/69825777/16648127
+    final Set<String> testTags = info.getTags();
+    if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
+
     Sale sale1 = new Sale();
     sale1.setPassword("password");
     sale1.setLast_name("last_name1");
@@ -132,32 +138,7 @@ public class companyMapperTest implements WithAssertions {
       query
     );
 
-    // test sales_id
-    List<Company> actual2 = companyMapper.getFilteredCompanies(
-      0,
-      100,
-      "id",
-      "desc",
-      2L,
-      null,
-      null,
-      null,
-      null
-    );
-
-    List<Company> actual3 = companyMapper.getFilteredCompanies(
-      0,
-      100,
-      "id",
-      "desc",
-      1L,
-      null,
-      null,
-      null,
-      null
-    );
-
-    assertThat(List.of(actual3, actual2, actual1)).isNotEmpty();
+    assertThat(actual1).isNotEmpty();
   }
 
   private static Stream<Arguments> providerForGetFilteredCompanies() {
@@ -192,6 +173,37 @@ public class companyMapperTest implements WithAssertions {
       Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangd"), // state abbriviation
       Arguments.of(0, 100, "id", "desc", null, null, null, null, "guangdong") // state abbriviation full name
     );
+  }
+
+  @Test
+  void testGetFilteredCompaniesForSalesIdParam() {
+    // test sales_id
+    List<Company> actual2 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      2L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    List<Company> actual3 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      1L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    assertThat(actual2).isNotEmpty();
+    assertThat(actual3).isNotEmpty();
   }
 
   @ParameterizedTest
@@ -246,6 +258,103 @@ public class companyMapperTest implements WithAssertions {
     List<Company> actual2 = companyMapper.getManyReferences(List.of(2L));
     List<Company> actual3 = companyMapper.getManyReferences(List.of(1L, 2L));
 
-    assertThat(List.of(actual1, actual2, actual3)).isNotEmpty();
+    assertThat(actual1).isNotEmpty();
+    assertThat(actual2).isNotEmpty();
+    assertThat(actual3).isNotEmpty();
+  }
+
+  @ParameterizedTest
+  @Tag("skipBeforeEach")
+  @MethodSource("providerForGetFilteredCompanies")
+  void testGetFilteredCompaniesShouldFindNull(
+    Integer start,
+    Integer take,
+    String sort,
+    String order,
+    Long sales_id,
+    Integer minSize,
+    Integer maxSize,
+    String sector,
+    String query
+  ) {
+    // test with @ParameterizedTest
+    List<Company> actual1 = companyMapper.getFilteredCompanies(
+      start,
+      take,
+      sort,
+      order,
+      sales_id,
+      minSize,
+      maxSize,
+      sector,
+      query
+    );
+
+    assertThat(actual1).isEmpty();
+  }
+
+  @Test
+  @Tag("skipBeforeEach")
+  void testGetFilteredCompaniesForSalesIdParamShouldFindNull() {
+    // test sales_id
+    List<Company> actual2 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      2L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    List<Company> actual3 = companyMapper.getFilteredCompanies(
+      0,
+      100,
+      "id",
+      "desc",
+      1L,
+      null,
+      null,
+      null,
+      null
+    );
+
+    assertThat(actual2).isEmpty();
+    assertThat(actual3).isEmpty();
+  }
+
+  @Test
+  @Tag("skipBeforeEach")
+  void testGetManyReferencesShouldFindNull() {
+    List<Company> actual1 = companyMapper.getManyReferences(List.of(1L));
+    List<Company> actual2 = companyMapper.getManyReferences(List.of(2L));
+    List<Company> actual3 = companyMapper.getManyReferences(List.of(1L, 2L));
+
+    assertThat(actual1).isEmpty();
+    assertThat(actual2).isEmpty();
+    assertThat(actual3).isEmpty();
+  }
+
+  @ParameterizedTest
+  @Tag("skipBeforeEach")
+  @MethodSource("providerForGetCompaniesCount")
+  void testGetCompaniesCountShouldFindNull(
+    String query,
+    Long sales_id,
+    Integer minSize,
+    Integer maxSize,
+    String sector
+  ) {
+    String actual = companyMapper.getCompaniesCount(
+      query,
+      sales_id,
+      minSize,
+      maxSize,
+      sector
+    );
+
+    assertThat(Integer.parseInt(actual)).isEqualTo(0);
   }
 }
