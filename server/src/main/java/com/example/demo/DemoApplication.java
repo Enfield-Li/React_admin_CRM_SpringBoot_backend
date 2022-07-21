@@ -2,10 +2,17 @@ package com.example.demo;
 
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
+import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
+import com.example.demo.entity.Tags;
 import com.example.demo.mapper.companyMapper;
+import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
+import com.example.demo.repository.TagsRepository;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.springframework.boot.SpringApplication;
@@ -24,82 +31,85 @@ public class DemoApplication {
 
     SaleRepository saleRepo = ctx.getBean(SaleRepository.class);
     companyMapper mapper = ctx.getBean(companyMapper.class);
+    ContactRepository contactRepo = ctx.getBean(ContactRepository.class);
+    TagsRepository tagsRepo = ctx.getBean(TagsRepository.class);
 
-    Sale sale1 = new Sale();
-    sale1.setPassword("password");
-    sale1.setLast_name("last_name1");
-    sale1.setFirst_name("first_name1");
-    sale1.setRole(ApplicationUserRole.SALE_ADMIN);
+    Sale sale1 = new Sale(
+      "first_name1",
+      "last_name1",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Company company1 = new Company();
-    company1.setSale(sale1);
-    company1.setSize(10);
-    company1.setName("company1");
-    company1.setCity("guangzhou");
-    company1.setSector("consumer");
-    company1.setStateAbbr("guangdong");
+    Sale sale2 = new Sale(
+      "first_name2",
+      "last_name2",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
 
-    Company company2 = new Company();
-    company2.setSale(sale1);
-    company2.setSize(20);
-    company2.setName("company2");
-    company2.setCity("guangzhou");
-    company2.setSector("consumer");
-    company2.setStateAbbr("guangdong");
+    Company company1 = new Company(
+      sale1,
+      "company1",
+      "guangzhou",
+      10,
+      "consumer",
+      "GD"
+    );
 
-    Sale sale2 = new Sale();
-    sale2.setPassword("password");
-    sale2.setLast_name("last_name2");
-    sale2.setFirst_name("first_name2");
-    sale2.setRole(ApplicationUserRole.SALE_ADMIN);
+    Company company2 = new Company(
+      sale1,
+      "company2",
+      "guangzhou",
+      20,
+      "consumer",
+      "GD"
+    );
 
-    Company company3 = new Company();
-    company3.setSale(sale2);
-    company3.setSize(10);
-    company3.setName("company3");
-    company3.setCity("guangzhou");
-    company3.setSector("sport");
-    company3.setStateAbbr("guangdong");
+    // sale1.setCompanies(Set.of(company1));
+    // sale2.setCompanies(Set.of(company2));
 
-    Company company4 = new Company();
-    company4.setSale(sale2);
-    company4.setSize(20);
-    company4.setName("company4");
-    company4.setCity("guangzhou");
-    company4.setSector("sport");
-    company4.setStateAbbr("guangdong");
+    // saleRepo.save(sale1);
+    // saleRepo.save(sale2);
 
-    sale1.setCompanies(Set.of(company1, company2));
-    sale2.setCompanies(Set.of(company3, company4));
-    // saleRepo.saveAll(List.of(sale1, sale2));
+    Contact contact1 = new Contact(
+      "contact1_FN",
+      "contact1_LN",
+      "title1",
+      "status1",
+      daysBefore(1),
+      company1,
+      sale1,
+      "background1"
+    );
 
-    // List<Company> res1 = mapper.getFilteredCompanies(
-    //   0,
-    //   100,
-    //   "id",
-    //   "desc",
-    //   1L,
-    //   null,
-    //   null,
-    //   null,
-    //   null
-    // );
+    Contact contact2 = new Contact(
+      "contact2_FN",
+      "contact2_LN",
+      "title2",
+      "status2",
+      daysBefore(10),
+      company1,
+      sale2,
+      "background2"
+    );
 
-    // System.out.println(res1.size());
+    Tags tag1 = new Tags("tag1", "color1");
+    Tags tag2 = new Tags("tag2", "color2");
 
-    // List<Company> res = mapper.getFilteredCompanies(
-    //   0,
-    //   100,
-    //   "id",
-    //   "desc",
-    //   2L,
-    //   null,
-    //   null,
-    //   null,
-    //   null
-    // );
+    tag1.addContact(contact1);
+    tag2.addContact(contact2);
 
-    // System.out.println(res.size());
+    // tagsRepo.saveAll(List.of(tag1, tag2));
+
+    // contact1.addTags(tag1);
+    // contact2.addTags(tag2);
+
+    // contactRepo.saveAll(List.of(contact1, contact2));
+  }
+
+  private static Date daysBefore(Integer days) {
+    return Date.from(Instant.now().minus(Duration.ofDays(days)));
   }
 
   private static void openSwaggerUI() throws IOException {

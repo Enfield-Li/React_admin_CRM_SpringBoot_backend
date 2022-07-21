@@ -18,14 +18,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,6 +61,7 @@ public class Contact {
   private Long company_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
@@ -70,13 +70,18 @@ public class Contact {
   private Long sales_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
   @JsonIgnore
-  @OneToOne(mappedBy = "contact", fetch = LAZY, cascade = DETACH)
-  private ContactNote contactNote;
+  @OneToMany(
+    mappedBy = "contact",
+    fetch = LAZY,
+    cascade = { PERSIST, DETACH, MERGE }
+  )
+  private Set<ContactNote> contactNote = new HashSet<>();
 
   // https://thorben-janssen.com/hibernate-tips-the-best-way-to-remove-entities-from-a-many-to-many-association/#1_Use_a_Set_instead_of_a_List
   @JsonIgnore
@@ -90,4 +95,84 @@ public class Contact {
     )
   )
   private Set<Tags> tag_list = new HashSet<>();
+
+  public void addTags(Tags tag) {
+    tag_list.add(tag);
+  }
+
+  public Contact(
+    String first_name,
+    String last_name,
+    String title,
+    String status,
+    Date last_seen,
+    Company company,
+    Sale sale,
+    String background
+  ) {
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.title = title;
+    this.status = status;
+    this.last_seen = last_seen;
+    this.company = company;
+    this.sale = sale;
+    this.background = background;
+  }
+
+  public List<Integer> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<Integer> tags) {
+    this.tags = tags;
+  }
+
+  public String getRaw_tags() {
+    return raw_tags;
+  }
+
+  public void setRaw_tags(String raw_tags) {
+    this.raw_tags = raw_tags;
+  }
+
+  public Long getCompany_id() {
+    return company_id;
+  }
+
+  public void setCompany(Company company) {
+    this.company = company;
+  }
+
+  public Long getSales_id() {
+    return sales_id;
+  }
+
+  public void setSales_id(Long sales_id) {
+    this.sales_id = sales_id;
+  }
+
+  public Sale getSale() {
+    return sale;
+  }
+
+  public void setSale(Sale sale) {
+    this.sale = sale;
+  }
+
+  public Set<ContactNote> getContactNote() {
+    return contactNote;
+  }
+
+  public void setContactNote(Set<ContactNote> contactNote) {
+    this.contactNote = contactNote;
+  }
+
+  public Set<Tags> getTag_list() {
+    return tag_list;
+  }
+
+  public void setTag_list(Set<Tags> tag_list) {
+    this.tag_list = tag_list;
+  }
 }

@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -54,6 +55,7 @@ public class Company {
   private Long sales_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
@@ -65,4 +67,20 @@ public class Company {
     fetch = LAZY
   )
   private Set<Contact> contact = new HashSet<>();
+
+  public Company(
+    Sale sale,
+    String name,
+    String city,
+    Integer size,
+    String sector,
+    String stateAbbr
+  ) {
+    this.sale = sale;
+    this.name = name;
+    this.city = city;
+    this.size = size;
+    this.sector = sector;
+    this.stateAbbr = stateAbbr;
+  }
 }

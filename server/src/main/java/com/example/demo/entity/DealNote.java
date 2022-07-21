@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -35,6 +36,7 @@ public class DealNote {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
@@ -42,6 +44,7 @@ public class DealNote {
   @Column(updatable = false, insertable = false)
   private Long deal_id;
 
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "deal_id")
   private Deal deal;

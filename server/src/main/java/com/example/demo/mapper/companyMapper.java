@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.Company;
 import java.util.List;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -28,4 +29,7 @@ public interface companyMapper {
   );
 
   public List<Company> getManyReferences(@Param("ids") List<Long> ids);
+
+  @Delete("DELETE FROM company")
+  public void deleteAll();
 }
