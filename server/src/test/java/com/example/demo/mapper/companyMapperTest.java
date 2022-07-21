@@ -35,12 +35,12 @@ public class companyMapperTest implements WithAssertions {
   void setUp(final TestInfo info) {
     // exclude method https://stackoverflow.com/a/69825777/16648127
     final Set<String> testTags = info.getTags();
-    boolean emptyData = testTags
+    boolean requireEmptyData = testTags
       .stream()
-      .anyMatch(tag -> tag.equals("emptyData"));
+      .anyMatch(tag -> tag.equals("requireEmptyData"));
 
-    if (saleRepo.findAll().size() > 0 || emptyData) {
-      if (emptyData) {
+    if (saleRepo.findAll().size() > 0 || requireEmptyData) {
+      if (requireEmptyData) {
         saleRepo.deleteAll();
         underTest.deleteAll();
       }
@@ -237,7 +237,7 @@ public class companyMapperTest implements WithAssertions {
    * Find null
    */
   @Test
-  @Tag("emptyData")
+  @Tag("requireEmptyData")
   void testGetFilteredCompaniesShouldFindNull() {
     List<Company> actual1 = underTest.getFilteredCompanies(
       0,
@@ -255,14 +255,14 @@ public class companyMapperTest implements WithAssertions {
   }
 
   @Test
-  @Tag("emptyData")
+  @Tag("requireEmptyData")
   void testGetManyReferencesShouldFindNull() {
     List<Company> actual = underTest.getManyReferences(List.of(1L));
     assertThat(actual).isEmpty();
   }
 
   @Test
-  @Tag("emptyData")
+  @Tag("requireEmptyData")
   void testGetCompaniesCountShouldFindNull() {
     String actual = underTest.getCompaniesCount(null, null, null, null, null);
     assertThat(Integer.parseInt(actual)).isEqualTo(0);
