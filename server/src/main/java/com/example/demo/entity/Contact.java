@@ -107,7 +107,8 @@ public class Contact {
     Date last_seen,
     Company company,
     Sale sale,
-    Set<Tags> tag_list
+    Set<Tags> tag_list,
+    String background
   ) {
     this.first_name = first_name;
     this.last_name = last_name;
@@ -117,5 +118,6 @@ public class Contact {
     this.company = company;
     this.sale = sale;
     this.tag_list = tag_list;
+    this.background = background;
   }
 }
