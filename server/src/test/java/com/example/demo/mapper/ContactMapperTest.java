@@ -1,7 +1,6 @@
 package com.example.demo.mapper;
 
 import com.example.demo.auth.user.ApplicationUserRole;
-import com.example.demo.dto.Contact_Tag;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
@@ -10,14 +9,12 @@ import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
 import com.example.demo.repository.TagsRepository;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -51,12 +48,6 @@ public class ContactMapperTest implements WithAssertions {
     final Set<String> testTags = info.getTags();
 
     if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
-
-    Tags tag1 = new Tags("tag1", "color1");
-    Tags tag2 = new Tags("tag2", "color2");
-
-    tagsRepo.saveAll(List.of(tag1, tag2));
-
     Sale sale1 = new Sale(
       "first_name1",
       "last_name1",
@@ -95,31 +86,40 @@ public class ContactMapperTest implements WithAssertions {
     saleRepo.save(sale1);
     saleRepo.save(sale2);
 
-    // Contact contact1 = new Contact(
-    //   "contact1_FN",
-    //   "contact1_LN",
-    //   "title1",
-    //   "status1",
-    //   daysBefore(1),
-    //   company1,
-    //   sale1,
-    //   Set.of(tag1),
-    //   "background1"
-    // );
+    Contact contact1 = new Contact(
+      "contact1_FN",
+      "contact1_LN",
+      "title1",
+      "status1",
+      daysBefore(1),
+      company1,
+      sale1,
+      "background1"
+    );
 
-    // Contact contact2 = new Contact(
-    //   "contact2_FN",
-    //   "contact2_LN",
-    //   "title2",
-    //   "status2",
-    //   daysBefore(10),
-    //   company1,
-    //   sale2,
-    //   Set.of(tag1),
-    //   "background2"
-    // );
+    Contact contact2 = new Contact(
+      "contact2_FN",
+      "contact2_LN",
+      "title2",
+      "status2",
+      daysBefore(10),
+      company1,
+      sale2,
+      "background2"
+    );
 
-    // contactRepo.saveAll(List.of(contact1, contact2));
+    Tags tag1 = new Tags("tag1", "color1");
+    Tags tag2 = new Tags("tag2", "color2");
+
+    tag1.addContact(contact1);
+    tag2.addContact(contact2);
+
+    tagsRepo.saveAll(List.of(tag1, tag2));
+
+    contact1.addTags(tag1);
+    contact2.addTags(tag2);
+
+    contactRepo.saveAll(List.of(contact1, contact2));
   }
 
   private Date daysBefore(Integer days) {

@@ -1,12 +1,10 @@
 package com.example.demo.mapper;
 
+import com.example.demo.entity.Contact;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
-import com.example.demo.dto.Contact_Tag;
-import com.example.demo.entity.Contact;
 
 @Mapper
 public interface ContactMapper {
@@ -20,9 +18,6 @@ public interface ContactMapper {
     " GROUP BY c.id"
   )
   Contact getContactById(@Param("id") Long id);
-
-  @Select("Select * from contact_tag where contact_id = 1")
-  Contact_Tag experiment();
 
   List<Contact> getCompanyContacts(
     @Param("start") Integer start,
