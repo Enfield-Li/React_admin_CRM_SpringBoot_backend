@@ -152,14 +152,6 @@ public class ContactMapperTest implements WithAssertions {
   }
 
   @Test
-  void testData() {
-    // Contact_Tag ct = underTest.experiment();
-    // System.out.println("************** acutal:" + ct.toString());
-
-    System.out.println("************** acutal:" + tagsRepo.findAll());
-  }
-
-  @Test
   void testGetContactById() {
     Contact actual = underTest.getContactById(1L);
     assertThat(actual).isNotNull();
@@ -283,6 +275,7 @@ public class ContactMapperTest implements WithAssertions {
     
   private static Stream<Arguments> providerForGetContactCount() {
     return Stream.of(
+      Arguments.of(null, null, null, null, null, null, null),
       Arguments.of("status1", null, null, null, null, null, null),
       Arguments.of("status2", null, null, null, null, null, null),
       // tags
@@ -305,6 +298,41 @@ public class ContactMapperTest implements WithAssertions {
     );
   }
     
-    @Test
-    void testGetContactsByIds() {}
+  @ParameterizedTest
+  @MethodSource("providerForGetContactsByIds")
+  void testGetContactsByIds(List<Long> ids) {
+    List<Contact> actual = underTest.getContactsByIds(ids);
+    assertThat(actual).isNotEmpty();
   }
+
+  private static Stream<Arguments> providerForGetContactsByIds() {
+    return Stream.of(
+      Arguments.of(List.of(1L)),
+      Arguments.of(List.of(2L)),
+      Arguments.of(List.of(1L, 2L))
+    );
+  }
+  
+  @Test
+  @Tag("requireEmptyData")
+  void testGetContactCountNull() {
+    String actual = underTest.getContactCount(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
+
+    assertThat(Integer.parseInt(actual)).isEqualTo(0);
+  }
+
+  @Test
+  @Tag("requireEmptyData")
+  void test_get_Contacts_by_ids_should_find_null() {
+    List<Contact> actual = underTest.getContactsByIds(List.of(1L));
+    assertThat(actual).isEmpty();
+  }
+}
