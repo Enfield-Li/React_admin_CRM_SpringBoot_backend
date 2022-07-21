@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 @Data
@@ -123,6 +124,18 @@ public class Sale {
   ) {
     this.email = email;
     this.status = status;
+    this.last_name = last_name;
+    this.first_name = first_name;
+    this.password = password;
+    this.role = role;
+  }
+
+  public Sale(
+    String first_name,
+    String last_name,
+    String password,
+    ApplicationUserRole role
+  ) {
     this.last_name = last_name;
     this.first_name = first_name;
     this.password = password;

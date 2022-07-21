@@ -18,12 +18,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -62,6 +64,7 @@ public class Contact {
   private Long company_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
@@ -70,13 +73,14 @@ public class Contact {
   private Long sales_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
   @JsonIgnore
-  @OneToOne(mappedBy = "contact", fetch = LAZY, cascade = DETACH)
-  private ContactNote contactNote;
+  @OneToMany(mappedBy = "contact", fetch = LAZY, cascade = DETACH)
+  private Set<ContactNote> contactNote = new HashSet<>();
 
   // https://thorben-janssen.com/hibernate-tips-the-best-way-to-remove-entities-from-a-many-to-many-association/#1_Use_a_Set_instead_of_a_List
   @JsonIgnore
@@ -90,4 +94,30 @@ public class Contact {
     )
   )
   private Set<Tags> tag_list = new HashSet<>();
+
+  public void addTags(Tags tag) {
+    tag_list.add(tag);
+  }
+
+  public Contact(
+    String first_name,
+    String last_name,
+    String title,
+    String status,
+    Date last_seen,
+    Company company,
+    Sale sale,
+    Set<Tags> tag_list,
+    String background
+  ) {
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.title = title;
+    this.status = status;
+    this.last_seen = last_seen;
+    this.company = company;
+    this.sale = sale;
+    this.tag_list = tag_list;
+    this.background = background;
+  }
 }

@@ -16,6 +16,7 @@ import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -39,7 +40,8 @@ public class ContactNote {
   private Long contact_id;
 
   @JsonIgnore
-  @OneToOne(fetch = LAZY)
+  @ToString.Exclude
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
 
@@ -47,6 +49,7 @@ public class ContactNote {
   private Long sales_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;

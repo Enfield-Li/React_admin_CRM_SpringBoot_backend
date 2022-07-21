@@ -25,6 +25,7 @@ import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -67,6 +68,7 @@ public class Deal {
   private Long sales_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
@@ -75,6 +77,7 @@ public class Deal {
   private Long company_id;
 
   @JsonIgnore
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "company_id")
   private Company company;
