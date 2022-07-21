@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -31,6 +32,7 @@ public class Task {
   @Column(updatable = false, insertable = false)
   private Long sales_id;
 
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
@@ -38,6 +40,7 @@ public class Task {
   @Column(updatable = false, insertable = false)
   private Long contact_id;
 
+  @ToString.Exclude
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;

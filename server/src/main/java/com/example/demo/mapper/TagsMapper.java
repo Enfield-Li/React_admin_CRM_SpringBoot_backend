@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface TagsMapper {
   List<Tags> getTagsByIds(@Param("ids") List<Integer> ids);
+
+  Tags getTagsById(Integer id);
 }

@@ -11,8 +11,8 @@
             <if test="sales_id != null">c.sales_id = #{sales_id}</if>
             <if test="status != null">AND c.status = #{status}</if>
             <if test="company_id != null">AND c.company_id = #{company_id}</if>
-            <if test="last_seen_gte != null">AND c.last_seen > #{last_seen_gte}</if>
-            <if test="last_seen_lte != null">AND c.last_seen <![CDATA[ < ]]> #{last_seen_lte}</if>
+            <if test="last_seen_gte != null">AND c.last_seen >= #{last_seen_gte}</if>
+            <if test="last_seen_lte != null">AND c.last_seen <![CDATA[ <= ]]> #{last_seen_lte}</if>
             <if test="tags != null">AND ct.tag_id = #{tags}</if>
             <if test="query != null">
                 AND
@@ -36,8 +36,8 @@
             <if test="sales_id != null">c.sales_id = #{sales_id}</if>
             <if test="status != null">AND c.status = #{status}</if>
             <if test="company_id != null">AND c.company_id = #{company_id}</if>
-            <if test="last_seen_gte != null">AND c.last_seen > #{last_seen_gte}</if>
-            <if test="last_seen_lte != null">AND c.last_seen <![CDATA[ < ]]> #{last_seen_lte}</if>
+            <if test="last_seen_gte != null">AND c.last_seen >= #{last_seen_gte}</if>
+            <if test="last_seen_lte != null">AND c.last_seen <![CDATA[ <= ]]> #{last_seen_lte}</if>
             <if test="query != null">
                 AND
                 (

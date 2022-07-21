@@ -9,4 +9,8 @@
           #{id}
         </foreach>
     </select>
+
+    <select id="getTagsById" resultType="com.example.demo.entity.Tags">
+        SELECT * FROM tags WHERE id = #{id}
+    </select>
 </mapper>

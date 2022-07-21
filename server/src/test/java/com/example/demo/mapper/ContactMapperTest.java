@@ -1,10 +1,15 @@
 package com.example.demo.mapper;
 
 import com.example.demo.auth.user.ApplicationUserRole;
+import com.example.demo.entity.Company;
+import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
+import com.example.demo.entity.Tags;
 import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
+import com.example.demo.repository.TagsRepository;
+
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,10 +30,13 @@ public class ContactMapperTest {
   SaleRepository saleRepo;
 
   @Autowired
-  ContactRepository contactRepo;
+  TagsRepository tagsRepo;
 
-  @Autowired
-  CompanyRepository companyRepo;
+  // @Autowired
+  // ContactRepository contactRepo;
+
+  // @Autowired
+  // CompanyRepository companyRepo;
 
   @BeforeEach
   void setUp(final TestInfo info) {
@@ -49,14 +57,39 @@ public class ContactMapperTest {
       ApplicationUserRole.SALE_ADMIN
     );
 
-    Sale sale3 = new Sale(
-      "first_name3",
-      "last_name3",
-      "password",
-      ApplicationUserRole.SALE_ADMIN
+    Company company1 = new Company(
+      sale1,
+      "company1",
+      "guangzhou",
+      10,
+      "consumer",
+      "GD"
     );
 
-    saleRepo.saveAll(Set.of(sale1, sale2, sale3));
+    Company company2 = new Company(
+      sale1,
+      "company2",
+      "guangzhou",
+      20,
+      "consumer",
+      "GD"
+    );
+
+    Company company3 = new Company(
+      sale2,
+      "company3",
+      "shenzhen",
+      10,
+      "sport",
+      "GD"
+    );
+
+    Tags tag1 = new Tags();
+    Contact contact1 = new Contact();
+
+    sale1.setCompanies(Set.of(company1, company2, company3));
+
+    saleRepo.saveAll(Set.of(sale1, sale2));
   }
 
   @AfterEach
@@ -64,6 +97,9 @@ public class ContactMapperTest {
     saleRepo.deleteAll();
   }
 
+  @Test 
+  void testData() {}
+  
   @Test
   void testGetCompanyContacts() {}
 
