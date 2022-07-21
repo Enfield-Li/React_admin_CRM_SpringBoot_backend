@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import static com.example.demo.util.Constants.*;
 
+import com.example.demo.dto.UpdateContactTagDto;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
@@ -12,8 +13,11 @@ import com.example.demo.repository.ContactRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -140,39 +144,24 @@ class ContactController {
 
   @Transactional
   @PutMapping("{id}")
-  public ResponseEntity<Contact> update(
+  public ResponseEntity<Boolean> update(
     @PathVariable("id") Long id,
-    @RequestBody Contact contactDto
+    @RequestBody UpdateContactTagDto dto
   ) {
-    if (contactDto.getId() == null) {
-      Contact contact = contactRepo
-        .findById(id)
-        .orElseThrow(() -> new ItemNotFoundException("Deal", id));
+    System.out.println(id);
+    System.out.println(dto);
 
-      contact.setTag_list(
-        contactDto
-          .getTags()
-          .stream()
-          .map(tag -> entityManager.getReference(Tags.class, tag))
-          .collect(Collectors.toSet())
-      );
+    Contact contact = contactRepo
+      .findById(id)
+      .orElseThrow(() -> new ItemNotFoundException("Contact", id));
 
-      contactRepo.save(contact);
+    Set<Tags> tag_list = new HashSet<>();
 
-      return ResponseEntity.ok().build();
-    }
+    dto.getTags().forEach(tagId -> tag_list.add(findTagsReference(tagId)));
 
-    contactDto.setTag_list(
-      contactDto
-        .getTags()
-        .stream()
-        .map(tag -> entityManager.getReference(Tags.class, tag))
-        .collect(Collectors.toSet())
-    );
+    contact.setTag_list(tag_list);
 
-    Contact savedContact = contactRepo.save(contactDto);
-
-    return ResponseEntity.ok(savedContact);
+    return ResponseEntity.ok(true);
   }
 
   @DeleteMapping("{id}")
@@ -209,15 +198,18 @@ class ContactController {
 
     contact.setSale(sale);
     contact.setCompany(company);
-
     contact.setTag_list(
       contact
         .getTags()
         .stream()
-        .map(tag -> entityManager.getReference(Tags.class, tag))
+        .map(id -> findTagsReference(id))
         .collect(Collectors.toSet())
     );
 
     return contact;
+  }
+
+  private Tags findTagsReference(Integer id) {
+    return entityManager.getReference(Tags.class, id);
   }
 }

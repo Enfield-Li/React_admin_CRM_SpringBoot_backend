@@ -40,7 +40,8 @@ public class ContactNote {
   private Long contact_id;
 
   @JsonIgnore
-  @OneToOne(fetch = LAZY)
+  @ToString.Exclude
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
 

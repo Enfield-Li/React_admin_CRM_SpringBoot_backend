@@ -35,11 +35,13 @@ public class companyMapperTest implements WithAssertions {
   void setUp(final TestInfo info) {
     // exclude method https://stackoverflow.com/a/69825777/16648127
     final Set<String> testTags = info.getTags();
-    boolean requireEmptyData = testTags
+
+    Boolean requireEmptyData = testTags
       .stream()
       .anyMatch(tag -> tag.equals("requireEmptyData"));
+    Boolean hasData = saleRepo.findAll().size() > 0;
 
-    if (saleRepo.findAll().size() > 0 || requireEmptyData) {
+    if (hasData || requireEmptyData) {
       if (requireEmptyData) {
         saleRepo.deleteAll();
         underTest.deleteAll();

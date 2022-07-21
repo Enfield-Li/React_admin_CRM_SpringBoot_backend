@@ -9,7 +9,7 @@ import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
 import com.example.demo.repository.TagsRepository;
-
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,14 @@ public class ContactMapperTest {
   @BeforeEach
   void setUp(final TestInfo info) {
     final Set<String> testTags = info.getTags();
+
     if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
+
+    Tags tag1 = new Tags("tag1", "color1");
+    Tags tag2 = new Tags("tag2", "color2");
+    Tags tag3 = new Tags("tag3", "color3");
+
+    tagsRepo.saveAll(List.of(tag1, tag2, tag3));
 
     Sale sale1 = new Sale(
       "first_name1",
@@ -84,8 +91,7 @@ public class ContactMapperTest {
       "GD"
     );
 
-    Tags tag1 = new Tags();
-    Contact contact1 = new Contact();
+    // Contact contact1 = new Contact("", "", "", "", null, null, null, null);
 
     sale1.setCompanies(Set.of(company1, company2, company3));
 
@@ -97,9 +103,9 @@ public class ContactMapperTest {
     saleRepo.deleteAll();
   }
 
-  @Test 
+  @Test
   void testData() {}
-  
+
   @Test
   void testGetCompanyContacts() {}
 
