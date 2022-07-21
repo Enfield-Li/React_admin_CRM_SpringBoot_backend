@@ -2,10 +2,17 @@ package com.example.demo;
 
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
+import com.example.demo.entity.Contact;
 import com.example.demo.entity.Sale;
+import com.example.demo.entity.Tags;
 import com.example.demo.mapper.companyMapper;
+import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
+import com.example.demo.repository.TagsRepository;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.springframework.boot.SpringApplication;
@@ -24,10 +31,19 @@ public class DemoApplication {
 
     SaleRepository saleRepo = ctx.getBean(SaleRepository.class);
     companyMapper mapper = ctx.getBean(companyMapper.class);
+    ContactRepository contactRepo = ctx.getBean(ContactRepository.class);
+    TagsRepository tagsRepo = ctx.getBean(TagsRepository.class);
 
     Sale sale1 = new Sale(
       "first_name1",
       "last_name1",
+      "password",
+      ApplicationUserRole.SALE_ADMIN
+    );
+
+    Sale sale2 = new Sale(
+      "first_name2",
+      "last_name2",
       "password",
       ApplicationUserRole.SALE_ADMIN
     );
@@ -50,62 +66,50 @@ public class DemoApplication {
       "GD"
     );
 
-    Sale sale2 = new Sale(
-      "first_name2",
-      "last_name2",
-      "password",
-      ApplicationUserRole.SALE_ADMIN
-    );
+    sale1.setCompanies(Set.of(company1));
+    sale2.setCompanies(Set.of(company2));
 
-    Company company3 = new Company(
+    saleRepo.save(sale1);
+    saleRepo.save(sale2);
+
+    Tags tag1 = new Tags("tag1", "color1");
+    Tags tag2 = new Tags("tag2", "color2");
+
+    Contact contact1 = new Contact(
+      "contact1_FN",
+      "contact1_LN",
+      "title1",
+      "status1",
+      daysBefore(1),
+      company1,
       sale1,
-      "company2",
-      "shenzhen",
-      10,
-      "sport",
-      "GD"
+      "background1"
     );
 
-    Company company4 = new Company(
+    Contact contact2 = new Contact(
+      "contact2_FN",
+      "contact2_LN",
+      "title2",
+      "status2",
+      daysBefore(10),
+      company1,
       sale2,
-      "company4",
-      "shenzhen",
-      20,
-      "sport",
-      "GD"
+      "background2"
     );
 
-    sale1.setCompanies(Set.of(company1, company2));
-    sale2.setCompanies(Set.of(company3, company4));
-    // saleRepo.saveAll(List.of(sale1, sale2));
+    tag1.addContact(contact1);
+    tag2.addContact(contact2);
 
-    // List<Company> res1 = mapper.getFilteredCompanies(
-    //   0,
-    //   100,
-    //   "id",
-    //   "desc",
-    //   1L,
-    //   null,
-    //   null,
-    //   null,
-    //   null
-    // );
+    tagsRepo.saveAll(List.of(tag1, tag2));
 
-    // System.out.println(res1.size());
+    contact1.addTags(tag1);
+    contact2.addTags(tag2);
 
-    // List<Company> res = mapper.getFilteredCompanies(
-    //   0,
-    //   100,
-    //   "id",
-    //   "desc",
-    //   2L,
-    //   null,
-    //   null,
-    //   null,
-    //   null
-    // );
+    contactRepo.saveAll(List.of(contact1, contact2));
+  }
 
-    // System.out.println(res.size());
+  private static Date daysBefore(Integer days) {
+    return Date.from(Instant.now().minus(Duration.ofDays(days)));
   }
 
   private static void openSwaggerUI() throws IOException {

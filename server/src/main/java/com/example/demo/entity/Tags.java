@@ -17,12 +17,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Data
+// @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+// @EqualsAndHashCode(exclude = "contacts")
 public class Tags {
 
   @Id
@@ -46,6 +48,10 @@ public class Tags {
   //   )
   // )
   private Set<Contact> contacts = new HashSet<>();
+
+  public void addContact(Contact contact) {
+    contacts.add(contact);
+  }
 
   public Tags(String name, String color) {
     this.name = name;

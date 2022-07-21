@@ -95,31 +95,31 @@ public class ContactMapperTest implements WithAssertions {
     saleRepo.save(sale1);
     saleRepo.save(sale2);
 
-    Contact contact1 = new Contact(
-      "contact1_FN",
-      "contact1_LN",
-      "title1",
-      "status1",
-      daysBefore(1),
-      company1,
-      sale1,
-      Set.of(tag1),
-      "background1"
-    );
+    // Contact contact1 = new Contact(
+    //   "contact1_FN",
+    //   "contact1_LN",
+    //   "title1",
+    //   "status1",
+    //   daysBefore(1),
+    //   company1,
+    //   sale1,
+    //   Set.of(tag1),
+    //   "background1"
+    // );
 
-    Contact contact2 = new Contact(
-      "contact2_FN",
-      "contact2_LN",
-      "title2",
-      "status2",
-      daysBefore(10),
-      company1,
-      sale2,
-      Set.of(tag1),
-      "background2"
-    );
+    // Contact contact2 = new Contact(
+    //   "contact2_FN",
+    //   "contact2_LN",
+    //   "title2",
+    //   "status2",
+    //   daysBefore(10),
+    //   company1,
+    //   sale2,
+    //   Set.of(tag1),
+    //   "background2"
+    // );
 
-    contactRepo.saveAll(List.of(contact1, contact2));
+    // contactRepo.saveAll(List.of(contact1, contact2));
   }
 
   private Date daysBefore(Integer days) {
