@@ -66,14 +66,11 @@ public class DemoApplication {
       "GD"
     );
 
-    sale1.setCompanies(Set.of(company1));
-    sale2.setCompanies(Set.of(company2));
+    // sale1.setCompanies(Set.of(company1));
+    // sale2.setCompanies(Set.of(company2));
 
-    saleRepo.save(sale1);
-    saleRepo.save(sale2);
-
-    Tags tag1 = new Tags("tag1", "color1");
-    Tags tag2 = new Tags("tag2", "color2");
+    // saleRepo.save(sale1);
+    // saleRepo.save(sale2);
 
     Contact contact1 = new Contact(
       "contact1_FN",
@@ -97,15 +94,18 @@ public class DemoApplication {
       "background2"
     );
 
+    Tags tag1 = new Tags("tag1", "color1");
+    Tags tag2 = new Tags("tag2", "color2");
+
     tag1.addContact(contact1);
     tag2.addContact(contact2);
 
-    tagsRepo.saveAll(List.of(tag1, tag2));
+    // tagsRepo.saveAll(List.of(tag1, tag2));
 
-    contact1.addTags(tag1);
-    contact2.addTags(tag2);
+    // contact1.addTags(tag1);
+    // contact2.addTags(tag2);
 
-    contactRepo.saveAll(List.of(contact1, contact2));
+    // contactRepo.saveAll(List.of(contact1, contact2));
   }
 
   private static Date daysBefore(Integer days) {
