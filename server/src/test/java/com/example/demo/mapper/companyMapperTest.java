@@ -42,7 +42,7 @@ public class companyMapperTest implements WithAssertions {
     Boolean hasData = saleRepo.findAll().size() > 0;
 
     if (hasData || requireEmptyData) {
-      if (requireEmptyData) {
+      if (hasData && requireEmptyData) {
         saleRepo.deleteAll();
         underTest.deleteAll();
       }

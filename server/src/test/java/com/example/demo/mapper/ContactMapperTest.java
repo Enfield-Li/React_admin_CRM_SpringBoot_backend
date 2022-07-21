@@ -14,10 +14,15 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -40,14 +45,28 @@ public class ContactMapperTest implements WithAssertions {
   @Autowired
   ContactRepository contactRepo;
 
-  // @Autowired
-  // CompanyRepository companyRepo;
+  @Autowired
+  CompanyRepository companyRepo;
 
   @BeforeEach
   void setUp(final TestInfo info) {
     final Set<String> testTags = info.getTags();
+    boolean requireEmptyData = testTags
+      .stream()
+      .anyMatch(tag -> tag.equals("requireEmptyData"));
 
-    if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
+    Boolean hasData = saleRepo.findAll().size() > 0;
+
+    if (hasData || requireEmptyData) {
+      if (hasData && requireEmptyData) {
+        tagsRepo.deleteAll();
+        contactRepo.deleteAll();
+        saleRepo.deleteAll();
+        companyRepo.deleteAll();
+      }
+      return;
+    }
+
     Sale sale1 = new Sale(
       "first_name1",
       "last_name1",
@@ -137,16 +156,65 @@ public class ContactMapperTest implements WithAssertions {
   @Test
   void testGetContactById() {
     Contact actual = underTest.getContactById(1L);
-    System.out.println("************** acutal:" + actual);
     assertThat(actual).isNotNull();
-    // assertThat(actual.getRaw_tags()).isNotNull();
   }
 
   @Test
-  void testGetCompanyContacts() {}
+  @Tag("requireEmptyData")
+  void testGetContactByIdNull() {
+    Contact actual = underTest.getContactById(1L);
+    assertThat(actual).isNull();
+  }
+
+  @ParameterizedTest
+  @MethodSource("providerForGetContactCount")
+  void testGetCompanyContacts(
+    Integer start,
+    Integer take,
+    String sort,
+    String order,
+    String status,
+    String tags,
+    Long sales_id,
+    String last_seen_gte,
+    String last_seen_lte,
+    Long company_id,
+    String query
+  ) {
+    List<Contact> actual = underTest.getCompanyContacts(
+      start,
+      take,
+      sort,
+      order,
+      status,
+      tags,
+      sales_id,
+      last_seen_gte,
+      last_seen_lte,
+      company_id,
+      query
+    );
+    System.out.println("****************** size: " + actual.size());
+
+    assertThat(actual ).isNotEmpty();
+
+  }
 
   @Test
   void testGetContactCount() {}
+
+  private static Stream<Arguments> providerForGetContactCount() {
+    return Stream.of(
+      // test start & take
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, null),
+      Arguments.of(1, 100, "id", "desc", null, null, null, null, null, null, null),
+      Arguments.of(0, 99, "id", "desc", null, null, null, null, null, null, null),
+      // test order & sort
+      Arguments.of(0, 100, "id", "asc", null, null, null, null, null, null, null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, null),
+      Arguments.of(0, 100, "id", "asc", null, null, null, null, null, null, null)
+    );
+  }
 
   @Test
   void testGetContactsByIds() {}
