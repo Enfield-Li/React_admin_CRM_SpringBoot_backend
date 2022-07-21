@@ -9,6 +9,8 @@ import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
 import com.example.demo.repository.TagsRepository;
+
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -110,7 +112,7 @@ public class ContactMapperTest implements WithAssertions {
       "contact1_LN",
       "title1",
       "status1",
-      daysBefore(1),
+      daysBefore(5),
       company1,
       sale1,
       "background1"
@@ -122,7 +124,7 @@ public class ContactMapperTest implements WithAssertions {
       "title2",
       "status2",
       daysBefore(10),
-      company1,
+      company2,
       sale2,
       "background2"
     );
@@ -141,8 +143,12 @@ public class ContactMapperTest implements WithAssertions {
     contactRepo.saveAll(List.of(contact1, contact2));
   }
 
-  private Date daysBefore(Integer days) {
+  private static Date daysBefore(Integer days) {
     return Date.from(Instant.now().minus(Duration.ofDays(days)));
+  }
+
+  private static String daysStringBefore(Integer days) {
+    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss") .format(daysBefore(days));
   }
 
   @Test
@@ -167,7 +173,7 @@ public class ContactMapperTest implements WithAssertions {
   }
 
   @ParameterizedTest
-  @MethodSource("providerForGetContactCount")
+  @MethodSource("providerForGetCompanyContacts")
   void testGetCompanyContacts(
     Integer start,
     Integer take,
@@ -182,28 +188,24 @@ public class ContactMapperTest implements WithAssertions {
     String query
   ) {
     List<Contact> actual = underTest.getCompanyContacts(
-      start,
-      take,
-      sort,
-      order,
-      status,
-      tags,
-      sales_id,
-      last_seen_gte,
-      last_seen_lte,
-      company_id,
-      query
+        start,
+        take,
+        sort,
+        order,
+        status,
+        tags,
+        sales_id,
+        last_seen_gte,
+        last_seen_lte,
+        company_id,
+        query
     );
-    System.out.println("****************** size: " + actual.size());
 
-    assertThat(actual ).isNotEmpty();
-
+    assertThat(actual).isNotEmpty();
   }
 
-  @Test
-  void testGetContactCount() {}
-
-  private static Stream<Arguments> providerForGetContactCount() {
+  
+  private static Stream<Arguments> providerForGetCompanyContacts() {
     return Stream.of(
       // test start & take
       Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, null),
@@ -211,11 +213,98 @@ public class ContactMapperTest implements WithAssertions {
       Arguments.of(0, 99, "id", "desc", null, null, null, null, null, null, null),
       // test order & sort
       Arguments.of(0, 100, "id", "asc", null, null, null, null, null, null, null),
-      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, null),
-      Arguments.of(0, 100, "id", "asc", null, null, null, null, null, null, null)
+      Arguments.of(0, 100, "status", "desc", null, null, null, null, null, null, null),
+      Arguments.of(0, 100, "status", "asc", null, null, null, null, null, null, null),
+      // status
+      Arguments.of(0, 100, "id", "desc", "status1", null, null, null, null, null, null),
+      Arguments.of(0, 100, "id", "desc", "status2", null, null, null, null, null, null),
+      // tags
+      Arguments.of(0, 100, "id", "desc", null, "1", null, null, null, null, null),
+      Arguments.of(0, 100, "id", "desc", null, "2", null, null, null, null, null),
+      // sales_id
+      Arguments.of(0, 100, "id", "desc", null, null, 1L, null, null, null, null),
+      Arguments.of(0, 100, "id", "desc", null, null, 2L, null, null, null, null),
+      // last_seen_gte 
+      Arguments.of(0, 100, "id", "desc", null, null, null, daysStringBefore(7), null, null, null),
+      // last_seen_lte
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, daysStringBefore(7), null, null),
+      // company_id .
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, 1L, null),
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, 2L, null),
+      // query
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, "back"),
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, "titl"),
+      Arguments.of(0, 100, "id", "desc", null, null, null, null, null, null, "_FN")
+      );
+    }
+    
+    @Test
+    @Tag("requireEmptyData")
+    void testGetCompanyContactsNul() {
+      List<Contact> actual = underTest.getCompanyContacts(
+        0, 
+        100, 
+        "id", 
+        "desc", 
+        null, 
+        null, 
+        null, 
+        null, 
+        null, 
+        null, 
+        null
+      );
+      assertThat(actual).isEmpty();
+    }
+  
+  @ParameterizedTest
+  @MethodSource("providerForGetContactCount")
+  void testGetContactCount(
+    String status,
+    String tags,
+    Long sales_id,
+    String last_seen_gte,
+    String last_seen_lte,
+    Long company_id,
+    String query
+  ) {
+    String actual = underTest.getContactCount(
+      status,
+      tags,
+      sales_id,
+      company_id,
+      last_seen_gte,
+      last_seen_lte,
+      query
+    );
+
+    assertThat(Integer.parseInt(actual)).isGreaterThan(0);
+  }
+    
+  private static Stream<Arguments> providerForGetContactCount() {
+    return Stream.of(
+      Arguments.of("status1", null, null, null, null, null, null),
+      Arguments.of("status2", null, null, null, null, null, null),
+      // tags
+      Arguments.of(null, "1", null, null, null, null, null),
+      Arguments.of(null, "2", null, null, null, null, null),
+      // sales_id
+      Arguments.of(null, null, 1L, null, null, null, null),
+      Arguments.of(null, null, 2L, null, null, null, null),
+      // last_seen_gte 
+      Arguments.of(null, null, null, daysStringBefore(7), null, null, null),
+      // last_seen_lte
+      Arguments.of(null, null, null, null, daysStringBefore(7), null, null),
+      // company_id 
+      Arguments.of(null, null, null, null, null, 1L, null),
+      Arguments.of(null, null, null, null, null, 2L, null),
+      // query
+      Arguments.of(null, null, null, null, null, null, "back"),
+      Arguments.of(null, null, null, null, null, null, "titl"),
+      Arguments.of(null, null, null, null, null, null, "_FN")
     );
   }
-
-  @Test
-  void testGetContactsByIds() {}
-}
+    
+    @Test
+    void testGetContactsByIds() {}
+  }

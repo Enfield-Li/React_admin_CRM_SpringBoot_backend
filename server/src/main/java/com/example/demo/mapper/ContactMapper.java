@@ -17,7 +17,7 @@ public interface ContactMapper {
     " WHERE c.id = #{id}" +
     " GROUP BY c.id"
   )
-  Contact getContactById(@Param("id") Long id);
+  Contact getContactById(@Param("id") Long id);     
 
   List<Contact> getCompanyContacts(
     @Param("start") Integer start,
