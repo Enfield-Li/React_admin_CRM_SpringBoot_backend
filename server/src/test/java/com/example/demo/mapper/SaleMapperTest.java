@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.assertj.core.api.WithAssertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,12 @@ public class SaleMapperTest implements WithAssertions {
   @BeforeEach
   void setUp(final TestInfo info) {
     final Set<String> testTags = info.getTags();
-    if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
+
+    Boolean requireEmptyData = testTags
+      .stream()
+      .anyMatch(tag -> tag.equals("requireEmptyData"));
+
+    if (requireEmptyData) return;
 
     Sale sale1 = new Sale(
       "first_name1",
@@ -56,11 +60,6 @@ public class SaleMapperTest implements WithAssertions {
     );
 
     saleRepo.saveAll(Set.of(sale1, sale2, sale3));
-  }
-
-  @AfterEach
-  void cleanUp() {
-    saleRepo.deleteAll();
   }
 
   @ParameterizedTest
@@ -92,14 +91,14 @@ public class SaleMapperTest implements WithAssertions {
   }
 
   @Test
-  @Tag("skipBeforeEach")
+  @Tag("requireEmptyData")
   void testGetSaleCountShouldFindNull() {
     String actual = saleMapper.getSaleCount();
     assertThat(Integer.parseInt(actual)).isEqualTo(0);
   }
 
   @ParameterizedTest
-  @Tag("skipBeforeEach")
+  @Tag("requireEmptyData")
   @MethodSource("providerForGetAllSales")
   void testGetAllSalesShouldFindNull(
     Integer start,

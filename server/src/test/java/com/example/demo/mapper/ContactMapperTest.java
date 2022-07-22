@@ -19,9 +19,12 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -33,6 +36,7 @@ import org.springframework.test.annotation.Rollback;
 @DataJpaTest
 @AutoConfigureMybatis
 @Rollback(value = false)
+@TestMethodOrder(OrderAnnotation.class)
 public class ContactMapperTest implements WithAssertions {
 
   @Autowired
@@ -53,21 +57,13 @@ public class ContactMapperTest implements WithAssertions {
   @BeforeEach
   void setUp(final TestInfo info) {
     final Set<String> testTags = info.getTags();
-    boolean requireEmptyData = testTags
+    
+    Boolean requireEmptyData = testTags
       .stream()
       .anyMatch(tag -> tag.equals("requireEmptyData"));
-
     Boolean hasData = saleRepo.findAll().size() > 0;
 
-    if (hasData || requireEmptyData) {
-      if (hasData && requireEmptyData) {
-        tagsRepo.deleteAll();
-        contactRepo.deleteAll();
-        saleRepo.deleteAll();
-        companyRepo.deleteAll();
-      }
-      return;
-    }
+    if (hasData || requireEmptyData) return;
 
     Sale sale1 = new Sale(
       "first_name1",
@@ -152,21 +148,22 @@ public class ContactMapperTest implements WithAssertions {
   }
 
   @Test
-  void testGetContactById() {
+  void test_get_contact_by_id() {
     Contact actual = underTest.getContactById(1L);
     assertThat(actual).isNotNull();
   }
 
   @Test
+  @Order(1)
   @Tag("requireEmptyData")
-  void testGetContactByIdNull() {
+  void test_get_contact_by_id_should_find_null() {
     Contact actual = underTest.getContactById(1L);
     assertThat(actual).isNull();
   }
 
   @ParameterizedTest
   @MethodSource("providerForGetCompanyContacts")
-  void testGetCompanyContacts(
+  void test_get_company_contacts(
     Integer start,
     Integer take,
     String sort,
@@ -179,19 +176,8 @@ public class ContactMapperTest implements WithAssertions {
     Long company_id,
     String query
   ) {
-    List<Contact> actual = underTest.getCompanyContacts(
-        start,
-        take,
-        sort,
-        order,
-        status,
-        tags,
-        sales_id,
-        last_seen_gte,
-        last_seen_lte,
-        company_id,
-        query
-    );
+    List<Contact> actual = underTest
+        .getCompanyContacts(start, take, sort, order, status, tags, sales_id, last_seen_gte, last_seen_lte, company_id, query);
 
     assertThat(actual).isNotEmpty();
   }
@@ -230,28 +216,19 @@ public class ContactMapperTest implements WithAssertions {
       );
     }
     
-    @Test
-    @Tag("requireEmptyData")
-    void testGetCompanyContactsNul() {
-      List<Contact> actual = underTest.getCompanyContacts(
-        0, 
-        100, 
-        "id", 
-        "desc", 
-        null, 
-        null, 
-        null, 
-        null, 
-        null, 
-        null, 
-        null
-      );
-      assertThat(actual).isEmpty();
-    }
+  @Test
+  @Order(2)
+  @Tag("requireEmptyData")
+  void test_get_companies_count_should_find_null() {
+    List<Contact> actual = underTest
+        .getCompanyContacts(0, 100, "id", "desc", null, null, null, null, null, null, null);
+
+    assertThat(actual).isEmpty();
+  }
   
   @ParameterizedTest
   @MethodSource("providerForGetContactCount")
-  void testGetContactCount(
+  void test_get_contact_count(
     String status,
     String tags,
     Long sales_id,
@@ -260,15 +237,8 @@ public class ContactMapperTest implements WithAssertions {
     Long company_id,
     String query
   ) {
-    String actual = underTest.getContactCount(
-      status,
-      tags,
-      sales_id,
-      company_id,
-      last_seen_gte,
-      last_seen_lte,
-      query
-    );
+    String actual = underTest
+        .getContactCount( status, tags, sales_id, company_id, last_seen_gte, last_seen_lte, query);
 
     assertThat(Integer.parseInt(actual)).isGreaterThan(0);
   }
@@ -297,41 +267,36 @@ public class ContactMapperTest implements WithAssertions {
       Arguments.of(null, null, null, null, null, null, "_FN")
     );
   }
+  
+  @Test
+  @Order(3)
+  @Tag("requireEmptyData")
+  void test_get_contact_count_should_find_null() {
+    String actual = underTest
+        .getContactCount( null, null, null, null, null, null, null);
+
+    assertThat(Integer.parseInt(actual)).isEqualTo(0);
+  }
     
   @ParameterizedTest
-  @MethodSource("providerForGetContactsByIds")
-  void testGetContactsByIds(List<Long> ids) {
+  @MethodSource("providerForGetContactsByIds") 
+  void test_get_contact_by_ids(List<Long> ids) {
     List<Contact> actual = underTest.getContactsByIds(ids);
     assertThat(actual).isNotEmpty();
   }
-
+  
   private static Stream<Arguments> providerForGetContactsByIds() {
     return Stream.of(
       Arguments.of(List.of(1L)),
       Arguments.of(List.of(2L)),
       Arguments.of(List.of(1L, 2L))
-    );
+      );
   }
-  
+    
   @Test
+  @Order(4)
   @Tag("requireEmptyData")
-  void testGetContactCountNull() {
-    String actual = underTest.getContactCount(
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    );
-
-    assertThat(Integer.parseInt(actual)).isEqualTo(0);
-  }
-
-  @Test
-  @Tag("requireEmptyData")
-  void test_get_Contacts_by_ids_should_find_null() {
+  void test_get_contact_by_ids_should_find_null() {
     List<Contact> actual = underTest.getContactsByIds(List.of(1L));
     assertThat(actual).isEmpty();
   }

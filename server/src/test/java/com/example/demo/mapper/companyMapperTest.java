@@ -9,9 +9,12 @@ import java.util.Set;
 import java.util.stream.Stream;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,6 +26,7 @@ import org.springframework.test.annotation.Rollback;
 @DataJpaTest
 @AutoConfigureMybatis
 @Rollback(value = false)
+@TestMethodOrder(OrderAnnotation.class)
 public class companyMapperTest implements WithAssertions {
 
   @Autowired
@@ -41,13 +45,7 @@ public class companyMapperTest implements WithAssertions {
       .anyMatch(tag -> tag.equals("requireEmptyData"));
     Boolean hasData = saleRepo.findAll().size() > 0;
 
-    if (hasData || requireEmptyData) {
-      if (hasData && requireEmptyData) {
-        saleRepo.deleteAll();
-        underTest.deleteAll();
-      }
-      return;
-    }
+    if (hasData || requireEmptyData) return;
 
     Sale sale1 = new Sale(
       "first_name1",
@@ -114,7 +112,7 @@ public class companyMapperTest implements WithAssertions {
 
   @ParameterizedTest
   @MethodSource("providerForGetFilteredCompanies")
-  void testGetFilteredCompanies(
+  void test_get_filtered_companies(
     Integer start,
     Integer take,
     String sort,
@@ -125,17 +123,8 @@ public class companyMapperTest implements WithAssertions {
     String sector,
     String query
   ) {
-    List<Company> actual1 = underTest.getFilteredCompanies(
-      start,
-      take,
-      sort,
-      order,
-      sales_id,
-      minSize,
-      maxSize,
-      sector,
-      query
-    );
+    List<Company> actual1 = underTest
+        .getFilteredCompanies(start, take, sort, order, sales_id, minSize, maxSize, sector, query);
 
     assertThat(actual1).isNotEmpty();
   }
@@ -174,22 +163,27 @@ public class companyMapperTest implements WithAssertions {
     );
   }
 
+  @Test
+  @Order(1)
+  @Tag("requireEmptyData")
+  void test_get_filtered_companies_should_find_null() {
+    List<Company> actual1 = underTest
+        .getFilteredCompanies(0, 100, "id", "desc", null, null, null, null, null);
+
+    assertThat(actual1).isEmpty();
+  }
+
   @ParameterizedTest
   @MethodSource("providerForGetCompaniesCount")
-  void testGetCompaniesCount(
+  void test_get_companies_count(
     String query,
     Long sales_id,
     Integer minSize,
     Integer maxSize,
     String sector
   ) {
-    String actual = underTest.getCompaniesCount(
-      query,
-      sales_id,
-      minSize,
-      maxSize,
-      sector
-    );
+    String actual = underTest
+        .getCompaniesCount(query, sales_id, minSize, maxSize, sector);
 
     assertThat(Integer.parseInt(actual)).isGreaterThan(0);
   }
@@ -220,9 +214,17 @@ public class companyMapperTest implements WithAssertions {
     );
   }
 
+  @Test
+  @Order(2)
+  @Tag("requireEmptyData")
+  void test_get_companies_count_should_find_null() {
+    String actual = underTest.getCompaniesCount(null, null, null, null, null);
+    assertThat(Integer.parseInt(actual)).isEqualTo(0);
+  }
+
   @ParameterizedTest
   @MethodSource("providerForGetManyReferences")
-  void getManyReferences(List<Long> ids) {
+  void test_get_many_references(List<Long> ids) {
     List<Company> actual = underTest.getManyReferences(ids);
     assertThat(actual).isNotEmpty();
   }
@@ -235,38 +237,11 @@ public class companyMapperTest implements WithAssertions {
     );
   }
 
-  /*
-   * Find null
-   */
   @Test
+  @Order(3)
   @Tag("requireEmptyData")
-  void testGetFilteredCompaniesShouldFindNull() {
-    List<Company> actual1 = underTest.getFilteredCompanies(
-      0,
-      100,
-      "id",
-      "desc",
-      null,
-      null,
-      null,
-      null,
-      null
-    );
-
-    assertThat(actual1).isEmpty();
-  }
-
-  @Test
-  @Tag("requireEmptyData")
-  void testGetManyReferencesShouldFindNull() {
+  void test_get_many_references_should_find_null() {
     List<Company> actual = underTest.getManyReferences(List.of(1L));
     assertThat(actual).isEmpty();
-  }
-
-  @Test
-  @Tag("requireEmptyData")
-  void testGetCompaniesCountShouldFindNull() {
-    String actual = underTest.getCompaniesCount(null, null, null, null, null);
-    assertThat(Integer.parseInt(actual)).isEqualTo(0);
   }
 }
