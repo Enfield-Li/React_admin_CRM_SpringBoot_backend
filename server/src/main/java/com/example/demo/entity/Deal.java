@@ -58,7 +58,11 @@ public class Deal {
   private List<Long> contact_ids = new ArrayList<>();
 
   @JsonIgnore
-  @OneToMany(mappedBy = "deal", cascade = { DETACH, DETACH }, fetch = LAZY)
+  @OneToMany(
+    mappedBy = "deal",
+    cascade = { DETACH, DETACH, MERGE },
+    fetch = LAZY
+  )
   private Set<DealNote> dealNote = new HashSet<>();
 
   @Column(updatable = false, insertable = false)
@@ -92,6 +96,28 @@ public class Deal {
   private Set<Contact> contact_list = new HashSet<>();
 
   public Deal() {}
+
+  public Deal(
+    String name,
+    String description,
+    String stage,
+    String type,
+    Long amount,
+    Sale sale,
+    Company company
+  ) {
+    this.name = name;
+    this.description = description;
+    this.stage = stage;
+    this.type = type;
+    this.amount = amount;
+    this.sale = sale;
+    this.company = company;
+  }
+
+  public void addContact(Contact contact) {
+    contact_list.add(contact);
+  }
 
   public Long getId() {
     return this.id;

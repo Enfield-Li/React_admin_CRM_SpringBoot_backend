@@ -94,8 +94,16 @@ public class Contact {
   )
   private Set<Tags> tag_list = new HashSet<>();
 
+  @JsonIgnore
+  @ManyToMany(cascade = { PERSIST, DETACH, MERGE }, fetch = LAZY)
+  private Set<Deal> deals = new HashSet<>();
+
   public void addTags(Tags tag) {
     tag_list.add(tag);
+  }
+
+  public void addDeals(Deal deal) {
+    deals.add(deal);
   }
 
   public Contact() {}

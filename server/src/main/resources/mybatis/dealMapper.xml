@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.DealMapper">
     <select id="getCompanyDeals" resultType="com.example.demo.entity.Deal">
-        SELECT d.*, d._index as 'index', d._description as description, 
+        SELECT d.*, 
+            d._index as index, 
+            d._description as description, 
             GROUP_CONCAT(DISTINCT dc.contact_id) AS contactIdsString
         FROM deal d
         LEFT JOIN deal_contact dc on d.id = dc.deal_id

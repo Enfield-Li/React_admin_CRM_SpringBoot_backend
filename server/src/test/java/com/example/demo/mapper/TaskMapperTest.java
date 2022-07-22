@@ -64,6 +64,7 @@ public class TaskMapperTest implements WithAssertions {
 
   @Test
   @Order(1)
+  @Tag("requireEmptyData")
   void test_get_all_tasks_should_find_null() {}
 
   @Test
@@ -71,5 +72,6 @@ public class TaskMapperTest implements WithAssertions {
 
   @Test
   @Order(2)
+  @Tag("requireEmptyData")
   void test_get_task_count_should_find_null() {}
 }

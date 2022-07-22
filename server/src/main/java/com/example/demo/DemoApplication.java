@@ -4,11 +4,13 @@ import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.ContactNote;
+import com.example.demo.entity.Deal;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Tags;
 import com.example.demo.mapper.companyMapper;
 import com.example.demo.repository.ContactNoteRepository;
 import com.example.demo.repository.ContactRepository;
+import com.example.demo.repository.DealRespository;
 import com.example.demo.repository.SaleRepository;
 import com.example.demo.repository.TagsRepository;
 import java.io.IOException;
@@ -38,6 +40,7 @@ public class DemoApplication {
     ContactNoteRepository contactNoteRepo = ctx.getBean(
       ContactNoteRepository.class
     );
+    DealRespository dealRepo = ctx.getBean(DealRespository.class);
 
     Sale sale1 = new Sale(
       "first_name1",
@@ -74,9 +77,6 @@ public class DemoApplication {
     sale1.setCompanies(Set.of(company1));
     sale2.setCompanies(Set.of(company2));
 
-    saleRepo.save(sale1);
-    saleRepo.save(sale2);
-
     Contact contact1 = new Contact(
       "contact1_FN",
       "contact1_LN",
@@ -99,12 +99,28 @@ public class DemoApplication {
       "background2"
     );
 
+    Tags tag1 = new Tags("tag1", "color1");
+    Tags tag2 = new Tags("tag2", "color2");
+
+    tag1.addContact(contact1);
+    tag2.addContact(contact2);
+
+    contact1.addTags(tag1);
+    contact2.addTags(tag2);
+
+    Deal deal1 = new Deal("deal1", "description1" ,"stage1", "type1", 5000L, sale1, company1);
+    Deal deal2 = new Deal("deal2", "description2","stage2", "type2", 10000L, sale2, company2);
+
+    contact1.addDeals(deal1);
+    contact2.addDeals(deal2);
+
+    deal1.addContact(contact1);
+    deal2.addContact(contact2);
+
+    saleRepo.saveAll(List.of(sale1, sale2));
+    tagsRepo.saveAll(List.of(tag1, tag2));
     contactRepo.saveAll(List.of(contact1, contact2));
-
-    ContactNote ctn1 = new ContactNote("ContactNote1", contact1, sale1);
-    ContactNote ctn2 = new ContactNote("ContactNote2", contact2, sale2);
-
-    contactNoteRepo.saveAll(List.of(ctn1, ctn2));
+    dealRepo.saveAll(List.of(deal1, deal2));
   }
 
   private static Date daysBefore(Integer days) {

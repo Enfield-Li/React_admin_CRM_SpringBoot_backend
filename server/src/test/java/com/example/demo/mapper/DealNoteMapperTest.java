@@ -64,6 +64,7 @@ public class DealNoteMapperTest implements WithAssertions {
 
   @Test
   @Order(1)
+  @Tag("requireEmptyData")
   void test_Get_Deal_Note_Count_should_find_null() {}
 
   @Test
@@ -71,5 +72,6 @@ public class DealNoteMapperTest implements WithAssertions {
 
   @Test
   @Order(2)
+  @Tag("requireEmptyData")
   void test_get_notes_by_deal_id_should_find_null() {}
 }
