@@ -65,8 +65,8 @@ class ContactNoteController {
     @RequestParam(name = "_end") Integer end,
     @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
-    @RequestParam(name = "sales_id", required = false) String sales_id,
-    @RequestParam(name = "contact_id", required = false) String contact_id,
+    @RequestParam(name = "sales_id", required = false) Long sales_id,
+    @RequestParam(name = "contact_id", required = false) Long contact_id,
     @RequestParam(name = "q", required = false) String query
   ) {
     Integer take = end - start;

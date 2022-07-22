@@ -12,12 +12,12 @@ public interface ContactNoteMapper {
     @Param("take") Integer take,
     @Param("sort") String sort,
     @Param("order") String order,
-    @Param("sales_id") String sales_id,
-    @Param("contact_id") String contact_id
+    @Param("sales_id") Long sales_id,
+    @Param("contact_id") Long contact_id
   );
 
   String getContactNoteCount(
-    @Param("sales_id") String sales_id,
-    @Param("contact_id") String contact_id
+    @Param("sales_id") Long sales_id,
+    @Param("contact_id") Long contact_id
   );
 }

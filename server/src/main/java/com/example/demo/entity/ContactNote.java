@@ -53,6 +53,8 @@ public class ContactNote {
   @JoinColumn(name = "sales_id")
   private Sale sale;
 
+  public ContactNote() {}
+
   public ContactNote(@NotNull String text, Contact contact, Sale sale) {
     this.text = text;
     this.contact = contact;

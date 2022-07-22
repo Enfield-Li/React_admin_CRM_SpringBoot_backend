@@ -36,7 +36,7 @@ import org.springframework.test.annotation.Rollback;
 @AutoConfigureMybatis
 @Rollback(value = false)
 @TestMethodOrder(OrderAnnotation.class)
-public class TaskMapperTest {
+public class TaskMapperTest implements WithAssertions {
 
   @Autowired
   SaleRepository saleRepo;
