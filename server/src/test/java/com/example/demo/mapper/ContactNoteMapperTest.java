@@ -1,20 +1,14 @@
 package com.example.demo.mapper;
 
+import static com.example.demo.util.Before.*;
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.ContactNote;
 import com.example.demo.entity.Sale;
-import com.example.demo.entity.Tags;
-import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.ContactNoteRepository;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.SaleRepository;
-import com.example.demo.repository.TagsRepository;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -129,10 +123,6 @@ public class ContactNoteMapperTest implements WithAssertions {
     ContactNote ctn2 = new ContactNote("ContactNote2", contact2, sale2);
 
     contactNoteRepo.saveAll(List.of(ctn1, ctn2));
-  }
-
-  private static Date daysBefore(Integer days) {
-    return Date.from(Instant.now().minus(Duration.ofDays(days)));
   }
 
   @ParameterizedTest

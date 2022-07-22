@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import static com.example.demo.util.Before.*;
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
@@ -121,10 +122,6 @@ public class DemoApplication {
     tagsRepo.saveAll(List.of(tag1, tag2));
     contactRepo.saveAll(List.of(contact1, contact2));
     dealRepo.saveAll(List.of(deal1, deal2));
-  }
-
-  private static Date daysBefore(Integer days) {
-    return Date.from(Instant.now().minus(Duration.ofDays(days)));
   }
 
   private static void openSwaggerUI() throws IOException {

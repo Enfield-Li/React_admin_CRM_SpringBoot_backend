@@ -1,20 +1,17 @@
 package com.example.demo.mapper;
 
+import static com.example.demo.util.Before.*;
+
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
 import com.example.demo.entity.Deal;
 import com.example.demo.entity.Sale;
 import com.example.demo.entity.Tags;
-import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.DealRespository;
 import com.example.demo.repository.SaleRepository;
 import com.example.demo.repository.TagsRepository;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -161,15 +158,6 @@ public class DealMapperTest implements WithAssertions {
     tagsRepo.saveAll(List.of(tag1, tag2));
     contactRepo.saveAll(List.of(contact1, contact2));
     dealRepo.saveAll(List.of(deal1, deal2));
-  }
-
-  private static Date daysBefore(Integer days) {
-    return Date.from(Instant.now().minus(Duration.ofDays(days)));
-  }
-
-  private static String daysStringBefore(Integer days) {
-    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-    .format(daysBefore(days));
   }
 
   @Order(5)
