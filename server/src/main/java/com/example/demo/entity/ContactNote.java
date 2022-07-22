@@ -13,15 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class ContactNote {
 
   @Id
@@ -29,6 +27,7 @@ public class ContactNote {
   private Long id;
 
   @Lob
+  @NotNull
   @Column(length = 1000)
   private String text;
 
@@ -53,4 +52,74 @@ public class ContactNote {
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "sales_id")
   private Sale sale;
+
+  public ContactNote(@NotNull String text, Contact contact, Sale sale) {
+    this.text = text;
+    this.contact = contact;
+    this.sale = sale;
+  }
+
+  public String getText() {
+    return this.text;
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+
+  public String getType() {
+    return this.type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public Date getDate() {
+    return this.date;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
+  public String getStatus() {
+    return this.status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public Long getContact_id() {
+    return this.contact_id;
+  }
+
+  public void setContact_id(Long contact_id) {
+    this.contact_id = contact_id;
+  }
+
+  public Contact getContact() {
+    return this.contact;
+  }
+
+  public void setContact(Contact contact) {
+    this.contact = contact;
+  }
+
+  public Long getSales_id() {
+    return this.sales_id;
+  }
+
+  public void setSales_id(Long sales_id) {
+    this.sales_id = sales_id;
+  }
+
+  public Sale getSale() {
+    return this.sale;
+  }
+
+  public void setSale(Sale sale) {
+    this.sale = sale;
+  }
 }

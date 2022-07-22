@@ -27,10 +27,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class Deal {
 
   @Id
@@ -93,4 +90,154 @@ public class Deal {
     )
   )
   private Set<Contact> contact_list = new HashSet<>();
+
+  public Deal() {}
+
+  public Long getId() {
+    return this.id;
+  }
+
+  public String getDescription() {
+    return this.description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Integer getIndex() {
+    return this.index;
+  }
+
+  public void setIndex(Integer index) {
+    this.index = index;
+  }
+
+  public Date getCreated_at() {
+    return this.created_at;
+  }
+
+  public void setCreated_at(Date created_at) {
+    this.created_at = created_at;
+  }
+
+  public Date getUpdated_at() {
+    return this.updated_at;
+  }
+
+  public void setUpdated_at(Date updated_at) {
+    this.updated_at = updated_at;
+  }
+
+  public Date getStart_at() {
+    return this.start_at;
+  }
+
+  public void setStart_at(Date start_at) {
+    this.start_at = start_at;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Long getAmount() {
+    return this.amount;
+  }
+
+  public void setAmount(Long amount) {
+    this.amount = amount;
+  }
+
+  public Integer getNb_notes() {
+    return this.nb_notes;
+  }
+
+  public void setNb_notes(Integer nb_notes) {
+    this.nb_notes = nb_notes;
+  }
+
+  public String getType() {
+    return this.type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getStage() {
+    return this.stage;
+  }
+
+  public void setStage(String stage) {
+    this.stage = stage;
+  }
+
+  public String getContactIdsString() {
+    return this.contactIdsString;
+  }
+
+  public void setContactIdsString(String contactIdsString) {
+    this.contactIdsString = contactIdsString;
+  }
+
+  public List<Long> getContact_ids() {
+    return this.contact_ids;
+  }
+
+  public void setContact_ids(List<Long> contact_ids) {
+    this.contact_ids = contact_ids;
+  }
+
+  public Set<DealNote> getDealNote() {
+    return this.dealNote;
+  }
+
+  public void setDealNote(Set<DealNote> dealNote) {
+    this.dealNote = dealNote;
+  }
+
+  public Long getSales_id() {
+    return this.sales_id;
+  }
+
+  public void setSales_id(Long sales_id) {
+    this.sales_id = sales_id;
+  }
+
+  public Sale getSale() {
+    return this.sale;
+  }
+
+  public void setSale(Sale sale) {
+    this.sale = sale;
+  }
+
+  public Long getCompany_id() {
+    return this.company_id;
+  }
+
+  public void setCompany_id(Long company_id) {
+    this.company_id = company_id;
+  }
+
+  public Company getCompany() {
+    return this.company;
+  }
+
+  public void setCompany(Company company) {
+    this.company = company;
+  }
+
+  public Set<Contact> getContact_list() {
+    return this.contact_list;
+  }
+
+  public void setContact_list(Set<Contact> contact_list) {
+    this.contact_list = contact_list;
+  }
 }

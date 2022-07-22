@@ -26,8 +26,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class Contact {
 
   @Id
@@ -100,6 +98,8 @@ public class Contact {
     tag_list.add(tag);
   }
 
+  public Contact() {}
+
   public Contact(
     String first_name,
     String last_name,
@@ -120,8 +120,128 @@ public class Contact {
     this.background = background;
   }
 
+  public Long getId() {
+    return this.id;
+  }
+
+  public String getFirst_name() {
+    return this.first_name;
+  }
+
+  public void setFirst_name(String first_name) {
+    this.first_name = first_name;
+  }
+
+  public String getLast_name() {
+    return this.last_name;
+  }
+
+  public void setLast_name(String last_name) {
+    this.last_name = last_name;
+  }
+
+  public String getGender() {
+    return this.gender;
+  }
+
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
+
+  public String getTitle() {
+    return this.title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getEmail() {
+    return this.email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getPhone_number1() {
+    return this.phone_number1;
+  }
+
+  public void setPhone_number1(String phone_number1) {
+    this.phone_number1 = phone_number1;
+  }
+
+  public String getPhone_number2() {
+    return this.phone_number2;
+  }
+
+  public void setPhone_number2(String phone_number2) {
+    this.phone_number2 = phone_number2;
+  }
+
+  public Integer getNb_notes() {
+    return this.nb_notes;
+  }
+
+  public void setNb_notes(Integer nb_notes) {
+    this.nb_notes = nb_notes;
+  }
+
+  public String getStatus() {
+    return this.status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getBackground() {
+    return this.background;
+  }
+
+  public void setBackground(String background) {
+    this.background = background;
+  }
+
+  public String getAcquisition() {
+    return this.acquisition;
+  }
+
+  public void setAcquisition(String acquisition) {
+    this.acquisition = acquisition;
+  }
+
+  public Date getFirst_seen() {
+    return this.first_seen;
+  }
+
+  public void setFirst_seen(Date first_seen) {
+    this.first_seen = first_seen;
+  }
+
+  public Date getLast_seen() {
+    return this.last_seen;
+  }
+
+  public void setLast_seen(Date last_seen) {
+    this.last_seen = last_seen;
+  }
+
+  public Boolean isHas_newsletter() {
+    return this.has_newsletter;
+  }
+
+  public Boolean getHas_newsletter() {
+    return this.has_newsletter;
+  }
+
+  public void setHas_newsletter(Boolean has_newsletter) {
+    this.has_newsletter = has_newsletter;
+  }
+
   public List<Integer> getTags() {
-    return tags;
+    return this.tags;
   }
 
   public void setTags(List<Integer> tags) {
@@ -129,7 +249,7 @@ public class Contact {
   }
 
   public String getRaw_tags() {
-    return raw_tags;
+    return this.raw_tags;
   }
 
   public void setRaw_tags(String raw_tags) {
@@ -137,7 +257,15 @@ public class Contact {
   }
 
   public Long getCompany_id() {
-    return company_id;
+    return this.company_id;
+  }
+
+  public void setCompany_id(Long company_id) {
+    this.company_id = company_id;
+  }
+
+  public Company getCompany() {
+    return this.company;
   }
 
   public void setCompany(Company company) {
@@ -145,7 +273,7 @@ public class Contact {
   }
 
   public Long getSales_id() {
-    return sales_id;
+    return this.sales_id;
   }
 
   public void setSales_id(Long sales_id) {
@@ -153,7 +281,7 @@ public class Contact {
   }
 
   public Sale getSale() {
-    return sale;
+    return this.sale;
   }
 
   public void setSale(Sale sale) {
@@ -161,7 +289,7 @@ public class Contact {
   }
 
   public Set<ContactNote> getContactNote() {
-    return contactNote;
+    return this.contactNote;
   }
 
   public void setContactNote(Set<ContactNote> contactNote) {
@@ -169,7 +297,7 @@ public class Contact {
   }
 
   public Set<Tags> getTag_list() {
-    return tag_list;
+    return this.tag_list;
   }
 
   public void setTag_list(Set<Tags> tag_list) {

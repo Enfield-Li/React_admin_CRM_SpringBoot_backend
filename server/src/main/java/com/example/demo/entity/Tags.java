@@ -20,11 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-// @Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-// @EqualsAndHashCode(exclude = "contacts")
 public class Tags {
 
   @Id
@@ -39,22 +35,44 @@ public class Tags {
 
   @JsonIgnore
   @ManyToMany(cascade = { PERSIST, DETACH, MERGE }, fetch = LAZY)
-  // @JoinTable(
-  //   name = "contact_tag",
-  //   joinColumns = @JoinColumn(name = "tag_id"),
-  //   inverseJoinColumns = @JoinColumn(name = "contact_id"),
-  //   uniqueConstraints = @UniqueConstraint(
-  //     columnNames = { "contact_id", "tag_id" }
-  //   )
-  // )
   private Set<Contact> contacts = new HashSet<>();
 
   public void addContact(Contact contact) {
     contacts.add(contact);
   }
 
+  public Tags() {}
+
   public Tags(String name, String color) {
     this.name = name;
     this.color = color;
+  }
+
+  public Integer getId() {
+    return this.id;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getColor() {
+    return this.color;
+  }
+
+  public void setColor(String color) {
+    this.color = color;
+  }
+
+  public Set<Contact> getContacts() {
+    return this.contacts;
+  }
+
+  public void setContacts(Set<Contact> contacts) {
+    this.contacts = contacts;
   }
 }

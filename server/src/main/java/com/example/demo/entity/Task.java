@@ -15,10 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 public class Task {
 
   @Id
@@ -44,4 +41,66 @@ public class Task {
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "contact_id")
   private Contact contact;
+
+  public Task() {}
+
+  public Long getId() {
+    return this.id;
+  }
+
+  public String getType() {
+    return this.type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getText() {
+    return this.text;
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+
+  public Date getDue_date() {
+    return this.due_date;
+  }
+
+  public void setDue_date(Date due_date) {
+    this.due_date = due_date;
+  }
+
+  public Long getSales_id() {
+    return this.sales_id;
+  }
+
+  public void setSales_id(Long sales_id) {
+    this.sales_id = sales_id;
+  }
+
+  public Sale getSale() {
+    return this.sale;
+  }
+
+  public void setSale(Sale sale) {
+    this.sale = sale;
+  }
+
+  public Long getContact_id() {
+    return this.contact_id;
+  }
+
+  public void setContact_id(Long contact_id) {
+    this.contact_id = contact_id;
+  }
+
+  public Contact getContact() {
+    return this.contact;
+  }
+
+  public void setContact(Contact contact) {
+    this.contact = contact;
+  }
 }

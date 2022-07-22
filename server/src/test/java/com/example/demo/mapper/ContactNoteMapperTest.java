@@ -82,15 +82,27 @@ public class ContactNoteMapperTest {
       // contact_id
       Arguments.of(0, 100, "id", "desc", null, null),
       Arguments.of(0, 100, "id", "desc", null, null)
-       );
+    );
   }
 
   @Test
   @Order(1)
   void test_get_all_contact_notes_should_find_null() {}
 
-  @Test
+  @ParameterizedTest
+  @MethodSource("providerForGetContactNoteCount")
   void test_get_contact_note_count(String sales_id, String contact_id) {}
+
+  private static Stream<Arguments> providerForGetContactNoteCount() {
+    return Stream.of(
+      Arguments.of(null, null),
+      // sales_id
+      Arguments.of(null, null),
+      // contact_id
+      Arguments.of(null, null),
+      Arguments.of(null, null)
+    );
+  }
 
   @Test
   @Order(2)

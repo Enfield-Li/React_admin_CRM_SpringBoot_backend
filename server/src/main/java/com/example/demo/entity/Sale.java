@@ -30,16 +30,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
-@Data
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(
   uniqueConstraints = {
     @UniqueConstraint(columnNames = { "first_name", "last_name" }),
   }
 )
-@EqualsAndHashCode(exclude = "companies")
 public class Sale {
 
   @Id
@@ -114,6 +110,8 @@ public class Sale {
   )
   private Set<ContactNote> contactNotes = new HashSet<>();
 
+  public Sale() {}
+
   public Sale(
     String email,
     String status,
@@ -152,5 +150,109 @@ public class Sale {
 
   public List<GrantedAuthority> getUserAuthorities() {
     return role.getGrantedAuthorities();
+  }
+
+  public Long getId() {
+    return this.id;
+  }
+
+  public String getEmail() {
+    return this.email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getStatus() {
+    return this.status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getLast_name() {
+    return this.last_name;
+  }
+
+  public void setLast_name(String last_name) {
+    this.last_name = last_name;
+  }
+
+  public String getFirst_name() {
+    return this.first_name;
+  }
+
+  public void setFirst_name(String first_name) {
+    this.first_name = first_name;
+  }
+
+  public String getPassword() {
+    return this.password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public ApplicationUserRole getRole() {
+    return this.role;
+  }
+
+  public void setRole(ApplicationUserRole role) {
+    this.role = role;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public Set<Company> getCompanies() {
+    return this.companies;
+  }
+
+  public void setCompanies(Set<Company> companies) {
+    this.companies = companies;
+  }
+
+  public Set<Task> getTasks() {
+    return this.tasks;
+  }
+
+  public void setTasks(Set<Task> tasks) {
+    this.tasks = tasks;
+  }
+
+  public Set<Deal> getDeals() {
+    return this.deals;
+  }
+
+  public void setDeals(Set<Deal> deals) {
+    this.deals = deals;
+  }
+
+  public Set<DealNote> getDealNote() {
+    return this.dealNote;
+  }
+
+  public void setDealNote(Set<DealNote> dealNote) {
+    this.dealNote = dealNote;
+  }
+
+  public Set<Contact> getContacts() {
+    return this.contacts;
+  }
+
+  public void setContacts(Set<Contact> contacts) {
+    this.contacts = contacts;
+  }
+
+  public Set<ContactNote> getContactNotes() {
+    return this.contactNotes;
+  }
+
+  public void setContactNotes(Set<ContactNote> contactNotes) {
+    this.contactNotes = contactNotes;
   }
 }
