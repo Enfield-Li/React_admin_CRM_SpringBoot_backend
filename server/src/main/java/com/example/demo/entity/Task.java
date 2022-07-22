@@ -44,6 +44,12 @@ public class Task {
 
   public Task() {}
 
+  public Task(String text, Sale sale, Contact contact) {
+    this.text = text;
+    this.sale = sale;
+    this.contact = contact;
+  }
+
   public Long getId() {
     return this.id;
   }
