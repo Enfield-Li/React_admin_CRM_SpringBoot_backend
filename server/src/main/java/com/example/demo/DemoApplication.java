@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import static com.example.demo.util.Before.*;
+import static com.example.demo.util.DateBefore.*;
 
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;

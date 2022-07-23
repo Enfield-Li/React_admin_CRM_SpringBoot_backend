@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,30 +36,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Sale")
+@RequiredArgsConstructor
 @RequestMapping(SALES_ENDPOINT)
 class SaleController {
 
   private static final String PENDING = "pending";
   private static final String FORMAL = "formal";
 
-  private final SaleRepository saleRepo;
   private final SaleMapper saleMapper;
+  private final SaleRepository saleRepo;
   private final PasswordEncoder passwordEncoder;
 
-  public SaleController(
-    SaleRepository saleRepo,
-    SaleMapper saleMapper,
-    PasswordEncoder passwordEncoder
-  ) {
-    this.saleRepo = saleRepo;
-    this.saleMapper = saleMapper;
-    this.passwordEncoder = passwordEncoder;
-  }
-
-  @PostMapping(TEST)
-  public String test() {
-    return "Have access";
-  }
+  // @PostMapping(TEST)
+  // public String test() {
+  //   return "Have access";
+  // }
 
   @PostMapping(LOGIN)
   public void login(@Valid @RequestBody LoginSaleDto dto) {}
@@ -84,14 +76,17 @@ class SaleController {
         firstName = username;
       }
 
-      Sale newSale = new Sale();
-      newSale.setStatus(PENDING);
-      newSale.setFirst_name(firstName);
-      newSale.setLast_name(lastName);
-      newSale.setPassword(passwordEncoder.encode(dto.getPassword()));
-      newSale.setRole(dto.getRole());
+      String encryptedPassword = passwordEncoder.encode(dto.getPassword());
 
+      Sale newSale = new Sale(
+        PENDING,
+        firstName,
+        lastName,
+        encryptedPassword,
+        dto.getRole()
+      );
       Sale savedSale = saleRepo.save(newSale);
+
       session.setAttribute(ApplicationUserInSession, savedSale);
 
       return ResponseEntity.ok(new SaleRegisterResponseDto(savedSale, null));
@@ -112,10 +107,10 @@ class SaleController {
 
   @GetMapping
   public ResponseEntity<List<Sale>> getAll(
-    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
+    @RequestParam(name = "_sort") String sort,
     @RequestParam(name = "_order") String order,
-    @RequestParam(name = "_sort") String sort
+    @RequestParam(name = "_start") Integer start
   ) {
     Integer take = end - start;
 

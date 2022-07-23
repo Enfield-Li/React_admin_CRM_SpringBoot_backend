@@ -3,7 +3,6 @@ package com.example.demo.exception;
 import com.example.demo.dto.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.validation.FieldError;
@@ -20,7 +19,7 @@ public class GlobalException extends RuntimeException {
   );
 
   @ExceptionHandler(Exception.class)
-  protected ResponseEntity<String> catchAllException(Exception e) {
+  protected ResponseEntity<String> catchUncaughtException(Exception e) {
     log.error("\n \n **************** Uncaught Error ****************", e);
 
     return ResponseEntity.badRequest().body(e.getMessage());
@@ -36,7 +35,9 @@ public class GlobalException extends RuntimeException {
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-  protected ResponseEntity<String> catchParamArgsMismatch(Exception e) {
+  protected ResponseEntity<String> catchParamArgsMismatchException(
+    Exception e
+  ) {
     log.error(e.getMessage());
 
     return ResponseEntity.badRequest().body("Required url parameter missing.");
@@ -50,7 +51,7 @@ public class GlobalException extends RuntimeException {
   }
 
   @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-  public ResponseEntity<ValidationErrorResponse> catchInvalidRequestBodyInput(
+  public ResponseEntity<ValidationErrorResponse> catchInvalidRequestBodyInputException(
     MethodArgumentNotValidException exception
   ) {
     FieldError fieldError = exception.getFieldError();

@@ -113,14 +113,12 @@ public class Sale {
   public Sale() {}
 
   public Sale(
-    String email,
     String status,
     String first_name,
     String last_name,
     String password,
     ApplicationUserRole role
   ) {
-    this.email = email;
     this.status = status;
     this.last_name = last_name;
     this.first_name = first_name;

@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
-import static com.example.demo.util.Before.*;
+import static com.example.demo.util.DateBefore.*;
+
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Contact;
@@ -164,19 +165,8 @@ public class ContactMapperTest implements WithAssertions {
     Long company_id,
     String query
   ) {
-    List<Contact> actual = underTest.getCompanyContacts(
-      start,
-      take,
-      sort,
-      order,
-      status,
-      tags,
-      sales_id,
-      last_seen_gte,
-      last_seen_lte,
-      company_id,
-      query
-    );
+    List<Contact> actual = underTest
+        .getCompanyContacts( start, take, sort, order, status, tags, sales_id, last_seen_gte, last_seen_lte, company_id, query);
 
     assertThat(actual).isNotEmpty();
   }
@@ -184,261 +174,33 @@ public class ContactMapperTest implements WithAssertions {
   private static Stream<Arguments> providerForGetCompanyContacts() {
     return Stream.of(
       // test start & take
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        1,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        0,
-        99,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, null, null, null),
+      Arguments.of( 1, 100, "id", "desc", null, null, null, null, null, null, null),
+      Arguments.of( 0, 99, "id", "desc", null, null, null, null, null, null, null),
       // test order & sort
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "asc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        0,
-        100,
-        "status",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        0,
-        100,
-        "status",
-        "asc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "asc", null, null, null, null, null, null, null),
+      Arguments.of( 0, 100, "status", "desc", null, null, null, null, null, null, null),
+      Arguments.of( 0, 100, "status", "asc", null, null, null, null, null, null, null),
       // status
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        "status1",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        "status2",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", "status1", null, null, null, null, null, null),
+      Arguments.of( 0, 100, "id", "desc", "status2", null, null, null, null, null, null),
       // tags
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        "1",
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        "2",
-        null,
-        null,
-        null,
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", null, "1", null, null, null, null, null),
+      Arguments.of( 0, 100, "id", "desc", null, "2", null, null, null, null, null),
       // sales_id
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        1L,
-        null,
-        null,
-        null,
-        null
-      ),
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        2L,
-        null,
-        null,
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", null, null, 1L, null, null, null, null),
+      Arguments.of( 0, 100, "id", "desc", null, null, 2L, null, null, null, null),
       // last_seen_gte
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        daysStringBefore(7),
-        null,
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, daysStringBefore(7), null, null, null),
       // last_seen_lte
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        daysStringBefore(7),
-        null,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, daysStringBefore(7), null, null),
       // company_id .
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        1L,
-        null
-      ),
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        2L,
-        null
-      ),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, null, 1L, null),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, null, 2L, null),
       // query
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "back"
-      ),
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "titl"
-      ),
-      Arguments.of(
-        0,
-        100,
-        "id",
-        "desc",
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        "_FN"
-      )
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, null, null, "back"),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, null, null, "titl"),
+      Arguments.of( 0, 100, "id", "desc", null, null, null, null, null, null, "_FN")
     );
   }
 
@@ -446,19 +208,8 @@ public class ContactMapperTest implements WithAssertions {
   @Order(2)
   @Tag("requireEmptyData")
   void test_get_companies_count_should_find_null() {
-    List<Contact> actual = underTest.getCompanyContacts(
-      0,
-      100,
-      "id",
-      "desc",
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    );
+    List<Contact> actual = underTest
+        .getCompanyContacts( 0, 100, "id", "desc", null, null, null, null, null, null, null);
 
     assertThat(actual).isEmpty();
   }
@@ -474,15 +225,8 @@ public class ContactMapperTest implements WithAssertions {
     Long company_id,
     String query
   ) {
-    String actual = underTest.getContactCount(
-      status,
-      tags,
-      sales_id,
-      company_id,
-      last_seen_gte,
-      last_seen_lte,
-      query
-    );
+    String actual = underTest
+        .getContactCount( status, tags, sales_id, company_id, last_seen_gte, last_seen_lte, query);
 
     assertThat(Integer.parseInt(actual)).isGreaterThan(0);
   }
@@ -516,15 +260,8 @@ public class ContactMapperTest implements WithAssertions {
   @Order(3)
   @Tag("requireEmptyData")
   void test_get_contact_count_should_find_null() {
-    String actual = underTest.getContactCount(
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    );
+    String actual = underTest
+        .getContactCount( null, null, null, null, null, null, null);
 
     assertThat(Integer.parseInt(actual)).isEqualTo(0);
   }

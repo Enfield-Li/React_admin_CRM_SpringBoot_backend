@@ -1,6 +1,6 @@
 package com.example.demo.mapper;
 
-import static com.example.demo.util.Before.*;
+import static com.example.demo.util.DateBefore.*;
 
 import com.example.demo.auth.user.ApplicationUserRole;
 import com.example.demo.entity.Company;
@@ -120,13 +120,9 @@ public class TaskMapperTest implements WithAssertions {
     String order,
     Long contact_id
   ) {
-    List<Task> actual = underTest.getAllTasks(
-      start,
-      take,
-      sort,
-      order,
-      contact_id
-    );
+    List<Task> actual = underTest
+        .getAllTasks( start, take, sort, order, contact_id);
+
     assertThat(actual).isNotEmpty();
   }
 

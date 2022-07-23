@@ -10,6 +10,7 @@ import com.example.demo.repository.DealNoteRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,22 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Deal_Note")
+@RequiredArgsConstructor
 @RequestMapping(DEALNOTES_ENDPOINT)
 class DealNoteController {
 
-  private final DealNoteRepository dealNoteRepo;
   private final EntityManager entityManager;
   private final DealNoteMapper dealNoteMapper;
-
-  public DealNoteController(
-    DealNoteRepository dealNoteRepo,
-    EntityManager entityManager,
-    DealNoteMapper dealNoteMapper
-  ) {
-    this.dealNoteRepo = dealNoteRepo;
-    this.entityManager = entityManager;
-    this.dealNoteMapper = dealNoteMapper;
-  }
+  private final DealNoteRepository dealNoteRepo;
 
   @PostMapping("test")
   public void test() {}
@@ -52,22 +44,18 @@ class DealNoteController {
 
   @GetMapping
   public ResponseEntity<List<DealNote>> getAll(
-    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
-    @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
-    @RequestParam(name = "deal_id", required = false) Long deal_id,
-    @RequestParam(name = "q", required = false) String query
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_start") Integer start,
+    @RequestParam(name = "q", required = false) String query,
+    @RequestParam(name = "deal_id", required = false) Long deal_id
   ) {
     Integer take = end - start;
 
-    List<DealNote> dealNotes = dealNoteMapper.getNotesByDealId(
-      start,
-      take,
-      sort,
-      order,
-      deal_id
-    );
+    List<DealNote> dealNotes = dealNoteMapper
+        .getNotesByDealId(start, take, sort, order, deal_id);
+
     String dealNoteCount = dealNoteMapper.getDealNoteCount(deal_id);
 
     return ResponseEntity

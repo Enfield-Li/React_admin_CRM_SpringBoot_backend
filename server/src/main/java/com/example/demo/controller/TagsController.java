@@ -9,6 +9,7 @@ import com.example.demo.mapper.TagsMapper;
 import com.example.demo.repository.TagsRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Tag")
+@RequiredArgsConstructor
 @RequestMapping(TAGS_ENDPOINT)
 class TagsController {
 
-  private final TagsRepository tagsRepo;
   private final TagsMapper tagsMapper;
-
-  public TagsController(TagsRepository tagsRepo, TagsMapper tagsMapper) {
-    this.tagsRepo = tagsRepo;
-    this.tagsMapper = tagsMapper;
-  }
+  private final TagsRepository tagsRepo;
 
   @PostMapping("test")
   public void test() {}
@@ -50,10 +47,10 @@ class TagsController {
 
   @GetMapping
   public ResponseEntity<List<Tags>> getAll(
-    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
-    @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "q", required = false) String query
   ) {
     List<Tags> tags = tagsRepo.findAll();

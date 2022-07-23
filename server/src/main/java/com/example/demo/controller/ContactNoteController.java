@@ -14,6 +14,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,22 +31,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Contact_Notes")
+@RequiredArgsConstructor
 @RequestMapping(CONTACTNOTES_ENDPOINT)
 class ContactNoteController {
 
-  private final ContactNoteRepository contactNoteRepo;
   private final EntityManager entityManager;
   private final ContactNoteMapper contactNoteMapper;
-
-  public ContactNoteController(
-    ContactNoteRepository contactNoteRepo,
-    EntityManager entityManager,
-    ContactNoteMapper contactNoteMapper
-  ) {
-    this.contactNoteRepo = contactNoteRepo;
-    this.entityManager = entityManager;
-    this.contactNoteMapper = contactNoteMapper;
-  }
+  private final ContactNoteRepository contactNoteRepo;
 
   @GetMapping("test")
   public void test() {
@@ -61,29 +53,21 @@ class ContactNoteController {
 
   @GetMapping
   public ResponseEntity<List<ContactNote>> getAll(
-    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
-    @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_start") Integer start,
+    @RequestParam(name = "q", required = false) String query,
     @RequestParam(name = "sales_id", required = false) Long sales_id,
-    @RequestParam(name = "contact_id", required = false) Long contact_id,
-    @RequestParam(name = "q", required = false) String query
+    @RequestParam(name = "contact_id", required = false) Long contact_id
   ) {
     Integer take = end - start;
 
-    List<ContactNote> contactNotes = contactNoteMapper.getAllContactNotes(
-      start,
-      take,
-      sort,
-      order,
-      sales_id,
-      contact_id
-    );
+    List<ContactNote> contactNotes = contactNoteMapper
+        .getAllContactNotes(start, take, sort, order, sales_id, contact_id);
 
-    String contactNoteCount = contactNoteMapper.getContactNoteCount(
-      sales_id,
-      contact_id
-    );
+    String contactNoteCount = contactNoteMapper
+        .getContactNoteCount(sales_id, contact_id);
 
     return ResponseEntity
       .ok()
@@ -100,9 +84,8 @@ class ContactNoteController {
   public ResponseEntity<ContactNote> create(
     @RequestBody ContactNote contactNote
   ) {
-    ContactNote savedContactNote = contactNoteRepo.save(
-      setRelationship(contactNote)
-    );
+    ContactNote savedContactNote = contactNoteRepo
+        .save(setRelationship(contactNote));
 
     return ResponseEntity.ok(savedContactNote);
   }
@@ -136,19 +119,14 @@ class ContactNoteController {
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     contactNoteRepo.deleteById(id);
-
     return ResponseEntity.ok().build();
   }
 
   private ContactNote setRelationship(ContactNote contactNote) {
-    Sale sale = entityManager.getReference(
-      Sale.class,
-      contactNote.getSales_id()
-    );
-    Contact contact = entityManager.getReference(
-      Contact.class,
-      contactNote.getContact_id()
-    );
+    Sale sale = entityManager
+        .getReference(Sale.class, contactNote.getSales_id());
+    Contact contact = entityManager
+        .getReference(Contact.class, contactNote.getContact_id());
 
     contactNote.setSale(sale);
     contactNote.setContact(contact);

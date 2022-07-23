@@ -10,6 +10,7 @@ import com.example.demo.repository.CompanyRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,22 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Company")
+@RequiredArgsConstructor
 @RequestMapping(COMPANIES_ENDPOINT)
 class CompanyController {
 
-  private final CompanyRepository companyRepo;
   private final EntityManager entityManager;
   private final companyMapper companyMapper;
-
-  public CompanyController(
-    CompanyRepository companyRepo,
-    EntityManager entityManager,
-    companyMapper companyMapper
-  ) {
-    this.companyRepo = companyRepo;
-    this.entityManager = entityManager;
-    this.companyMapper = companyMapper;
-  }
+  private final CompanyRepository companyRepo;
 
   @PostMapping("test")
   public List<Company> test() {
@@ -54,14 +46,14 @@ class CompanyController {
 
   @GetMapping
   public ResponseEntity<List<Company>> getAll(
-    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
-    @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
-    @RequestParam(name = "sales_id", required = false) Long sales_id,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_start") Integer start,
+    @RequestParam(name = "q", required = false) String query,
     @RequestParam(name = "size", required = false) Integer size,
     @RequestParam(name = "sector", required = false) String sector,
-    @RequestParam(name = "q", required = false) String query
+    @RequestParam(name = "sales_id", required = false) Long sales_id
   ) {
     Integer take = end - start;
 
@@ -70,48 +62,20 @@ class CompanyController {
 
     if (size != null) {
       switch (size) {
-        case 1:
-          maxSize = 1;
-          break;
-        case 10:
-          minSize = 1;
-          maxSize = 10;
-          break;
-        case 50:
-          minSize = 9;
-          maxSize = 50;
-          break;
-        case 250:
-          minSize = 49;
-          maxSize = 250;
-          break;
-        case 500:
-          minSize = 250;
-          break;
-        default:
-          break;
+        case 1: { maxSize = 1; break; }
+        case 10: { minSize = 1; maxSize = 10; break; }
+        case 50: { minSize = 10; maxSize = 50; break; }
+        case 250: { minSize = 50; maxSize = 250; break; }
+        case 500: { minSize = 250; break; }
+        default: { break; }
       }
     }
 
-    List<Company> filteredCompany = companyMapper.getFilteredCompanies(
-      start,
-      take,
-      sort,
-      order,
-      sales_id,
-      minSize,
-      maxSize,
-      sector,
-      query
-    );
+    List<Company> filteredCompany = companyMapper
+        .getFilteredCompanies(start, take, sort, order, sales_id, minSize, maxSize, sector, query);
 
-    String companyCount = companyMapper.getCompaniesCount(
-      query,
-      sales_id,
-      minSize,
-      maxSize,
-      sector
-    );
+    String companyCount = companyMapper
+        .getCompaniesCount(query, sales_id, minSize, maxSize, sector);
 
     return ResponseEntity
       .ok()

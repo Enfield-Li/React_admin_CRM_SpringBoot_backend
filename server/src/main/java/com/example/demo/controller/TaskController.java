@@ -10,6 +10,7 @@ import com.example.demo.repository.TaskRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,22 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Tasks")
+@RequiredArgsConstructor
 @RequestMapping(TASKS_ENDPOINT)
 class TaskController {
 
+  private final TaskMapper taskMapper;
   private final TaskRepository taskRepo;
   private final EntityManager entityManager;
-  private final TaskMapper taskMapper;
-
-  public TaskController(
-    TaskRepository taskRepo,
-    EntityManager entityManager,
-    TaskMapper taskMapper
-  ) {
-    this.taskRepo = taskRepo;
-    this.entityManager = entityManager;
-    this.taskMapper = taskMapper;
-  }
 
   @PostMapping("test")
   public void test() {}
@@ -52,21 +44,16 @@ class TaskController {
 
   @GetMapping
   public ResponseEntity<List<Task>> getAll(
-    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "_end") Integer end,
-    @RequestParam(name = "_order") String order,
     @RequestParam(name = "_sort") String sort,
+    @RequestParam(name = "_order") String order,
+    @RequestParam(name = "_start") Integer start,
     @RequestParam(name = "contact_id", required = false) Long contact_id
   ) {
     Integer take = end - start;
 
-    List<Task> tasks = taskMapper.getAllTasks(
-      start,
-      take,
-      sort,
-      order,
-      contact_id
-    );
+    List<Task> tasks = taskMapper
+        .getAllTasks(start, take, sort, order, contact_id);
 
     String taskCount = taskMapper.getTaskCount();
 
@@ -98,11 +85,10 @@ class TaskController {
   }
 
   private Task setRelationship(Task task) {
-    Sale sale = entityManager.getReference(Sale.class, task.getSales_id());
-    Contact contact = entityManager.getReference(
-      Contact.class,
-      task.getContact_id()
-    );
+    Sale sale = entityManager
+        .getReference(Sale.class, task.getSales_id());
+    Contact contact = entityManager
+        .getReference(Contact.class, task.getContact_id());
 
     task.setSale(sale);
     task.setContact(contact);

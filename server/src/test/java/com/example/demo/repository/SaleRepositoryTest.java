@@ -20,12 +20,17 @@ public class SaleRepositoryTest implements WithAssertions {
   SaleRepository underTest;
 
   private String isFullName = "first_name last_name";
-  private String isNotFullName = "only_First_Name";
+  private String isNotFullName = "only_first_name";
 
   @BeforeEach
   void setUp(final TestInfo info) {
     final Set<String> testTags = info.getTags();
-    if (testTags.stream().anyMatch(tag -> tag.equals("skipBeforeEach"))) return;
+
+    Boolean requireEmptyData = testTags
+      .stream()
+      .anyMatch(tag -> tag.equals("requireEmptyData"));
+
+    if (requireEmptyData) return;
 
     Sale isFullNameSale = new Sale(
       "first_name",
@@ -35,9 +40,7 @@ public class SaleRepositoryTest implements WithAssertions {
     );
 
     Sale isNotFullNameSale = new Sale(
-      "email@gg.com",
-      "stats",
-      "only_First_Name",
+      "only_first_name",
       null,
       "123",
       ApplicationUserRole.SALE_PERSON
@@ -64,7 +67,7 @@ public class SaleRepositoryTest implements WithAssertions {
   }
 
   @Test
-  @Tag("skipBeforeEach")
+  @Tag("requireEmptyData")
   void findByFullNameOnFullNameShouldFail() {
     Optional<Sale> saleFound = underTest.findByFullName("Abc");
     Optional<Sale> saleFound2 = underTest.findByFullName("Abc Def");
